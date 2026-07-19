@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Linting Check
+    name: Linting & Type Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -28,3 +28,6 @@ jobs:
 
       - name: Run Lint
         run: bun lint
+
+      - name: Run Type Check
+        run: bun check
