@@ -61,7 +61,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <div
   aria-label={labels[figure]}
   class={cn(
-    "flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted/40 p-1.5 text-muted-foreground",
+    "flex h-12 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted/40 p-1 text-muted-foreground",
     className,
   )}
   role="img"

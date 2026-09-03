@@ -44,7 +44,6 @@ const en = {
   "sidebar.groupSettings": "Settings",
   "sidebar.tabProfiles": "Profiles",
   "sidebar.tabRemap": "Remap",
-  "sidebar.tabKeyTester": "Key Tester",
   "sidebar.tabPerformance": "Performance",
   "sidebar.tabAdvancedKeys": "Advanced Keys",
   "sidebar.tabGamepad": "Gamepad",
@@ -63,11 +62,6 @@ const en = {
   "landing.connected": "Successfully connected to {name}.",
   "landing.firmwareAvailable":
     " Newer version of the firmware is available.",
-
-  "header.import": "Import",
-  "header.export": "Export",
-  "header.importTooltip": "Load the current profile from a JSON file",
-  "header.exportTooltip": "Download the current profile as JSON",
 
   "profile.label": "Profile {profile}",
   "profile.active": "Active",
@@ -92,6 +86,9 @@ const en = {
   "remap.resetLayer": "Reset Current Layer",
   "remap.testerHighlight": "Tester highlight",
   "remap.testerHighlightSr": "Toggle key tester highlight",
+  "remap.testerReset": "Reset tester",
+  "remap.testerPressed": "Pressed",
+  "remap.testerHistory": "History",
   "remap.legendLayout": "Legend layout",
   "remap.legendLayoutTooltip": "Legend layout (US / JP)",
   "remap.importProfile": "Import Profile",
@@ -557,7 +554,6 @@ const ja: Dictionary = {
   "sidebar.groupSettings": "設定",
   "sidebar.tabProfiles": "プロフィール",
   "sidebar.tabRemap": "リマップ",
-  "sidebar.tabKeyTester": "キーテスター",
   "sidebar.tabPerformance": "パフォーマンス",
   "sidebar.tabAdvancedKeys": "高度なキー",
   "sidebar.tabGamepad": "ゲームパッド",
@@ -576,11 +572,6 @@ const ja: Dictionary = {
   "landing.connected": "{name} に接続しました。",
   "landing.firmwareAvailable":
     " 新しいバージョンのファームウェアが利用可能です。",
-
-  "header.import": "インポート",
-  "header.export": "エクスポート",
-  "header.importTooltip": "現在のプロフィールを JSON ファイルから読み込む",
-  "header.exportTooltip": "現在のプロフィールを JSON として保存",
 
   "profile.label": "プロフィール {profile}",
   "profile.active": "使用中",
@@ -605,6 +596,9 @@ const ja: Dictionary = {
   "remap.resetLayer": "現在のレイヤーをリセット",
   "remap.testerHighlight": "テスターのハイライト",
   "remap.testerHighlightSr": "キーテスターのハイライトを切替",
+  "remap.testerReset": "テスターをリセット",
+  "remap.testerPressed": "押下中",
+  "remap.testerHistory": "履歴",
   "remap.legendLayout": "キー表示レイアウト",
   "remap.legendLayoutTooltip": "キー表示レイアウト (US / JP)",
   "remap.importProfile": "プロフィールをインポート",

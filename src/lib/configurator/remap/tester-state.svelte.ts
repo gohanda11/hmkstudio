@@ -17,19 +17,29 @@ import { Context } from "runed"
 import { SvelteSet } from "svelte/reactivity"
 
 /**
- * Web codes that have been pressed at least once since the last reset.
- * Unlike {@link KeyTesterState.keyEvents}, entries persist after release so
- * the keyboard highlights like a QMK matrix test: currently-held keys render
- * as "active", previously-pressed keys stay "latched" until reset.
+ * Shared tester-mode state for the Remap tab. Held keys render as
+ * "active", released keys stay "latched" (QMK matrix-test style) until
+ * reset.
  */
-export class KeyTesterLatchedState {
-  codes = new SvelteSet<string>()
+export class RemapTesterState {
+  /** Web codes currently held down. */
+  pressed = new SvelteSet<string>()
+  /** Web codes pressed at least once since the last reset. */
+  latched = new SvelteSet<string>()
+  /** Whether Shift was held when each web code was pressed. */
+  shiftAtPress = new Map<string, boolean>()
 
   reset() {
-    this.codes.clear()
+    this.pressed.clear()
+    this.latched.clear()
+    this.shiftAtPress.clear()
+  }
+
+  get empty(): boolean {
+    return this.pressed.size === 0 && this.latched.size === 0
   }
 }
 
-export const keyTesterLatchedContext = new Context<KeyTesterLatchedState>(
-  "hmk-key-tester-latched",
+export const remapTesterContext = new Context<RemapTesterState>(
+  "hmk-remap-tester",
 )

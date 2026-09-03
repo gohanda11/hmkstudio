@@ -18,7 +18,6 @@ import {
   Gamepad2Icon,
   GaugeIcon,
   Grid2x2Icon,
-  KeyboardIcon,
   MouseIcon,
   PencilIcon,
   SettingsIcon,
@@ -49,7 +48,6 @@ export const sidebarTabGroups: SidebarTabGroup[] = [
     groupKey: "sidebar.groupKeyboard",
     tabs: [
       { labelKey: "sidebar.tabRemap", value: "remap", icon: PencilIcon },
-      { labelKey: "sidebar.tabKeyTester", value: "key-tester", icon: KeyboardIcon },
       { labelKey: "sidebar.tabPerformance", value: "performance", icon: GaugeIcon },
       {
         labelKey: "sidebar.tabAdvancedKeys",

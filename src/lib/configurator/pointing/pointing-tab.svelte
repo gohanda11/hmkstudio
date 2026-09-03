@@ -90,25 +90,25 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div
-  class={cn("mx-auto flex size-full max-w-5xl flex-col", className)}
+  class={cn("mx-auto flex size-full max-w-6xl flex-col", className)}
   {...props}
 >
-  <FixedScrollArea class="flex flex-col gap-4 p-4">
-    <div class="grid text-sm text-wrap">
-      <span class="font-semibold">{t("pointing.title")}</span>
-      <span class="text-muted-foreground">
+  <FixedScrollArea class="flex flex-col gap-2.5 p-3">
+    <div class="flex flex-wrap items-baseline gap-x-2 text-wrap">
+      <span class="text-sm font-semibold">{t("pointing.title")}</span>
+      <span class="text-xs text-muted-foreground">
         {t("pointing.description")}
       </span>
     </div>
     {#if !pointingAvailable}
-      <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
+      <div class="grid gap-1.5 rounded-lg border bg-card p-3 text-sm shadow-sm">
         <span class="font-semibold">{t("pointing.firmwareRequired")}</span>
         <span class="text-muted-foreground">
           {t("pointing.firmwareRequiredDescription", { min: displayVersion(HMK_POINTING_CONFIG_MIN_VERSION), version: displayVersion(version) })}
         </span>
       </div>
     {:else if queryError && !result}
-      <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
+      <div class="grid gap-1.5 rounded-lg border bg-card p-3 text-sm shadow-sm">
         <span class="font-semibold">{t("pointing.loadFailed")}</span>
         <span class="text-muted-foreground">{queryError.message}</span>
         <div>
@@ -122,18 +122,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
       </div>
     {:else if result && !result.supported}
-      <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
+      <div class="grid gap-1.5 rounded-lg border bg-card p-3 text-sm shadow-sm">
         <span class="font-semibold">{t("pointing.noDevice")}</span>
         <span class="text-muted-foreground">
           {t("pointing.noDeviceDescription")}
         </span>
       </div>
     {:else}
-      <div class="grid items-start gap-4 xl:grid-cols-2">
-        <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-          <div class="grid text-sm">
-            <span class="font-semibold">{t("pointing.deviceTitle")}</span>
-            <span class="text-muted-foreground">
+      <div class="grid items-start gap-2.5 text-sm xl:grid-cols-2 2xl:grid-cols-3 [&_p.text-sm]:text-xs [&_p.text-sm]:leading-snug [&_span.text-muted-foreground]:text-xs [&_span.text-muted-foreground]:leading-snug">
+        <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          <div class="grid">
+            <span class="text-[13px] font-semibold leading-tight">{t("pointing.deviceTitle")}</span>
+            <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.deviceDescription")}
             </span>
           </div>
@@ -148,7 +148,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             id="pointing-enabled"
             title={t("pointing.enabled")}
           />
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-2">
             <CommitSlider
               bind:committed={
                 () => config?.cpi ?? defaultPointingConfig.cpi,
@@ -168,22 +168,22 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
         {#if layerConflict}
           <div
-            class="grid gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm shadow-sm xl:col-span-2"
+            class="grid gap-1 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm shadow-sm xl:col-span-2 2xl:col-span-3"
           >
-            <span class="font-semibold text-destructive">{t("pointing.conflictTitle")}</span>
-            <span class="text-muted-foreground">
+            <span class="text-[13px] font-semibold leading-tight text-destructive">{t("pointing.conflictTitle")}</span>
+            <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.conflictDescription")}
             </span>
           </div>
         {/if}
-        <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-          <div class="grid text-sm">
-            <span class="font-semibold">{t("pointing.autoMouseTitle")}</span>
-            <span class="text-muted-foreground">
+        <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          <div class="grid">
+            <span class="text-[13px] font-semibold leading-tight">{t("pointing.autoMouseTitle")}</span>
+            <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.autoMouseDescription")}
             </span>
           </div>
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-2">
             <Switch
               bind:checked={
                 () =>
@@ -212,10 +212,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             />
             <PointingFigure figure="auto-mouse" on={autoMouseLayerEnabled} />
           </div>
-          <div class="flex items-center justify-between gap-4">
-            <div class="grid text-sm text-wrap">
-              <span class="font-semibold">{t("pointing.targetLayer")}</span>
-              <span class="text-muted-foreground">
+          <div class="flex items-center justify-between gap-3">
+            <div class="grid text-wrap">
+              <span class="text-[13px] font-semibold leading-tight">{t("pointing.targetLayer")}</span>
+              <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.targetLayerDescription")}
               </span>
             </div>
@@ -240,14 +240,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </div>
         </div>
         {#if extendedAvailable}
-          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-            <div class="grid text-sm">
-              <span class="font-semibold">{t("pointing.orientationTitle")}</span>
-              <span class="text-muted-foreground">
+          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+            <div class="grid">
+              <span class="text-[13px] font-semibold leading-tight">{t("pointing.orientationTitle")}</span>
+              <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.orientationDescription")}
               </span>
             </div>
-            <div class="flex items-start gap-3">
+            <div class="flex items-start gap-2">
               <CommitSlider
                 bind:committed={
                   () => config?.rotationDeg ?? defaultPointingConfig.rotationDeg,
@@ -272,7 +272,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                   defaultPointingConfig.rotationDeg}
               />
             </div>
-            <div class="flex items-start gap-3">
+            <div class="flex items-start gap-2">
               <Switch
                 bind:checked={
                   () => config?.invertX ?? defaultPointingConfig.invertX,
@@ -290,7 +290,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                 on={config?.invertX ?? defaultPointingConfig.invertX}
               />
             </div>
-            <div class="flex items-start gap-3">
+            <div class="flex items-start gap-2">
               <Switch
                 bind:checked={
                   () => config?.invertY ?? defaultPointingConfig.invertY,
@@ -308,7 +308,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                 on={config?.invertY ?? defaultPointingConfig.invertY}
               />
             </div>
-            <div class="flex items-start gap-3">
+            <div class="flex items-start gap-2">
               <Switch
                 bind:checked={
                   () => config?.swapAxes ?? defaultPointingConfig.swapAxes,
@@ -328,11 +328,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               />
             </div>
           </div>
-          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-            <div class="grid text-sm">
-            <span class="font-semibold">{t("pointing.scrollTitle")}</span>
-              <span class="text-muted-foreground">
-              {t("pointing.scrollDescription")}
+          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+            <div class="grid">
+              <span class="text-[13px] font-semibold leading-tight">{t("pointing.scrollTitle")}</span>
+              <span class="text-xs leading-snug text-muted-foreground">
+                {t("pointing.scrollDescription")}
               </span>
             </div>
             <Switch
@@ -349,11 +349,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               id="pointing-invert-scroll"
               title={t("pointing.invertScroll")}
             />
-            <div class="flex items-start gap-3">
-              <div class="grid min-w-0 flex-1 gap-1 text-sm">
+            <div class="flex items-start gap-2">
+              <div class="grid min-w-0 flex-1 gap-1">
                 <div class="grid text-wrap">
-                  <span class="font-semibold">{t("pointing.scrollLayer")}</span>
-                  <span class="text-muted-foreground">
+                  <span class="text-[13px] font-semibold leading-tight">{t("pointing.scrollLayer")}</span>
+                  <span class="text-xs leading-snug text-muted-foreground">
                     {t("pointing.scrollLayerDescription")}
                   </span>
                 </div>
@@ -379,7 +379,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                   disabled={!config}
                   type="single"
                 >
-                  <Select.Trigger class="w-48" size="sm">
+                  <Select.Trigger class="w-36" size="sm">
                     <span>
                       {scrollLayerLabel(
                         config?.scrollLayer ?? HMK_POINTING_SCROLL_LAYER_OFF,
@@ -424,18 +424,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               title={t("pointing.scrollDivisor")}
             />
           </div>
-          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-            <div class="grid text-sm">
-              <span class="font-semibold">{t("pointing.axisSnapping")}</span>
-              <span class="text-muted-foreground">
+          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+            <div class="grid">
+              <span class="text-[13px] font-semibold leading-tight">{t("pointing.axisSnapping")}</span>
+              <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.axisSnappingDescription")}
               </span>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="grid min-w-0 flex-1 gap-1 text-sm">
+            <div class="flex items-start gap-2">
+              <div class="grid min-w-0 flex-1 gap-1">
                 <div class="grid text-wrap">
-                  <span class="font-semibold">{t("pointing.snapAxis")}</span>
-                  <span class="text-muted-foreground">
+                  <span class="text-[13px] font-semibold leading-tight">{t("pointing.snapAxis")}</span>
+                  <span class="text-xs leading-snug text-muted-foreground">
                     {t("pointing.snapAxisDescription")}
                   </span>
                 </div>
@@ -452,7 +452,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                   disabled={!config}
                   type="single"
                 >
-                  <Select.Trigger class="w-48" size="sm">
+                  <Select.Trigger class="w-36" size="sm">
                     <span>{snapAxisLabel(config?.snapAxis ?? 0)}</span>
                   </Select.Trigger>
                   <Select.Content class="w-[var(--bits-select-anchor-width)]">
@@ -489,7 +489,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </div>
         {:else}
           <div
-            class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm xl:col-span-2"
+            class="grid gap-1 rounded-lg border bg-card p-3 text-sm shadow-sm xl:col-span-2 2xl:col-span-3"
           >
             <span class="font-semibold">{t("pointing.extendedUnavailable")}</span>
             <span class="text-muted-foreground">

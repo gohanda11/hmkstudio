@@ -24,7 +24,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const profilesTab = import("./profiles/profiles-tab.svelte")
   const remapTab = import("./remap/remap-tab.svelte")
-  const keyTesterTab = import("./key-tester/key-tester-tab.svelte")
   const performanceTab = import("./performance/performance-tab.svelte")
   const advancedKeysTab = import("./advanced-keys/advanced-keys-tab.svelte")
   const gamepadTab = import("./gamepad/gamepad-tab.svelte")
@@ -50,13 +49,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tabs.Content value="remap">
       {#snippet child({ props })}
         <RemapTab {...props} />
-      {/snippet}
-    </Tabs.Content>
-  {/await}
-  {#await keyTesterTab then { default: KeyTesterTab }}
-    <Tabs.Content value="key-tester">
-      {#snippet child({ props })}
-        <KeyTesterTab {...props} />
       {/snippet}
     </Tabs.Content>
   {/await}

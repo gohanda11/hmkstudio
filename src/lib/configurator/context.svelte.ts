@@ -132,7 +132,6 @@ export const gamepadStateContext = new Context<ConfiguratorGamepadState>(
 export type ConfiguratorTabs =
   | "profiles"
   | "remap"
-  | "key-tester"
   | "performance"
   | "advanced-keys"
   | "gamepad"

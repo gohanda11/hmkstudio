@@ -20,11 +20,15 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import RemapKeyboard from "./remap-keyboard.svelte"
   import RemapMenu from "./remap-menu.svelte"
   import RemapMenubar from "./remap-menubar.svelte"
+  import RemapTesterStatus from "./remap-tester-status.svelte"
   import RemapToolbar from "./remap-toolbar.svelte"
+  import { RemapTesterState, remapTesterContext } from "./tester-state.svelte"
 
   const {
     ...props
   }: WithoutChildren<ComponentProps<typeof KeyboardEditor.Root>> = $props()
+
+  remapTesterContext.set(new RemapTesterState())
 
   let testerMode = $state(false)
 </script>
@@ -34,6 +38,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <div class="flex h-full min-h-0 flex-1 flex-row">
       <div class="flex min-w-0 flex-1 flex-col">
         <RemapKeyboard {testerMode} />
+        {#if testerMode}
+          <RemapTesterStatus />
+        {/if}
         <RemapMenubar />
       </div>
       <RemapToolbar bind:testerMode />
@@ -42,7 +49,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>
     <KeyboardEditor.Container>
-      <RemapMenu />
+      <RemapMenu {testerMode} />
     </KeyboardEditor.Container>
   </KeyboardEditor.Pane>
 </KeyboardEditor.Root>

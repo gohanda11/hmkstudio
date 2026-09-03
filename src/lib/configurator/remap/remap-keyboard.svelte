@@ -22,7 +22,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { numberNullable, stringNullable } from "$lib/utils"
   import { ToggleGroup } from "bits-ui"
   import { useEventListener } from "runed"
-  import { SvelteSet } from "svelte/reactivity"
   import { remapStateContext } from "../context.svelte"
   import { advancedKeysQueryContext } from "../queries/advanced-keys-query.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
@@ -30,6 +29,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { assignKeycode, getModtapKeymap } from "./modtap"
   import RemapKeyDialog from "./remap-key-dialog.svelte"
   import RemapModtapButton from "./remap-modtap-button.svelte"
+  import { remapTesterContext } from "./tester-state.svelte"
 
   let { testerMode = false }: { testerMode?: boolean } = $props()
 
@@ -57,6 +57,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   let lastClickedAt = 0
 
   function handleKeyClick(key: number) {
+    // Tester mode is view-only: physical key presses light up, clicks must
+    // not change the remap selection or open the edit dialog.
+    if (testerMode) return
     const now = Date.now()
     if (lastClickedKey === key && now - lastClickedAt < DOUBLE_CLICK_MS) {
       lastClickedKey = null
@@ -69,28 +72,46 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     lastClickedAt = now
   }
 
-  // Inline key-tester highlight mode: pressed physical keys light up based on
-  // the web codes of their configured keycodes.
-  const pressedWebCodes = new SvelteSet<string>()
+  // Tester highlight mode (moved from the old key-tester tab): pressed
+  // physical keys light up based on the web codes of their configured
+  // keycodes. Released keys stay latched until reset, QMK-matrix-test style.
+  const tester = remapTesterContext.get()
   useEventListener(
     () => window,
     "keydown",
     (e) => {
-      if (testerMode && !e.repeat) pressedWebCodes.add(e.code)
+      if (testerMode && !e.repeat) {
+        tester.pressed.add(e.code)
+        tester.latched.add(e.code)
+        tester.shiftAtPress.set(e.code, e.shiftKey || e.code.startsWith("Shift"))
+      }
     },
   )
   useEventListener(
     () => window,
     "keyup",
     (e) => {
-      pressedWebCodes.delete(e.code)
+      tester.pressed.delete(e.code)
     },
   )
   useEventListener(
     () => window,
     "blur",
-    () => pressedWebCodes.clear(),
+    () => tester.pressed.clear(),
   )
+
+  // Leaving tester mode returns to editing with a clean highlight state.
+  $effect(() => {
+    if (!testerMode) {
+      tester.reset()
+    }
+  })
+
+  // Entering tester mode closes a leftover key-edit dialog so it does not
+  // linger over the view-only tester surface.
+  $effect(() => {
+    if (testerMode) keyDialogOpen = false
+  })
 
   function resolveKeycode(key: number): number {
     for (const { layer: akLayer, key: akKey, action } of advancedKeys ?? []) {
@@ -105,22 +126,23 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     return keymap?.[layer]?.[key] ?? Keycode.KC_NO
   }
 
-  const pressedKeys = $derived.by(() => {
-    const ret = new Set<number>()
-    if (!testerMode || !keymap || layer >= keymap.length) return ret
-    for (let k = 0; k < keymap[layer].length; k++) {
-      const { webCodes } = getKeycodeMetadata(resolveKeycode(k))
-      if (webCodes.some((webCode) => pressedWebCodes.has(webCode))) {
-        ret.add(k)
-      }
+  function testerState(key: number): "active" | "latched" | "off" {
+    if (!testerMode || !keymap || layer >= keymap.length) return "off"
+    const { webCodes } = getKeycodeMetadata(resolveKeycode(key))
+    if (webCodes.some((webCode) => tester.pressed.has(webCode))) {
+      return "active"
     }
-    return ret
-  })
+    if (webCodes.some((webCode) => tester.latched.has(webCode))) {
+      return "latched"
+    }
+    return "off"
+  }
 </script>
 
 <ToggleGroup.Root
   bind:value={
     () => stringNullable(key), (v) => {
+      if (testerMode) return
       const next = numberNullable(v)
       // The dialog-opening second click of a double-click re-toggles the
       // active item off; ignore that transient deselect while the dialog is
@@ -138,12 +160,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <KeycodeButton.Skeleton />
         {:else}
           <ToggleGroup.Item
-            class={testerMode && pressedKeys.has(key)
-              ? "ring-2 ring-primary"
-              : undefined}
+            class={testerState(key) === "active"
+              ? "bg-primary text-primary-foreground ring-2 ring-primary"
+              : testerState(key) === "latched"
+                ? "bg-accent text-accent-foreground ring-1 ring-primary"
+                : undefined}
+            data-tester-state={testerState(key)}
+            disabled={testerMode}
             onclick={() => handleKeyClick(key)}
             oncontextmenu={(e) => {
               e.preventDefault()
+              if (testerMode) return
               void assignKeycode(
                 keymapQuery,
                 advancedKeysQuery,

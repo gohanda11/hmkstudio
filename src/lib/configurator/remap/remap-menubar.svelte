@@ -16,35 +16,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import LayerSelect from "$lib/components/layer-select.svelte"
-  import { Button } from "$lib/components/ui/button"
-  import { t } from "$lib/i18n.svelte"
-  import { keyboardContext } from "$lib/keyboard"
-  import { globalStateContext, remapStateContext } from "../context.svelte"
-  import { keymapQueryContext } from "../queries/keymap-query.svelte"
+  import { remapStateContext } from "../context.svelte"
 
-  const { profile } = $derived(globalStateContext.get())
   const remapState = remapStateContext.get()
   const { layer } = $derived(remapState)
-  const { defaultKeymaps } = keyboardContext.get().metadata
-
-  const keymapQuery = keymapQueryContext.get()
 </script>
 
 <KeyboardEditor.Menubar>
   <LayerSelect bind:layer={() => layer, (v) => remapState.setLayer(v)} />
-  <div class="flex items-center gap-2">
-    <Button
-      onclick={() =>
-        keymapQuery.set({
-          layer,
-          offset: 0,
-          data: defaultKeymaps[profile][layer],
-        })}
-      size="sm"
-      variant="destructive"
-    >
-      {t("remap.resetLayer")}
-    </Button>
-    <KeyboardEditor.LayoutDialog />
-  </div>
 </KeyboardEditor.Menubar>
