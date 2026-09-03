@@ -24,7 +24,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <Sidebar.Menu>
   <Sidebar.MenuItem>
     <Sidebar.GroupLabel class="truncate text-sm">
-      hmkconf {displayVersion(version)}
+      hmkstudio {displayVersion(version)}
     </Sidebar.GroupLabel>
   </Sidebar.MenuItem>
 </Sidebar.Menu>

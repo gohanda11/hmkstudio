@@ -14,16 +14,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import GithubLink from "./github-link.svelte"
-  import ThemeSwitcher from "./theme-switcher.svelte"
+  import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
+  import * as KeyTester from "$lib/components/key-tester"
 </script>
 
-<footer class="flex items-center border border-t p-4">
-  <div class="flex-1">
-    <h1 class="text-xl font-semibold tracking-tight">hmkstudio</h1>
+<FixedScrollArea class="flex flex-col gap-4 p-4">
+  <div class="flex flex-col gap-2">
+    <div class="text-sm font-medium">Pressed Keys</div>
+    <KeyTester.Press class="h-32 w-full" />
   </div>
-  <div class="flex shrink-0 items-center gap-2">
-    <GithubLink />
-    <ThemeSwitcher />
+  <div class="flex flex-col gap-2">
+    <div class="text-sm font-medium">Released Keys</div>
+    <KeyTester.Release class="h-32 w-full" />
   </div>
-</footer>
+</FixedScrollArea>

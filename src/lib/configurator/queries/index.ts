@@ -31,6 +31,7 @@ import { GamepadQuery, gamepadQueryContext } from "./gamepad-query.svelte"
 import { KeymapQuery, keymapQueryContext } from "./keymap-query.svelte"
 import { MacrosQuery, macrosQueryContext } from "./macros-query.svelte"
 import { OptionsQuery, optionsQueryContext } from "./options-query.svelte"
+import { PointingQuery, pointingQueryContext } from "./pointing-query.svelte"
 import { ProfileQuery, profileQueryContext } from "./profile-query.svelte"
 import { TickRateQuery, tickRateQueryContext } from "./tick-rate-query.svelte"
 
@@ -58,6 +59,7 @@ export function setConfiguratorQueryContext() {
   analogInfoQueryContext.set(new AnalogInfoQuery())
   calibrationQueryContext.set(new CalibrationQuery())
   optionsQueryContext.set(new OptionsQuery())
+  pointingQueryContext.set(new PointingQuery())
   keymapQueryContext.set(new KeymapQuery())
   actuationQueryContext.set(new ActuationQuery())
   advancedKeysQueryContext.set(new AdvancedKeysQuery())

@@ -20,6 +20,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     KeyboardIcon,
     LogOutIcon,
   } from "@lucide/svelte"
+  import { base } from "$app/paths"
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
   import * as Sidebar from "$lib/components/ui/sidebar"
   import { displayUInt16 } from "$lib/integer"
@@ -65,7 +66,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         {#if demo}
           <DropdownMenu.Item class="gap-2 p-2">
             {#snippet child({ props })}
-              <a href="/" {...props}>
+              <a href="{base}/" {...props}>
                 <LogOutIcon class="size-4" />
                 Exit Demo
               </a>

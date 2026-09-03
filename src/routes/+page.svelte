@@ -15,11 +15,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { CableIcon, ShapesIcon } from "@lucide/svelte"
+  import { base } from "$app/paths"
   import screenshotDark from "$lib/assets/screenshot-dark.png"
   import screenshot from "$lib/assets/screenshot.png"
   import Footer from "$lib/components/footer.svelte"
   import { Button } from "$lib/components/ui/button"
   import Configurator from "$lib/configurator/configurator.svelte"
+  import FirmwareUpdateDialog from "$lib/configurator/settings/firmware-update-dialog.svelte"
   import type { Keyboard } from "$lib/keyboard"
   import { connect } from "$lib/keyboard/hmk-keyboard.svelte"
   import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
@@ -52,7 +54,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   <main class="py-24">
     <div class="mx-auto max-w-7xl px-6">
       <div class="mx-auto max-w-2xl text-center">
-        <h1 class="text-5xl font-semibold tracking-tight">hmkconf</h1>
+        <h1 class="text-5xl font-semibold tracking-tight">hmkstudio</h1>
         <p class="mt-4 text-lg font-medium text-wrap text-muted-foreground">
           A web-based configurator for libhmk keyboards. Customize keyboard
           bindings, adjust actuation points, enable Rapid Trigger, and more.
@@ -61,7 +63,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <Button onclick={() => handleConnect()} size="lg">
             <CableIcon /> Connect Keyboard
           </Button>
-          <Button href="/demo" size="lg" variant="outline">
+          <Button href="{base}/demo" size="lg" variant="outline">
             <ShapesIcon /> Try Demo
           </Button>
         </div>
@@ -88,3 +90,5 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   </main>
   <Footer />
 {/if}
+
+<FirmwareUpdateDialog />

@@ -24,9 +24,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const profilesTab = import("./profiles/profiles-tab.svelte")
   const remapTab = import("./remap/remap-tab.svelte")
+  const keyTesterTab = import("./key-tester/key-tester-tab.svelte")
   const performanceTab = import("./performance/performance-tab.svelte")
   const advancedKeysTab = import("./advanced-keys/advanced-keys-tab.svelte")
   const gamepadTab = import("./gamepad/gamepad-tab.svelte")
+  const pointingTab = import("./pointing/pointing-tab.svelte")
   const calibrationTab = import("./calibration/calibration-tab.svelte")
   const settingsTab = import("./settings/settings-tab.svelte")
 
@@ -51,6 +53,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       {/snippet}
     </Tabs.Content>
   {/await}
+  {#await keyTesterTab then { default: KeyTesterTab }}
+    <Tabs.Content value="key-tester">
+      {#snippet child({ props })}
+        <KeyTesterTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
   {#await performanceTab then { default: PerformanceTab }}
     <Tabs.Content value="performance">
       {#snippet child({ props })}
@@ -69,6 +78,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tabs.Content value="gamepad">
       {#snippet child({ props })}
         <GamepadTab {...props} />
+      {/snippet}
+    </Tabs.Content>
+  {/await}
+  {#await pointingTab then { default: PointingTab }}
+    <Tabs.Content value="pointing">
+      {#snippet child({ props })}
+        <PointingTab {...props} />
       {/snippet}
     </Tabs.Content>
   {/await}

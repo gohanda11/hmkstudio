@@ -21,6 +21,10 @@ import {
   defaultAdvancedKey,
   type HMK_AdvancedKey,
 } from "$lib/libhmk/advanced-keys"
+import {
+  defaultPointingConfig,
+  type HMK_PointingConfig,
+} from "$lib/libhmk/commands/pointing-config"
 import { HMK_GamepadButton, type HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import { defaultMacroNode, type HMK_MacroNode } from "$lib/libhmk/macro"
 import type {
@@ -41,6 +45,7 @@ import type {
   SetKeymapParams,
   SetMacrosParams,
   SetOptionsParams,
+  SetPointingConfigParams,
   SetTickRateParams,
 } from "."
 import { demoMetadata } from "./metadata"
@@ -84,6 +89,7 @@ function defaultProfile(profile: number): DemoKeyboardProfileState {
 
 type DemoKeyboardState = {
   options: HMK_Options
+  pointingConfig: HMK_PointingConfig
   profiles: DemoKeyboardProfileState[]
 }
 
@@ -99,6 +105,7 @@ export class DemoKeyboard implements Keyboard {
       saveBottomOutThreshold: true,
       highPollingRateEnabled: true,
     },
+    pointingConfig: structuredClone(defaultPointingConfig),
     profiles: [...Array(numProfiles)].map((_, i) =>
       structuredClone(defaultProfile(i)),
     ),
@@ -129,6 +136,16 @@ export class DemoKeyboard implements Keyboard {
   }
   async setOptions({ data }: SetOptionsParams) {
     this.#state.options = data
+  }
+  async getPointingConfig() {
+    return {
+      supported: true,
+      side: 0,
+      config: this.#state.pointingConfig,
+    }
+  }
+  async setPointingConfig({ data }: SetPointingConfigParams) {
+    this.#state.pointingConfig = data
   }
   async resetProfile({ profile }: ResetProfileParams) {
     this.#state.profiles[profile] = structuredClone(defaultProfile(profile))

@@ -15,6 +15,7 @@
 
 import { keyboardContext } from "$lib/keyboard"
 import { keyboardConfigSchema } from "$lib/keyboard/config"
+import { displayUInt16 } from "$lib/integer"
 import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
 import { HMK_AKType } from "$lib/libhmk/advanced-keys"
 import { SvelteDate } from "svelte/reactivity"
@@ -30,6 +31,7 @@ export class KeyboardConfig {
   #keyboard = keyboardContext.get()
   #schema = keyboardConfigSchema.superRefine((val, ctx) => {
     const {
+      name,
       vendorId,
       productId,
       numLayers,
@@ -46,7 +48,7 @@ export class KeyboardConfig {
     if (metadata.version > HMK_FIRMWARE_MAX_VERSION) {
       ctx.addIssue({
         code: "custom",
-        message: "Unsupported firmware version",
+        message: `The configuration requires firmware version ${displayUInt16(metadata.version)}, but the latest supported version is ${displayUInt16(HMK_FIRMWARE_MAX_VERSION)}.`,
       })
       return
     }
@@ -54,7 +56,7 @@ export class KeyboardConfig {
     if (metadata.vendorId !== vendorId || metadata.productId !== productId) {
       ctx.addIssue({
         code: "custom",
-        message: "The keyboard does not match the configuration",
+        message: `The configuration does not match the connected keyboard ${name}. Expected VID: ${displayUInt16(vendorId)}, PID: ${displayUInt16(productId)}, but got VID: ${displayUInt16(metadata.vendorId)}, PID: ${displayUInt16(metadata.productId)}.`,
       })
       return
     }
@@ -63,13 +65,14 @@ export class KeyboardConfig {
       if (keymap.length !== numLayers) {
         ctx.addIssue({
           code: "custom",
-          message: `Expected keymap to have exactly ${numLayers} layers.`,
+          message: `Expected keymap to have exactly ${numLayers} layers, but got ${keymap.length}.`,
         })
       }
-      if (keymap.some((layer) => layer.length !== numKeys)) {
+      const invalidLayer = keymap.findIndex((layer) => layer.length !== numKeys)
+      if (invalidLayer !== -1) {
         ctx.addIssue({
           code: "custom",
-          message: `Expected ${numKeys} keys for each keymap layer`,
+          message: `Expected keymap layer ${invalidLayer} to have exactly ${numKeys} keys, but got ${keymap[invalidLayer].length}.`,
         })
       }
     }
@@ -77,7 +80,7 @@ export class KeyboardConfig {
     if (actuationMap !== undefined && actuationMap.length !== numKeys) {
       ctx.addIssue({
         code: "custom",
-        message: `Expected actuation map to have exactly ${numKeys} entries.`,
+        message: `Expected actuation map to have exactly ${numKeys} entries, but got ${actuationMap.length}.`,
       })
     }
 
@@ -85,7 +88,7 @@ export class KeyboardConfig {
       if (advancedKeys.length !== numAdvancedKeys) {
         ctx.addIssue({
           code: "custom",
-          message: `Expected advanced keys to have exactly ${numAdvancedKeys} entries.`,
+          message: `Expected advanced keys to have exactly ${numAdvancedKeys} entries, but got ${advancedKeys.length}.`,
         })
       }
       if (
@@ -106,14 +109,14 @@ export class KeyboardConfig {
     if (macros !== undefined && macros.length !== numMacroNodes) {
       ctx.addIssue({
         code: "custom",
-        message: `Expected macros to have exactly ${numMacroNodes} entries.`,
+        message: `Expected macros to have exactly ${numMacroNodes} entries, but got ${macros.length}.`,
       })
     }
 
     if (gamepadButtons !== undefined && gamepadButtons.length !== numKeys) {
       ctx.addIssue({
         code: "custom",
-        message: `Expected gamepad buttons to have exactly ${numKeys} entries.`,
+        message: `Expected gamepad buttons to have exactly ${numKeys} entries, but got ${gamepadButtons.length}.`,
       })
     }
   })

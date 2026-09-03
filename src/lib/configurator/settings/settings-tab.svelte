@@ -23,6 +23,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import type { HTMLAttributes } from "svelte/elements"
   import { optionsQueryContext } from "../queries/options-query.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
+  import FirmwarePanel from "./firmware-panel.svelte"
 
   const {
     class: className,
@@ -99,6 +100,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </Button>
       </div>
     </div>
+    <FirmwarePanel />
     <div class="flex flex-col gap-2">
       <div class="grid text-sm text-wrap">
         <span class="font-semibold">Factory Reset</span>

@@ -18,6 +18,8 @@ import {
   Gamepad2Icon,
   GaugeIcon,
   Grid2x2Icon,
+  KeyboardIcon,
+  MouseIcon,
   PencilIcon,
   SettingsIcon,
   SquareChevronUpIcon,
@@ -46,6 +48,7 @@ export const sidebarTabGroups: SidebarTabGroup[] = [
     group: "Keyboard Configuration",
     tabs: [
       { label: "Remap", value: "remap", icon: PencilIcon },
+      { label: "Key Tester", value: "key-tester", icon: KeyboardIcon },
       { label: "Performance", value: "performance", icon: GaugeIcon },
       {
         label: "Advanced Keys",
@@ -53,6 +56,7 @@ export const sidebarTabGroups: SidebarTabGroup[] = [
         icon: SquareChevronUpIcon,
       },
       { label: "Gamepad", value: "gamepad", icon: Gamepad2Icon },
+      { label: "Pointing", value: "pointing", icon: MouseIcon },
       { label: "Calibration", value: "calibration", icon: CrosshairIcon },
     ],
   },

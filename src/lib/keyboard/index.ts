@@ -17,6 +17,10 @@ import type { HMK_Calibration, HMK_Options } from "$lib/libhmk"
 import type { HMK_Actuation } from "$lib/libhmk/actuation"
 import type { HMK_AdvancedKey } from "$lib/libhmk/advanced-keys"
 import type { HMK_AnalogInfo } from "$lib/libhmk/commands"
+import type {
+  HMK_PointingConfig,
+  HMK_PointingConfigResult,
+} from "$lib/libhmk/commands/pointing-config"
 import type { HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import type { HMK_MacroNode } from "$lib/libhmk/macro"
 import { Context } from "runed"
@@ -27,6 +31,8 @@ type SetParams<T> = { data: T }
 export type SetCalibrationParams = SetParams<HMK_Calibration>
 
 export type SetOptionsParams = SetParams<HMK_Options>
+
+export type SetPointingConfigParams = SetParams<HMK_PointingConfig>
 
 export type ResetProfileParams = { profile: number }
 export type DuplicateProfileParams = { profile: number; srcProfile: number }
@@ -79,6 +85,8 @@ export type KeyboardAction = {
   resetProfile(params: ResetProfileParams): Promise<void>
   duplicateProfile(params: DuplicateProfileParams): Promise<void>
   saveCalibrationThreshold(): Promise<void>
+  getPointingConfig(): Promise<HMK_PointingConfigResult>
+  setPointingConfig(params: SetPointingConfigParams): Promise<void>
 
   getKeymap(params: GetKeymapParams): Promise<number[][]>
   setKeymap(params: SetKeymapParams): Promise<void>

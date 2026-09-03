@@ -21,6 +21,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Tabs } from "bits-ui"
   import type { ComponentProps } from "svelte"
   import { globalStateContext } from "./context.svelte"
+  import ImportExport from "./import-export.svelte"
   import { MIN_WINDOW_HEIGHT, MIN_WINDOW_WIDTH } from "./lib/layout"
   import ProfileSelect from "./profile-select.svelte"
   import ConfiguratorSidebar from "./sidebar/sidebar.svelte"
@@ -62,6 +63,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             <ProfileSelect />
           </div>
           <div class="flex shrink-0 items-center gap-2">
+            <ImportExport />
             <GithubLink />
             <ThemeSwitcher />
           </div>

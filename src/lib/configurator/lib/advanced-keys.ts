@@ -172,7 +172,7 @@ export function createAdvancedKey(
         action: {
           type,
           tapKeycode: keycodes[0],
-          holdKeycode: Keycode.KC_NO,
+          holdKeycode: keycodes[1] ?? Keycode.KC_NO,
           tappingTerm: DEFAULT_TAPPING_TERM,
           holdOnOtherKeyPress: false,
         },

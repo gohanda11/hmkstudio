@@ -50,6 +50,10 @@ import { getMacros, setMacros } from "$lib/libhmk/commands/macros"
 import { getMetadata } from "$lib/libhmk/commands/metadata"
 import { getOptions, setOptions } from "$lib/libhmk/commands/options"
 import {
+  getPointingConfig,
+  setPointingConfig,
+} from "$lib/libhmk/commands/pointing-config"
+import {
   duplicateProfile,
   getProfile,
   resetProfile,
@@ -77,6 +81,7 @@ import type {
   SetKeymapParams,
   SetMacrosParams,
   SetOptionsParams,
+  SetPointingConfigParams,
   SetTickRateParams,
 } from "."
 import { Commander } from "./commander"
@@ -161,6 +166,12 @@ class HMKKeyboard implements Keyboard {
   }
   saveCalibrationThreshold() {
     return saveCalibrationThreshold(this.commander)
+  }
+  getPointingConfig() {
+    return getPointingConfig(this.commander, this.version)
+  }
+  setPointingConfig(params: SetPointingConfigParams) {
+    return setPointingConfig(this.commander, params, this.version)
   }
 
   getKeymap(params: GetKeymapParams) {

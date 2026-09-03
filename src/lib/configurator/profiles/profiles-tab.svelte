@@ -21,10 +21,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
   import { keyboardContext } from "$lib/keyboard"
   import { cn, type WithoutChildren } from "$lib/utils"
-  import { toast } from "svelte-sonner"
   import type { HTMLAttributes } from "svelte/elements"
-  import z from "zod"
-  import { KeyboardConfig } from "../lib/keyboard-config.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
 
   const {
@@ -32,64 +29,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     ...props
   }: WithoutChildren<HTMLAttributes<HTMLDivElement>> = $props()
 
-  const { name, numProfiles } = keyboardContext.get().metadata
+  const { numProfiles } = keyboardContext.get().metadata
 
   const profileQuery = profileQueryContext.get()
   const { current: currentProfile } = $derived(profileQuery.profile)
-  const keyboardConfig = new KeyboardConfig()
-
-  let fileRef: HTMLInputElement | null = $state(null)
-  let anchorRef: HTMLAnchorElement | null = $state(null)
-
-  const importProfile = async (profile: number) => {
-    if (!fileRef) return
-    fileRef.onchange = null
-    fileRef.value = ""
-    fileRef.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
-      if (!file) return
-      try {
-        const json = JSON.parse(await file.text())
-        await keyboardConfig.setConfig(profile, json)
-        toast.success(`Successfully imported Profile ${profile}.`)
-      } catch (err) {
-        if (err instanceof SyntaxError) {
-          toast.error("The selected file is not a valid JSON.")
-        } else if (err instanceof z.ZodError) {
-          toast.error(
-            "The selected file is not a valid keyboard metadata. See console for details.",
-          )
-          console.error(z.treeifyError(err))
-        } else {
-          toast.error(String(err))
-        }
-      }
-    }
-    fileRef.click()
-  }
-
-  const exportProfile = async (profile: number) => {
-    if (!anchorRef) return
-    try {
-      const config = await keyboardConfig.getConfig(profile)
-      const blob = new Blob([JSON.stringify(config)], {
-        type: "application/json",
-      })
-      anchorRef.href = URL.createObjectURL(blob)
-      anchorRef.download = `${name}-profile-${profile}.json`
-      toast.success(`Successfully exported Profile ${profile}.`)
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        toast.error(
-          "Unexpected keyboard configuration schema error. See console for details.",
-        )
-        console.error(z.treeifyError(err))
-      } else {
-        toast.error(String(err))
-      }
-    }
-    anchorRef.click()
-  }
 </script>
 
 <div
@@ -100,8 +43,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <div class="grid shrink-0">
       <span class="font-semibold">Configure Profiles</span>
       <span class="text-sm text-muted-foreground">
-        Manage your keyboard profiles here. You can import, export, and
-        customize them.
+        Manage your keyboard profiles here. Use the menu on each profile to
+        duplicate it from another profile or restore its default bindings.
+        Switch, import, and export the active profile using the toolbar at the
+        top.
       </span>
     </div>
     <div class="grid grid-cols-2 gap-4">
@@ -127,12 +72,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="start" class="w-40">
                 <DropdownMenu.Group>
-                  <DropdownMenu.Item onSelect={() => importProfile(profile)}>
-                    Import
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item onSelect={() => exportProfile(profile)}>
-                    Export
-                  </DropdownMenu.Item>
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger>
                       Duplicate From
@@ -167,11 +106,3 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     </div>
   </FixedScrollArea>
 </div>
-<input
-  bind:this={fileRef}
-  accept="application/json"
-  aria-hidden="true"
-  hidden
-  type="file"
-/>
-<a bind:this={anchorRef} aria-hidden="true" hidden href="#0"></a>

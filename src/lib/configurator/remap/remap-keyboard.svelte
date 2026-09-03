@@ -20,13 +20,26 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { numberNullable, stringNullable } from "$lib/utils"
   import { ToggleGroup } from "bits-ui"
   import { remapStateContext } from "../context.svelte"
+  import { advancedKeysQueryContext } from "../queries/advanced-keys-query.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
+  import { assignKeycode, getModtapKeymap } from "./modtap"
+  import RemapKeyDialog from "./remap-key-dialog.svelte"
+  import RemapModtapButton from "./remap-modtap-button.svelte"
 
   const remapState = remapStateContext.get()
   const { layer, key } = $derived(remapState)
 
   const keymapQuery = keymapQueryContext.get()
   const { current: keymap } = $derived(keymapQuery.keymap)
+  const advancedKeysQuery = advancedKeysQueryContext.get()
+  const { current: advancedKeys } = $derived(advancedKeysQuery.advancedKeys)
+
+  const modtapKeymap = $derived(
+    keymap && advancedKeys ? getModtapKeymap(advancedKeys, keymap) : null,
+  )
+
+  let keyDialogOpen = $state(false)
+  let keyDialogKey = $state<number | null>(null)
 </script>
 
 <ToggleGroup.Root
@@ -38,22 +51,35 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   {#snippet child({ props })}
     <KeyboardEditorKeyboard {...props}>
       {#snippet keyGenerator(key)}
-        {#if !keymap}
+        {#if !keymap || !advancedKeys}
           <KeycodeButton.Skeleton />
         {:else}
           <ToggleGroup.Item
+            onclick={() => {
+              keyDialogKey = key
+              keyDialogOpen = true
+            }}
             oncontextmenu={(e) => {
               e.preventDefault()
-              keymapQuery.set({ layer, offset: key, data: [Keycode.KC_NO] })
+              assignKeycode(keymapQuery, advancedKeysQuery, advancedKeys, {
+                layer,
+                key,
+                keycode: Keycode.KC_NO,
+              })
             }}
             value={String(key)}
           >
             {#snippet child({ props })}
-              <KeycodeButton.Root
-                keycode={keymap[layer][key]}
-                showTooltip
-                {...props}
-              />
+              {@const modtap = modtapKeymap?.[layer][key]}
+              {#if modtap}
+                <RemapModtapButton {modtap} showTooltip {...props} />
+              {:else}
+                <KeycodeButton.Root
+                  keycode={keymap[layer][key]}
+                  showTooltip
+                  {...props}
+                />
+              {/if}
             {/snippet}
           </ToggleGroup.Item>
         {/if}
@@ -61,3 +87,5 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     </KeyboardEditorKeyboard>
   {/snippet}
 </ToggleGroup.Root>
+
+<RemapKeyDialog bind:open={keyDialogOpen} key={keyDialogKey} />
