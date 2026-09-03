@@ -136,7 +136,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }
 </script>
 
-<div class="flex flex-col items-center gap-1.5 border-l p-2">
+<div class="flex flex-col items-center gap-1.5 border-l py-2 pl-2 pr-3">
   <div class="flex flex-col items-center gap-1.5">
     <Tooltip.Root>
       <Tooltip.Trigger>
