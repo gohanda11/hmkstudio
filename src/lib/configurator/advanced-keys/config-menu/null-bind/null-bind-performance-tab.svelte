@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import DistanceSlider from "$lib/components/distance-slider.svelte"
   import Switch from "$lib/components/switch.svelte"
   import { actuationQueryContext } from "$lib/configurator/queries/actuation-query.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { distanceToUnit, SWITCH_DISTANCE_UNIT } from "$lib/distance"
   import {
     DEFAULT_ACTUATION_POINT,
@@ -76,9 +77,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         }))
     }
     {disabled}
-    description="Enable Rapid Trigger to compare keys only when Rapid Trigger registers a key press. Additional Rapid Trigger options are available in the Performance tab."
+    description={t("advkeys.nullBind.rapidTriggerDescription")}
     id="rapid-trigger"
-    title="Enable Rapid Trigger"
+    title={t("advkeys.nullBind.rapidTriggerTitle")}
   />
   <DistanceSlider
     bind:committed={
@@ -89,12 +90,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           actuationPoint: v,
         }))
     }
-    description="Set the actuation point at which Null Bind becomes active."
+    description={t("advkeys.nullBind.actuationPointDescription")}
     {disabled}
     max={action.bottomOutPoint > 0
       ? distanceToUnit(action.bottomOutPoint)
       : SWITCH_DISTANCE_UNIT}
-    title="Actuation Point"
+    title={t("advkeys.nullBind.actuationPointTitle")}
   />
   {#if action.bottomOutPoint > 0}
     <DistanceSlider
@@ -102,10 +103,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         () => action.bottomOutPoint,
         (v) => configMenuState.updateAction({ ...action, bottomOutPoint: v })
       }
-      description="Set the actuation point at which the key is considered fully pressed."
+      description={t("advkeys.nullBind.bottomOutPointDescription")}
       {disabled}
       min={optMap(currentActuation?.actuationPoint, distanceToUnit)}
-      title="Bottom Out Point"
+      title={t("advkeys.nullBind.bottomOutPointTitle")}
     />
   {/if}
 </div>

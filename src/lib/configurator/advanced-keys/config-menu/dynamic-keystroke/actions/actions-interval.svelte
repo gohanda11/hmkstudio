@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { GripVerticalIcon } from "@lucide/svelte"
+  import { t } from "$lib/i18n.svelte"
   import {
     DKS_ACTION_SIZE,
     getDKSIntervalLeft,
@@ -43,7 +44,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   style:width="{intervalWidth}px"
   style:height="{DKS_ACTION_SIZE}px"
 >
-  <span class="sr-only">Delete Action</span>
+  <span class="sr-only">{t("advkeys.dks.deleteAction")}</span>
 </button>
 <div
   class="absolute top-1/2 z-20 flex h-4 w-3 -translate-1/2 items-center justify-center rounded-xs border bg-accent"

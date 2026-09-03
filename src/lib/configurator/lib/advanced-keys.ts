@@ -25,7 +25,7 @@ import {
   ToggleLeftIcon,
   WorkflowIcon,
 } from "@lucide/svelte"
-import { displayUInt8 } from "$lib/integer"
+import type { I18nKey } from "$lib/i18n.svelte"
 import type { KeyboardMetadata } from "$lib/keyboard/metadata"
 import type { Feature } from "$lib/libhmk"
 import {
@@ -48,8 +48,8 @@ import type { Component } from "svelte"
 export type AdvancedKeyMetadata = {
   type: HMK_AKType
   icon: Component
-  title: string
-  description: string
+  titleKey: I18nKey
+  descriptionKey: I18nKey
   numKeys: number
   keycodes: Keycode[]
   feature?: Feature
@@ -59,45 +59,40 @@ export const advancedKeyMetadata: AdvancedKeyMetadata[] = [
   {
     type: HMK_AKType.NULL_BIND,
     icon: MoveHorizontalIcon,
-    title: "Null Bind",
-    description:
-      "Monitor 2 selected keys and register them according to your chosen behavior.",
+    titleKey: "advkeys.type.nullBindTitle",
+    descriptionKey: "advkeys.type.nullBindDescription",
     numKeys: 2,
     keycodes: [Keycode.AK_NULL_BIND_PRIMARY, Keycode.AK_NULL_BIND_SECONDARY],
   },
   {
     type: HMK_AKType.DYNAMIC_KEYSTROKE,
     icon: LayersIcon,
-    title: "Dynamic Keystroke",
-    description:
-      "Assign up to 4 bindings to a single key. Each binding can be configured with 4 different actions based on the key's position.",
+    titleKey: "advkeys.type.dksTitle",
+    descriptionKey: "advkeys.type.dksDescription",
     numKeys: 1,
     keycodes: [Keycode.AK_DYNAMIC_KEYSTROKE],
   },
   {
     type: HMK_AKType.TAP_HOLD,
     icon: LayoutTemplateIcon,
-    title: "Tap-Hold",
-    description:
-      "Register different bindings depending on whether the key is tapped or held.",
+    titleKey: "advkeys.type.tapHoldTitle",
+    descriptionKey: "advkeys.type.tapHoldDescription",
     numKeys: 1,
     keycodes: [Keycode.AK_TAP_HOLD],
   },
   {
     type: HMK_AKType.TOGGLE,
     icon: ToggleLeftIcon,
-    title: "Toggle",
-    description:
-      "Toggle between key press and release states. Hold the key for a normal key behavior.",
+    titleKey: "advkeys.type.toggleTitle",
+    descriptionKey: "advkeys.type.toggleDescription",
     numKeys: 1,
     keycodes: [Keycode.AK_TOGGLE],
   },
   {
     type: HMK_AKType.MACRO,
     icon: WorkflowIcon,
-    title: "Macro",
-    description:
-      "Run a sequence of configurable actions when the key is pressed.",
+    titleKey: "advkeys.type.macroTitle",
+    descriptionKey: "advkeys.type.macroDescription",
     numKeys: 1,
     keycodes: [Keycode.AK_MACRO],
     feature: "advancedKeyMacro",
@@ -110,8 +105,8 @@ export function getAdvancedKeyMetadata(type: HMK_AKType): AdvancedKeyMetadata {
     metadata ?? {
       type,
       icon: FileQuestionMarkIcon,
-      title: `Unknown ${displayUInt8(type)}`,
-      description: "This Advanced Key type is not recognized.",
+      titleKey: "advkeys.unknownTitle",
+      descriptionKey: "advkeys.unknownDescription",
       numKeys: 0,
       keycodes: [],
     }
@@ -203,35 +198,35 @@ export function createAdvancedKey(
 
 export type NullBindBehaviorMetadata = {
   behavior: HMK_NullBindBehavior
-  title: string
-  description: string
+  titleKey: I18nKey
+  descriptionKey: I18nKey
 }
 
 export const nullBindBehaviorMetadata: NullBindBehaviorMetadata[] = [
   {
     behavior: HMK_NullBindBehavior.LAST,
-    title: "Last Input Priority",
-    description: "Activate the key that was pressed last.",
+    titleKey: "advkeys.nullBindBehavior.lastTitle",
+    descriptionKey: "advkeys.nullBindBehavior.lastDescription",
   },
   {
     behavior: HMK_NullBindBehavior.PRIMARY,
-    title: "Absolute Priority (Key 1)",
-    description: "Key 1 will take priority over Key 2.",
+    titleKey: "advkeys.nullBindBehavior.primaryTitle",
+    descriptionKey: "advkeys.nullBindBehavior.primaryDescription",
   },
   {
     behavior: HMK_NullBindBehavior.SECONDARY,
-    title: "Absolute Priority (Key 2)",
-    description: "Key 2 will take priority over Key 1.",
+    titleKey: "advkeys.nullBindBehavior.secondaryTitle",
+    descriptionKey: "advkeys.nullBindBehavior.secondaryDescription",
   },
   {
     behavior: HMK_NullBindBehavior.NEUTRAL,
-    title: "Neutral",
-    description: "Neither key will be activated.",
+    titleKey: "advkeys.nullBindBehavior.neutralTitle",
+    descriptionKey: "advkeys.nullBindBehavior.neutralDescription",
   },
   {
     behavior: HMK_NullBindBehavior.DISTANCE,
-    title: "Distance Priority (Rappy Snappy)",
-    description: "Activate whichever key is pressed down further.",
+    titleKey: "advkeys.nullBindBehavior.distanceTitle",
+    descriptionKey: "advkeys.nullBindBehavior.distanceDescription",
   },
 ]
 
@@ -242,8 +237,8 @@ export function getNullBindBehaviorMetadata(
   return (
     metadata ?? {
       behavior,
-      title: `Unknown ${displayUInt8(behavior)}`,
-      description: "This Null Bind behavior is not recognized.",
+      titleKey: "advkeys.unknownTitle",
+      descriptionKey: "advkeys.unknownDescription",
     }
   )
 }
@@ -254,14 +249,17 @@ export const DKS_ACTION_SIZE = 32
 
 export type DynamicKeystrokeHeader = {
   icon: Component
-  tooltip: string
+  tooltipKey: I18nKey
 }
 
 export const dynamicKeystrokeHeaders: DynamicKeystrokeHeader[] = [
-  { icon: ArrowDownFromLineIcon, tooltip: "Key press" },
-  { icon: ArrowDownToLineIcon, tooltip: "Key fully pressed" },
-  { icon: ArrowUpFromLineIcon, tooltip: "Key release from fully pressed" },
-  { icon: ArrowUpToLineIcon, tooltip: "Key release" },
+  { icon: ArrowDownFromLineIcon, tooltipKey: "advkeys.dks.headerPress" },
+  { icon: ArrowDownToLineIcon, tooltipKey: "advkeys.dks.headerFullyPressed" },
+  {
+    icon: ArrowUpFromLineIcon,
+    tooltipKey: "advkeys.dks.headerReleaseFromFully",
+  },
+  { icon: ArrowUpToLineIcon, tooltipKey: "advkeys.dks.headerRelease" },
 ]
 
 export function bitmapToIntervals(bitmap: HMK_DKSAction[]) {

@@ -20,16 +20,24 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import RemapKeyboard from "./remap-keyboard.svelte"
   import RemapMenu from "./remap-menu.svelte"
   import RemapMenubar from "./remap-menubar.svelte"
+  import RemapToolbar from "./remap-toolbar.svelte"
 
   const {
     ...props
   }: WithoutChildren<ComponentProps<typeof KeyboardEditor.Root>> = $props()
+
+  let testerMode = $state(false)
 </script>
 
 <KeyboardEditor.Root {...props}>
   <KeyboardEditor.Pane>
-    <RemapKeyboard />
-    <RemapMenubar />
+    <div class="flex h-full min-h-0 flex-1 flex-row">
+      <div class="flex min-w-0 flex-1 flex-col">
+        <RemapKeyboard {testerMode} />
+        <RemapMenubar />
+      </div>
+      <RemapToolbar bind:testerMode />
+    </div>
   </KeyboardEditor.Pane>
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>

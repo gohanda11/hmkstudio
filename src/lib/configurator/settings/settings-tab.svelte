@@ -18,6 +18,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import Switch from "$lib/components/switch.svelte"
   import { Button } from "$lib/components/ui/button"
   import * as Dialog from "$lib/components/ui/dialog"
+  import * as Select from "$lib/components/ui/select"
+  import { getLocale, locales, setLocale, t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { cn, isFeatureAvailable, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
@@ -47,6 +49,40 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   {...props}
 >
   <FixedScrollArea class="flex flex-col gap-4 p-4">
+    <div class="flex flex-col gap-2">
+      <div class="grid text-sm text-wrap">
+        <span class="font-semibold">{t("settings.languageTitle")}</span>
+        <span class="text-muted-foreground">
+          {t("settings.languageDescription")}
+        </span>
+      </div>
+      <div>
+        <Select.Root
+          bind:value={
+            () => getLocale(),
+            (v) => {
+              if (v === "ja" || v === "en") setLocale(v)
+            }
+          }
+          type="single"
+        >
+          <Select.Trigger
+            aria-label={t("settings.languageLabel")}
+            class="w-48"
+            size="sm"
+          >
+            {locales.find((locale) => locale.value === getLocale())?.label}
+          </Select.Trigger>
+          <Select.Content class="w-[var(--bits-select-anchor-width)]">
+            {#each locales as locale (locale.value)}
+              <Select.Item value={locale.value}>
+                {locale.label}
+              </Select.Item>
+            {/each}
+          </Select.Content>
+        </Select.Root>
+      </div>
+    </div>
     {#if usbHighSpeed && isFeatureAvailable("pollingRateSwitch", version)}
       <Switch
         bind:checked={
@@ -58,16 +94,15 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             })
         }
         id="8000hz-polling-rate"
-        title="8000Hz Polling Rate"
-        description="Enable the 8000Hz polling rate for faster response times, but may increase the CPU usage of the host device. Restart the keyboard to apply changes. This setting applies globally across all profiles."
+        title={t("settings.pollingTitle")}
+        description={t("settings.pollingDescription")}
       />
     {/if}
     <div class="flex flex-col gap-2">
       <div class="grid text-sm text-wrap">
-        <span class="font-semibold">Restart Keyboard</span>
+        <span class="font-semibold">{t("settings.restartTitle")}</span>
         <span class="text-muted-foreground">
-          The keyboard will disconnect and reconnect. No changes will be made to
-          your keyboard settings.
+          {t("settings.restartDescription")}
         </span>
       </div>
       <div>
@@ -77,16 +112,15 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           size="sm"
           variant="outline"
         >
-          Restart Keyboard
+          {t("settings.restartButton")}
         </Button>
       </div>
     </div>
     <div class="flex flex-col gap-2">
       <div class="grid text-sm text-wrap">
-        <span class="font-semibold">Enter Bootloader Mode</span>
+        <span class="font-semibold">{t("settings.bootloaderTitle")}</span>
         <span class="text-muted-foreground">
-          The keyboard will restart and enter bootloader mode if it is supported
-          by the firmware. No changes will be made to your keyboard settings.
+          {t("settings.bootloaderDescription")}
         </span>
       </div>
       <div>
@@ -96,17 +130,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           size="sm"
           variant="outline"
         >
-          Enter Bootloader Mode
+          {t("settings.bootloaderButton")}
         </Button>
       </div>
     </div>
     <FirmwarePanel />
     <div class="flex flex-col gap-2">
       <div class="grid text-sm text-wrap">
-        <span class="font-semibold">Factory Reset</span>
+        <span class="font-semibold">{t("settings.factoryTitle")}</span>
         <span class="text-muted-foreground">
-          Revert the keyboard to its factory settings defined by the firmware.
-          All user data and settings will be lost.
+          {t("settings.factoryDescription")}
         </span>
       </div>
       <div>
@@ -119,27 +152,27 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                 variant="destructive"
                 {...props}
               >
-                Factory Reset
+                {t("settings.factoryButton")}
               </Button>
             {/snippet}
           </Dialog.Trigger>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>Factory Reset?</Dialog.Title>
+              <Dialog.Title>{t("settings.factoryConfirmTitle")}</Dialog.Title>
               <Dialog.Description>
-                Are you sure you want to factory reset your keyboard?
+                {t("settings.factoryConfirmDescription")}
               </Dialog.Description>
             </Dialog.Header>
             <Dialog.Footer>
               <Dialog.Close>
                 {#snippet child({ props })}
-                  <Button size="sm" variant="outline" {...props}>Cancel</Button>
+                  <Button size="sm" variant="outline" {...props}>{t("settings.cancel")}</Button>
                 {/snippet}
               </Dialog.Close>
               <Dialog.Close onclick={() => profileQuery.factoryReset()}>
                 {#snippet child({ props })}
                   <Button size="sm" variant="destructive" {...props}>
-                    Factory Reset
+                    {t("settings.factoryButton")}
                   </Button>
                 {/snippet}
               </Dialog.Close>

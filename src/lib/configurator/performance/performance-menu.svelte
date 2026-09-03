@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import DistanceSlider from "$lib/components/distance-slider.svelte"
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import Switch from "$lib/components/switch.svelte"
+  import { t } from "$lib/i18n.svelte"
   import {
     DEFAULT_ACTUATION_POINT,
     DEFAULT_RT_SENSITIVITY,
@@ -67,10 +68,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           updateActuation((actuation) => ({ ...actuation, actuationPoint: v }))
       }
       description={rtEnabled
-        ? "Set the specific distance at which Rapid Trigger activates and deactivates."
-        : "Set the specific distance at which a key press and release is registered."}
+        ? t("performance.actuationPointDescriptionRt")
+        : t("performance.actuationPointDescription")}
       {disabled}
-      title="Actuation Point"
+      title={t("performance.actuationPointTitle")}
     />
     <DistanceSlider
       bind:committed={
@@ -78,12 +79,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         (v) => updateActuation((actuation) => ({ ...actuation, rtDown: v }))
       }
       description={separatedRT
-        ? "Set the minimum distance change required for Rapid Trigger to register a key press."
-        : "Set the minimum distance change required for Rapid Trigger to register a key press or release."}
+        ? t("performance.rtPressDescriptionSeparated")
+        : t("performance.rtSensitivityDescription")}
       disabled={disabled || !rtEnabled}
       title={separatedRT
-        ? "Rapid Trigger Press Sensitivity"
-        : "Rapid Trigger Sensitivity"}
+        ? t("performance.rtPressTitle")
+        : t("performance.rtSensitivityTitle")}
     />
     {#if separatedRT}
       <DistanceSlider
@@ -91,9 +92,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           () => currentActuation?.rtUp ?? DEFAULT_RT_SENSITIVITY,
           (v) => updateActuation((actuation) => ({ ...actuation, rtUp: v }))
         }
-        description="Set the minimum distance change required for Rapid Trigger to register a key release."
+        description={t("performance.rtReleaseDescription")}
         disabled={disabled || !rtEnabled}
-        title="Rapid Trigger Release Sensitivity"
+        title={t("performance.rtReleaseTitle")}
       />
     {/if}
   </FixedScrollArea>
@@ -109,10 +110,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             continuous: false,
           }))
       }
-      description="Rapid Trigger registers key presses and releases based on changes in key distance rather than absolute position. It activates and deactivates at the actuation point."
+      description={t("performance.enableRtDescription")}
       {disabled}
       id="rapid-trigger"
-      title="Enable Rapid Trigger"
+      title={t("performance.enableRtTitle")}
     />
 
     <Switch
@@ -124,10 +125,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             rtUp: v ? DEFAULT_RT_SENSITIVITY : 0,
           }))
       }
-      description="Configure sensitivity for key presses and releases independently."
+      description={t("performance.separateSensitivityDescription")}
       disabled={disabled || !rtEnabled}
       id="separate-rt"
-      title="Separate Press/Release Sensitivity"
+      title={t("performance.separateSensitivityTitle")}
     />
     <Switch
       bind:checked={
@@ -138,10 +139,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             continuous: v,
           }))
       }
-      description="Deactivates Rapid Trigger only when the key is fully released, instead of at the actuation point."
+      description={t("performance.continuousDescription")}
       disabled={disabled || !rtEnabled}
       id="continuous-rapid-trigger"
-      title="Continuous Rapid Trigger"
+      title={t("performance.continuousTitle")}
     />
   </FixedScrollArea>
 </div>

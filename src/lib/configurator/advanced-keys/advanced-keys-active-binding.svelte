@@ -17,6 +17,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { SquarePenIcon, TrashIcon } from "@lucide/svelte"
   import * as KeycodeButton from "$lib/components/keycode-button"
   import { Button } from "$lib/components/ui/button"
+  import { t } from "$lib/i18n.svelte"
+  import { displayUInt8 } from "$lib/integer"
   import { HMK_AKType, type HMK_AdvancedKey } from "$lib/libhmk/advanced-keys"
   import { unitToStyle } from "$lib/ui"
   import { cn, type WithoutChildren } from "$lib/utils"
@@ -59,7 +61,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const display = $derived.by(() => {
     switch (action.type) {
       case HMK_AKType.NULL_BIND:
-        return getNullBindBehaviorMetadata(action.behavior).title
+        return t(getNullBindBehaviorMetadata(action.behavior).titleKey, {
+          value: displayUInt8(action.behavior),
+        })
       case HMK_AKType.DYNAMIC_KEYSTROKE:
         return [...action.keycodes]
       case HMK_AKType.TAP_HOLD:
@@ -132,13 +136,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       variant="outline"
     >
       <SquarePenIcon />
-      <span class="sr-only">Edit</span>
+      <span class="sr-only">{t("advkeys.activeBinding.edit")}</span>
     </Button>
     <AdvancedKeysDeleteDialog {index} {advancedKey}>
       {#snippet child({ props })}
         <Button size="icon" variant="outline" {...props}>
           <TrashIcon />
-          <span class="sr-only">Delete</span>
+          <span class="sr-only">{t("advkeys.activeBinding.delete")}</span>
         </Button>
       {/snippet}
     </AdvancedKeysDeleteDialog>

@@ -20,6 +20,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import type { ComponentProps } from "svelte"
   import { KeyButton } from "$lib/components/key-button"
   import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
 
   const {
     modtap,
@@ -66,7 +67,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       {/snippet}
     </Tooltip.Trigger>
     <Tooltip.Content class="max-w-56 text-wrap">
-      {`Tap: ${tapMetadata.tooltip ?? tapMetadata.name} / Hold: ${holdMetadata.tooltip ?? holdMetadata.name}`}
+      {t("modtap.tooltip", { tap: tapMetadata.tooltip ?? tapMetadata.name, hold: holdMetadata.tooltip ?? holdMetadata.name })}
     </Tooltip.Content>
   </Tooltip.Root>
 {/if}

@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { WrenchIcon } from "@lucide/svelte"
   import { persistedStateContext } from "$lib/configurator/context.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import Switch from "../switch.svelte"
   import { buttonVariants } from "../ui/button"
@@ -31,7 +32,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <Popover.Root>
   <Popover.Trigger class={buttonVariants({ size: "icon", variant: "outline" })}>
     <WrenchIcon />
-    <span class="sr-only">Configure Layout</span>
+    <span class="sr-only">{t("common.configureLayout")}</span>
   </Popover.Trigger>
   <Popover.Content align="end" class="flex flex-col gap-4">
     {#each labels as label, i (i)}

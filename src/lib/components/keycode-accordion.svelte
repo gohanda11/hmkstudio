@@ -15,11 +15,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { XIcon } from "@lucide/svelte"
+  import { t, type I18nKey } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import {
     getCategorizedKeycodes,
     getKeycodeMetadata,
     keycodeCategories,
+    type KeycodeCategory,
   } from "$lib/keycodes"
   import { unitToStyle } from "$lib/ui"
   import { cn, type WithoutChildrenOrChild } from "$lib/utils"
@@ -37,7 +39,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   } = $props()
 
   let search = $state("")
-  let accordionValue = $state(["Basic"])
+  let accordionValue: string[] = $state([keycodeCategories.BASIC])
 
   const getAccordionValue = () =>
     search === "" ? accordionValue : Object.values(keycodeCategories)
@@ -47,6 +49,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const categorizedKeycodes = getCategorizedKeycodes(
     keyboardContext.get().metadata,
   )
+  const categoryLabelKey: Record<KeycodeCategory, I18nKey> = {
+    [keycodeCategories.BASIC]: "keycodes.catBasic",
+    [keycodeCategories.EXTENDED]: "keycodes.catExtended",
+    [keycodeCategories.SPECIAL]: "keycodes.catSpecial",
+    [keycodeCategories.PROFILES]: "keycodes.catProfiles",
+    [keycodeCategories.MEDIA]: "keycodes.catMedia",
+    [keycodeCategories.MOUSE]: "keycodes.catMouse",
+    [keycodeCategories.ADVANCED_KEYS]: "keycodes.catAdvancedKeys",
+    [keycodeCategories.GAMEPAD]: "keycodes.catGamepad",
+    [keycodeCategories.UNKNOWN]: "keycodes.catUnknown",
+  }
   const filteredKeycodes = $derived.by(() => {
     if (search === "") return categorizedKeycodes
     const lowerSearch = search.toLowerCase()
@@ -69,11 +82,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <div class={cn("flex w-full flex-col gap-2", className)} {...props}>
   <div class="flex justify-end">
     <InputGroup.Root class="w-60">
-      <InputGroup.Input bind:value={search} placeholder="Search..." />
+      <InputGroup.Input bind:value={search} placeholder={t("keycodes.search")} />
       <InputGroup.Addon align="inline-end">
         <InputGroup.Button onclick={() => (search = "")} size="icon-xs">
           <XIcon />
-          <span class="sr-only">Clear Search</span>
+          <span class="sr-only">{t("keycodes.clearSearch")}</span>
         </InputGroup.Button>
       </InputGroup.Addon>
     </InputGroup.Root>
@@ -85,7 +98,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     {#each filteredKeycodes as [category, keycodes] (category)}
       {#if keycodes.length > 0}
         <Accordion.Item value={category}>
-          <Accordion.Trigger>{category}</Accordion.Trigger>
+          <Accordion.Trigger>{t(categoryLabelKey[category])}</Accordion.Trigger>
           <Accordion.Content class="flex flex-wrap text-sm">
             {#each keycodes as keycode (keycode)}
               <div class="p-0.5" style={unitToStyle()}>

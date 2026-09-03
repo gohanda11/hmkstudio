@@ -24,6 +24,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
   import * as Sidebar from "$lib/components/ui/sidebar"
   import { displayUInt16 } from "$lib/integer"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
 
   const keyboard = keyboardContext.get()
@@ -68,7 +69,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             {#snippet child({ props })}
               <a href="{base}/" {...props}>
                 <LogOutIcon class="size-4" />
-                Exit Demo
+                {t("menu.exitDemo")}
               </a>
             {/snippet}
           </DropdownMenu.Item>
@@ -78,7 +79,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             onSelect={() => keyboard.forget()}
           >
             <CableIcon class="size-4" />
-            Disconnect
+            {t("menu.disconnect")}
           </DropdownMenu.Item>
         {/if}
       </DropdownMenu.Content>

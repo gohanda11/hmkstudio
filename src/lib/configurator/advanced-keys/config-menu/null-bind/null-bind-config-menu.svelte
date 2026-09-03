@@ -21,6 +21,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as RadioGroup from "$lib/components/ui/radio-group"
   import * as Tabs from "$lib/components/ui/tabs"
   import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
   import { nullBindBehaviorMetadata } from "$lib/configurator/lib/advanced-keys"
   import {
     DEFAULT_BOTTOM_OUT_POINT,
@@ -36,10 +37,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <div class="grid text-sm text-wrap">
-    <span class="font-medium">Configure Null Bind Resolution Behavior</span>
+    <span class="font-medium">{t("advkeys.nullBind.configureTitle")}</span>
     <span class="text-muted-foreground">
-      Select how Null Bind resolves key presses when both keys are pressed
-      simultaneously.
+      {t("advkeys.nullBind.configureDescription")}
     </span>
   </div>
   <RadioGroup.Root
@@ -48,17 +48,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       (v) => configMenuState.updateAction({ ...action, behavior: Number(v) })
     }
   >
-    {#each nullBindBehaviorMetadata as { behavior, title, description } (behavior)}
+    {#each nullBindBehaviorMetadata as { behavior, titleKey, descriptionKey } (behavior)}
       <div class="flex items-center gap-3">
         <RadioGroup.Item id={String(behavior)} value={String(behavior)} />
         <div class="flex flex-1 items-center gap-2">
-          <Label class="flex-1" for={String(behavior)}>{title}</Label>
+          <Label class="flex-1" for={String(behavior)}>{t(titleKey)}</Label>
           <Tooltip.Root>
             <Tooltip.Trigger>
               <InfoIcon class="size-4" />
-              <span class="sr-only">Info</span>
+              <span class="sr-only">{t("advkeys.nullBind.info")}</span>
             </Tooltip.Trigger>
-            <Tooltip.Content>{description}</Tooltip.Content>
+            <Tooltip.Content>{t(descriptionKey)}</Tooltip.Content>
           </Tooltip.Root>
         </div>
       </div>
@@ -73,16 +73,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           bottomOutPoint: v ? DEFAULT_BOTTOM_OUT_POINT : 0,
         })
     }
-    description="Enable this option to register both key presses when keys are fully pressed simultaneously, bypassing the resolution behavior."
+    description={t("advkeys.nullBind.alternativeBehaviorDescription")}
     id="alternative-fully-pressed-behavior"
-    title="Alternative Fully Pressed Behavior"
+    title={t("advkeys.nullBind.alternativeBehaviorTitle")}
   />
 </FixedScrollArea>
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <Tabs.Root value="performance">
     <Tabs.List>
-      <Tabs.Trigger value="performance">Performance</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">Key Tester</Tabs.Trigger>
+      <Tabs.Trigger value="performance">{t("advkeys.tabs.performance")}</Tabs.Trigger>
+      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="performance">

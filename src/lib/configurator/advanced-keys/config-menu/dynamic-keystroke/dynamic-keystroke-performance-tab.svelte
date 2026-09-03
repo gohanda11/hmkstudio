@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { InfoIcon } from "@lucide/svelte"
   import DistanceSlider from "$lib/components/distance-slider.svelte"
   import { actuationQueryContext } from "$lib/configurator/queries/actuation-query.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { distanceToUnit } from "$lib/distance"
   import { DEFAULT_ACTUATION_POINT } from "$lib/libhmk/actuation"
   import type { HMK_AKDynamicKeystroke } from "$lib/libhmk/advanced-keys"
@@ -50,25 +51,25 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           data: [{ ...actuationMap[key], actuationPoint: v }],
         })
     }
-    description="Set the actuation point for &quot;Key press&quot; and &quot;Key release&quot; actions."
+    description={t("advkeys.dks.actuationPointDescription")}
     disabled={!actuationMap}
     max={distanceToUnit(action.bottomOutPoint)}
-    title="Actuation Point"
+    title={t("advkeys.dks.actuationPointTitle")}
   />
   <DistanceSlider
     bind:committed={
       () => action.bottomOutPoint,
       (v) => configMenuState.updateAction({ ...action, bottomOutPoint: v })
     }
-    description="Set the actuation point for &quot;Key fully pressed&quot; and &quot;Key released from fully pressed&quot; actions."
+    description={t("advkeys.dks.bottomOutPointDescription")}
     disabled={!actuationMap}
     min={optMap(actuationMap?.[key].actuationPoint, distanceToUnit)}
-    title="Bottom Out Point"
+    title={t("advkeys.dks.bottomOutPointTitle")}
   />
   <div class="flex items-center gap-2 text-muted-foreground">
     <InfoIcon class="size-4" />
     <p class="text-sm">
-      Rapid Trigger is automatically disabled for Dynamic Keystroke keys.
+      {t("advkeys.dks.rapidTriggerNote")}
     </p>
   </div>
 </div>

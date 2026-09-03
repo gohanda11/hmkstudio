@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import CommitSlider from "$lib/components/commit-slider.svelte"
   import Switch from "$lib/components/switch.svelte"
+  import { t } from "$lib/i18n.svelte"
   import {
     MAX_TAPPING_TERM,
     MIN_TAPPING_TERM,
@@ -41,21 +42,21 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       () => action.holdOnOtherKeyPress,
       (v) => configMenuState.updateAction({ ...action, holdOnOtherKeyPress: v })
     }
-    description="Immediately perform the hold action if another non-Tap-Hold key is pressed."
+    description={t("advkeys.tapHold.holdOnOtherKeyPressDescription")}
     id="hold-on-other-key-press"
-    title="Hold on Other Key Press"
+    title={t("advkeys.tapHold.holdOnOtherKeyPressTitle")}
   />
   <CommitSlider
     bind:committed={
       () => action.tappingTerm,
       (v) => configMenuState.updateAction({ ...action, tappingTerm: v })
     }
-    description="Set the duration the key must be held to perform the hold action."
+    description={t("advkeys.tapHold.tappingTermDescription")}
     display={(v) => `${v}ms`}
     min={MIN_TAPPING_TERM}
     max={MAX_TAPPING_TERM}
     step={10}
-    title="Tapping Term"
+    title={t("advkeys.tapHold.tappingTermTitle")}
   />
   <TickRateSlider />
 </div>

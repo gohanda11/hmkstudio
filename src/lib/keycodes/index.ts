@@ -21,10 +21,13 @@ import { advancedKeysKeycodeMetadata } from "./advanced-keys"
 import { basicKeycodeMetadata, basicKeycodes } from "./basic"
 import { extendedKeycodeMetadata, extendedKeycodes } from "./extended"
 import { gamepadKeycodeMetadata } from "./gamepad"
+import { getKeycodeLayout, type KeycodeLayout } from "./layout.svelte"
 import { mediaKeycodeMetadata, mediaKeycodes } from "./media"
 import { mouseKeycodeMetadata, mouseKeycodes } from "./mouse"
 import { getProfilesKeycodes, profilesKeycodeMetadata } from "./profiles"
 import { getSpecialKeycodes, specialKeycodeMetadata } from "./special"
+
+export type { KeycodeLayout } from "./layout.svelte"
 
 export const keycodeCategories = {
   BASIC: "Basic",
@@ -65,7 +68,52 @@ const keycodeMetadataMap = new Map(
   keycodeMetadata.map((metadata) => [metadata.keycode, metadata]),
 )
 
-export function getKeycodeMetadata(keycode: Keycode): KeycodeMetadata {
+/**
++ * US legends for JIS-specific keys. The base metadata carries JIS glyphs
++ * (ろ, かな, ¥, …), so the US layout overrides them with neutral names.
++ */
+const usNameOverrides: Partial<
+  Record<Keycode, { name: string; tooltip?: string }>
+> = {
+  [Keycode.KC_INTERNATIONAL_1]: { name: "Ro", tooltip: "Ro (Int1)" },
+  [Keycode.KC_INTERNATIONAL_2]: { name: "Kana", tooltip: "Kana (Int2)" },
+  [Keycode.KC_INTERNATIONAL_3]: { name: "Yen", tooltip: "Yen (Int3)" },
+  [Keycode.KC_INTERNATIONAL_4]: { name: "Henkan", tooltip: "Henkan (Int4)" },
+  [Keycode.KC_INTERNATIONAL_5]: {
+    name: "Muhenkan",
+    tooltip: "Muhenkan (Int5)",
+  },
+  [Keycode.KC_LANGUAGE_1]: { name: "Lang 1", tooltip: "Language 1 (Lang1)" },
+  [Keycode.KC_LANGUAGE_2]: { name: "Lang 2", tooltip: "Language 2 (Lang2)" },
+}
+
+/**
++ * JIS (JP) legends for symbol keys. The base metadata carries US glyphs, so
++ * the JP layout overrides the keys whose legends differ on JIS keyboards.
++ */
+const jpNameOverrides: Partial<
+  Record<Keycode, { name: string; tooltip?: string }>
+> = {
+  [Keycode.KC_GRAVE]: { name: "半/全", tooltip: "Zenkaku/Hankaku" },
+  [Keycode.KC_2]: { name: '"\n2' },
+  [Keycode.KC_6]: { name: "&\n6" },
+  [Keycode.KC_7]: { name: "'\n7" },
+  [Keycode.KC_8]: { name: "(\n8" },
+  [Keycode.KC_9]: { name: ")\n9" },
+  [Keycode.KC_0]: { name: "0" },
+  [Keycode.KC_MINUS]: { name: "=\n-" },
+  [Keycode.KC_EQUAL]: { name: "~\n^" },
+  [Keycode.KC_LEFT_BRACKET]: { name: "`\n@" },
+  [Keycode.KC_RIGHT_BRACKET]: { name: "{\n[" },
+  [Keycode.KC_BACKSLASH]: { name: "}\n]" },
+  [Keycode.KC_SEMICOLON]: { name: "+\n;" },
+  [Keycode.KC_QUOTE]: { name: "*\n:" },
+}
+
+export function getKeycodeMetadata(
+  keycode: Keycode,
+  layout?: KeycodeLayout,
+): KeycodeMetadata {
   if (Keycode.SP_MO_MIN <= keycode && keycode <= Keycode.SP_MO_MAX) {
     const layer = MO_GET_LAYER(keycode)
     return {
@@ -88,15 +136,18 @@ export function getKeycodeMetadata(keycode: Keycode): KeycodeMetadata {
     }
   }
 
-  return (
+  const resolvedLayout = layout ?? getKeycodeLayout()
+  const base =
     keycodeMetadataMap.get(keycode) ?? {
       name: displayUInt16(keycode),
       tooltip: `Unknown Keycode: ${displayUInt16(keycode)}`,
       keycode,
       webCodes: [],
-      category: "Unknown",
+      category: "Unknown" as const,
     }
-  )
+  const override =
+    resolvedLayout === "jp" ? jpNameOverrides[keycode] : usNameOverrides[keycode]
+  return override ? { ...base, ...override } : base
 }
 
 export function getCategorizedKeycodes({

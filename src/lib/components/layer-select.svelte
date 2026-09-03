@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
@@ -36,7 +37,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <div class={cn("flex items-center gap-2", className)} {...props}>
   <span class={cn("text-sm font-medium", disabled && "opacity-50")}>
-    Layer
+    {t("common.layer")}
   </span>
   <ToggleGroup.Root
     bind:value={

@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
   import {
     DKS_ACTION_SIZE,
     DKS_ROW_PADDING,
@@ -23,9 +24,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div class="grid place-items-center" style:grid-area="bindings">
-  <span class="text-sm font-medium">Bindings</span>
+  <span class="text-sm font-medium">{t("advkeys.tabs.bindings")}</span>
 </div>
-{#each dynamicKeystrokeHeaders as { icon: Icon, tooltip }, i (i)}
+{#each dynamicKeystrokeHeaders as { icon: Icon, tooltipKey }, i (i)}
   <div class="flex items-center" style:grid-area="icon{i}">
     <Tooltip.Root>
       <Tooltip.Trigger
@@ -33,9 +34,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         style="margin-left: {DKS_ROW_PADDING + DKS_ACTION_SIZE / 2}px"
       >
         <Icon class="size-4" />
-        <span class="sr-only">{tooltip}</span>
+        <span class="sr-only">{t(tooltipKey)}</span>
       </Tooltip.Trigger>
-      <Tooltip.Content>{tooltip}</Tooltip.Content>
+      <Tooltip.Content>{t(tooltipKey)}</Tooltip.Content>
     </Tooltip.Root>
   </div>
 {/each}

@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import LayerSelect from "$lib/components/layer-select.svelte"
   import { Button } from "$lib/components/ui/button"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { globalStateContext, remapStateContext } from "../context.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
@@ -42,7 +43,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       size="sm"
       variant="destructive"
     >
-      Reset Current Layer
+      {t("remap.resetLayer")}
     </Button>
     <KeyboardEditor.LayoutDialog />
   </div>

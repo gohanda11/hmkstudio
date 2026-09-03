@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as Sidebar from "$lib/components/ui/sidebar"
+  import { t } from "$lib/i18n.svelte"
   import { Tabs } from "bits-ui"
   import { globalStateContext } from "../context.svelte"
   import { sidebarTabGroups } from "../lib/layout"
@@ -22,23 +23,23 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const { tab } = $derived(globalStateContext.get())
 </script>
 
-{#each sidebarTabGroups as { group, tabs } (group)}
+{#each sidebarTabGroups as { groupKey, tabs } (groupKey)}
   <Sidebar.Group>
     <Sidebar.GroupLabel class="truncate">
-      {group}
+      {t(groupKey)}
     </Sidebar.GroupLabel>
     <Sidebar.Menu>
-      {#each tabs as { label, value, icon: Icon } (value)}
+      {#each tabs as { labelKey, value, icon: Icon } (value)}
         <Sidebar.MenuItem>
           <Tabs.Trigger {value}>
             {#snippet child({ props })}
               <Sidebar.MenuButton
                 isActive={tab === value}
-                tooltipContent={label}
+                tooltipContent={t(labelKey)}
                 {...props}
               >
                 <Icon />
-                <span>{label}</span>
+                <span>{t(labelKey)}</span>
               </Sidebar.MenuButton>
             {/snippet}
           </Tabs.Trigger>

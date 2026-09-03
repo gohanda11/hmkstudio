@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { KeyButton } from "$lib/components/key-button"
   import { displayDistance } from "$lib/distance"
+  import { t } from "$lib/i18n.svelte"
   import type { HMK_Actuation } from "$lib/libhmk/actuation"
   import type { WithoutChildrenOrChild } from "$lib/utils"
   import type { ComponentProps } from "svelte"
@@ -28,7 +29,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   } = $props()
 
   const { actuationPoint, rtDown, rtUp, continuous } = $derived(actuation)
-  const continuousLabel = $derived(continuous ? "C" : "")
+  const continuousLabel = $derived(
+    continuous ? t("performance.continuousAbbreviation") : "",
+  )
+
 </script>
 
 <KeyButton size="sm" {...props}>

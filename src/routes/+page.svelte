@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import Configurator from "$lib/configurator/configurator.svelte"
   import FirmwareUpdateDialog from "$lib/configurator/settings/firmware-update-dialog.svelte"
+  import { t } from "$lib/i18n.svelte"
   import type { Keyboard } from "$lib/keyboard"
   import { connect } from "$lib/keyboard/hmk-keyboard.svelte"
   import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
@@ -32,13 +33,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const handleConnect = async () => {
     try {
       keyboard = await connect(({ metadata: { name } }) => {
-        toast.success(`${name} disconnected.`)
+        toast.success(t("landing.disconnected", { name }))
         keyboard = null
       })
       if (keyboard) {
-        let message = `Successfully connected to ${keyboard.metadata.name}.`
+        let message = t("landing.connected", { name: keyboard.metadata.name })
         if (keyboard.version < HMK_FIRMWARE_MAX_VERSION) {
-          message += " Newer version of the firmware is available."
+          message += t("landing.firmwareAvailable")
         }
         toast.success(message)
       }
@@ -56,15 +57,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <div class="mx-auto max-w-2xl text-center">
         <h1 class="text-5xl font-semibold tracking-tight">hmkstudio</h1>
         <p class="mt-4 text-lg font-medium text-wrap text-muted-foreground">
-          A web-based configurator for libhmk keyboards. Customize keyboard
-          bindings, adjust actuation points, enable Rapid Trigger, and more.
+          {t("landing.description")}
         </p>
         <div class="mt-6 flex items-center justify-center gap-4">
           <Button onclick={() => handleConnect()} size="lg">
-            <CableIcon /> Connect Keyboard
+            <CableIcon /> {t("landing.connect")}
           </Button>
           <Button href="{base}/demo" size="lg" variant="outline">
-            <ShapesIcon /> Try Demo
+            <ShapesIcon /> {t("landing.tryDemo")}
           </Button>
         </div>
       </div>

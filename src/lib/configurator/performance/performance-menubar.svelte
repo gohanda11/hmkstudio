@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import { Button } from "$lib/components/ui/button"
   import { Toggle } from "$lib/components/ui/toggle"
+  import { t } from "$lib/i18n.svelte"
   import { defaultActuation } from "$lib/libhmk/actuation"
   import { setToIntervals } from "$lib/utils"
   import {
@@ -40,7 +41,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       disabled={allKeys.every((key) => keys.has(key))}
       onclick={() => allKeys.forEach((key) => keys.add(key))}
       size="sm"
-      variant="outline">Select All</Button
+      variant="outline">{t("performance.selectAll")}</Button
     >
     <Button
       disabled={keys.size === 0}
@@ -48,14 +49,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       size="sm"
       variant="outline"
     >
-      Deselect All
+      {t("performance.deselectAll")}
     </Button>
     <Toggle
       bind:pressed={performanceState.showKeymap}
       size="sm"
       variant="outline"
     >
-      Show Keymap
+      {t("performance.showKeymap")}
     </Toggle>
   </div>
   <div class="flex items-center gap-2">
@@ -73,7 +74,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       size="sm"
       variant="destructive"
     >
-      Reset Selected
+      {t("performance.resetSelected")}
     </Button>
     <KeyboardEditor.LayoutDialog />
   </div>

@@ -25,15 +25,16 @@ import {
   SquareChevronUpIcon,
 } from "@lucide/svelte"
 import type { Component } from "svelte"
+import type { I18nKey } from "$lib/i18n.svelte"
 import type { ConfiguratorTabs } from "../context.svelte"
 
 export const MIN_WINDOW_WIDTH = 1024
 export const MIN_WINDOW_HEIGHT = 768
 
 export type SidebarTabGroup = {
-  group: string
+  groupKey: I18nKey
   tabs: {
-    label: string
+    labelKey: I18nKey
     value: ConfiguratorTabs
     icon: Component
   }[]
@@ -41,27 +42,27 @@ export type SidebarTabGroup = {
 
 export const sidebarTabGroups: SidebarTabGroup[] = [
   {
-    group: "Profiles",
-    tabs: [{ label: "Profiles", value: "profiles", icon: Grid2x2Icon }],
+    groupKey: "sidebar.groupProfiles",
+    tabs: [{ labelKey: "sidebar.tabProfiles", value: "profiles", icon: Grid2x2Icon }],
   },
   {
-    group: "Keyboard Configuration",
+    groupKey: "sidebar.groupKeyboard",
     tabs: [
-      { label: "Remap", value: "remap", icon: PencilIcon },
-      { label: "Key Tester", value: "key-tester", icon: KeyboardIcon },
-      { label: "Performance", value: "performance", icon: GaugeIcon },
+      { labelKey: "sidebar.tabRemap", value: "remap", icon: PencilIcon },
+      { labelKey: "sidebar.tabKeyTester", value: "key-tester", icon: KeyboardIcon },
+      { labelKey: "sidebar.tabPerformance", value: "performance", icon: GaugeIcon },
       {
-        label: "Advanced Keys",
+        labelKey: "sidebar.tabAdvancedKeys",
         value: "advanced-keys",
         icon: SquareChevronUpIcon,
       },
-      { label: "Gamepad", value: "gamepad", icon: Gamepad2Icon },
-      { label: "Pointing", value: "pointing", icon: MouseIcon },
-      { label: "Calibration", value: "calibration", icon: CrosshairIcon },
+      { labelKey: "sidebar.tabGamepad", value: "gamepad", icon: Gamepad2Icon },
+      { labelKey: "sidebar.tabPointing", value: "pointing", icon: MouseIcon },
+      { labelKey: "sidebar.tabCalibration", value: "calibration", icon: CrosshairIcon },
     ],
   },
   {
-    group: "Settings",
-    tabs: [{ label: "Settings", value: "settings", icon: SettingsIcon }],
+    groupKey: "sidebar.groupSettings",
+    tabs: [{ labelKey: "sidebar.tabSettings", value: "settings", icon: SettingsIcon }],
   },
 ]

@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import { Button } from "$lib/components/ui/button"
   import * as Empty from "$lib/components/ui/empty"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { HMK_AKType } from "$lib/libhmk/advanced-keys"
   import { isFeatureAvailable } from "$lib/utils"
@@ -44,9 +45,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <div class="grid size-full grid-cols-[28rem_minmax(0,1fr)]">
   <FixedScrollArea class="flex flex-col gap-4 p-4">
-    <div class="font-semibold">Add Advanced Key</div>
+    <div class="font-semibold">{t("advkeys.mainMenu.addTitle")}</div>
     <div class="flex flex-col gap-2">
-      {#each advancedKeyMetadata as { type, icon: Icon, title, description, feature } (type)}
+      {#each advancedKeyMetadata as { type, icon: Icon, titleKey, descriptionKey, feature } (type)}
         {#if feature === undefined || isFeatureAvailable(feature, version)}
           <Button
             class="size-full gap-4 px-4 py-2"
@@ -56,9 +57,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           >
             <Icon class="size-6" />
             <div class="grid text-left text-sm text-wrap">
-              <span class="font-medium">{title}</span>
+              <span class="font-medium">{t(titleKey)}</span>
               <span class="font-normal text-muted-foreground">
-                {description}
+                {t(descriptionKey)}
               </span>
             </div>
           </Button>
@@ -68,14 +69,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   </FixedScrollArea>
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <div class="font-semibold">
-      Active Advanced Keys ({String(count ?? 0).padStart(2, "0")}/{String(
-        numAdvancedKeys,
-      ).padStart(2, "0")})
+      {t("advkeys.mainMenu.activeTitle", { count: String(count ?? 0).padStart(2, "0"), total: String(numAdvancedKeys).padStart(2, "0") })}
     </div>
     {#if !advancedKeys || !count}
       <Empty.Root class="border border-dashed">
         <Empty.Header>
-          <Empty.Description>No active advanced keys...</Empty.Description>
+          <Empty.Description>{t("advkeys.mainMenu.empty")}</Empty.Description>
         </Empty.Header>
       </Empty.Root>
     {:else}

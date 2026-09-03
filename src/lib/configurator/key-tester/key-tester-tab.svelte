@@ -20,6 +20,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import type { ComponentProps } from "svelte"
   import KeyTesterKeyboard from "./key-tester-keyboard.svelte"
   import KeyTesterMenu from "./key-tester-menu.svelte"
+  import {
+    KeyTesterLatchedState,
+    keyTesterLatchedContext,
+  } from "./latched-state.svelte"
+
+  keyTesterLatchedContext.set(new KeyTesterLatchedState())
 
   const {
     ...props

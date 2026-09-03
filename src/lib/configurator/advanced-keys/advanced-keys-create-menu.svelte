@@ -18,6 +18,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { KeyButton } from "$lib/components/key-button"
   import * as KeycodeButton from "$lib/components/keycode-button"
   import { Button } from "$lib/components/ui/button"
+  import { t } from "$lib/i18n.svelte"
+  import { displayUInt8 } from "$lib/integer"
   import { keyboardContext } from "$lib/keyboard"
   import { HMK_AKType } from "$lib/libhmk/advanced-keys"
   import { unitToStyle } from "$lib/ui"
@@ -40,7 +42,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const { current: advancedKeys } = $derived(advancedKeysQuery.advancedKeys)
   const { current: keymap } = $derived(keymapQueryContext.get().keymap)
 
-  const { title, description, numKeys } = $derived(getAdvancedKeyMetadata(type))
+  const { titleKey, descriptionKey, numKeys } = $derived(
+    getAdvancedKeyMetadata(type),
+  )
+  const title = $derived(t(titleKey, { value: displayUInt8(type) }))
+  const description = $derived(t(descriptionKey))
 </script>
 
 <FixedScrollArea class="flex flex-col gap-2 p-4">
@@ -52,7 +58,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         size="sm"
         variant="outline"
       >
-        Cancel
+        {t("advkeys.createMenu.cancel")}
       </Button>
       <Button
         disabled={!advancedKeys || !keymap || keys.some((key) => key === null)}
@@ -78,14 +84,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         }}
         size="sm"
       >
-        Continue
+        {t("advkeys.createMenu.continue")}
       </Button>
     </div>
   </div>
   <div class="flex flex-col gap-4">
     <div class="grid text-sm">
       <span class="font-medium">
-        {`Select ${numKeys > 1 ? `${numKeys} keys` : `${numKeys} key`} to assign ${title} to.`}
+        {numKeys > 1 ? t("advkeys.createMenu.selectKeysPlural", { numKeys, title }) : t("advkeys.createMenu.selectKeysSingle", { numKeys, title })}
       </span>
       <span class="text-muted-foreground">{description}</span>
     </div>
@@ -100,7 +106,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       >
         {#each { length: numKeys }, i (i)}
           <div class="flex flex-col items-center text-center text-base">
-            <div class="text-muted-foreground">Key {i + 1}</div>
+            <div class="text-muted-foreground">{t("advkeys.createMenu.keyLabel", { index: i + 1 })}</div>
             <div class="p-0.5" style={unitToStyle()}>
               {#if !advancedKeys || !keymap}
                 <KeycodeButton.Skeleton />
@@ -117,7 +123,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                         class="border-dashed font-normal text-muted-foreground"
                         {...props}
                       >
-                        <span>Assign</span>
+                        <span>{t("advkeys.createMenu.assign")}</span>
                       </KeyButton>
                     {/if}
                   {/snippet}

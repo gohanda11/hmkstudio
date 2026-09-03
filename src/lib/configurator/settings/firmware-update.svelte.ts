@@ -28,6 +28,7 @@ import {
   type DfuConnection,
   type FirmwareEntry,
 } from "$lib/dfu/libhmk-dfu"
+import { t } from "$lib/i18n.svelte"
 import type { Keyboard } from "$lib/keyboard"
 import { toast } from "svelte-sonner"
 
@@ -44,8 +45,8 @@ export type FirmwareUpdateStep =
 // How long the user may take to pick the DFU device after the keyboard has
 // jumped to the bootloader before an error with recovery guidance is shown.
 export const DFU_SELECT_TIMEOUT_S = 60
-
-const dfuSelectTimeoutMessage = `Timed out waiting for a DFU device to be selected (${DFU_SELECT_TIMEOUT_S} seconds). If the keyboard is stuck in DFU bootloader mode, unplug it and plug it back in (or press its reset button), then click "Select DFU Device" again. On Windows, make sure the DFU device is bound to a WinUSB driver (Zadig).`
+const dfuSelectTimeoutMessage = () =>
+  t("dfu.timeout", { seconds: DFU_SELECT_TIMEOUT_S })
 
 function dfuVendorLabel(vendorId: number) {
   switch (vendorId) {
@@ -202,7 +203,7 @@ class FirmwareUpdate {
         `Warning: the selected DFU device (${dfuDeviceDescription(usbDevice)}) is not the bootloader expected for ${this.keyboardName} (${dfuVendorLabel(expectedVendorId)})`,
       )
       await connection.device.close()
-      this.error = `The selected DFU device (${dfuDeviceDescription(usbDevice)}) does not match "${this.keyboardName}", which expects the ${dfuVendorLabel(expectedVendorId)} DFU bootloader. To avoid flashing the wrong keyboard, disconnect the other device and select the DFU device that appeared when "${this.keyboardName}" restarted.`
+      this.error = t("dfu.mismatch", { device: dfuDeviceDescription(usbDevice), name: this.keyboardName, expected: dfuVendorLabel(expectedVendorId) })
       this.step = "select"
       this.#armSelectTimeout()
       return
@@ -286,9 +287,7 @@ class FirmwareUpdate {
     this.#resetState()
 
     if (keyboardMayBeInDfu) {
-      toast.warning(
-        `Firmware update cancelled. "${keyboardName}" may still be in DFU bootloader mode: if it does not reconnect as a keyboard, unplug it and plug it back in (or press its reset button).`,
-      )
+      toast.warning(t("dfu.cancelled", { name: keyboardName }))
     }
   }
 
@@ -297,7 +296,7 @@ class FirmwareUpdate {
     // disconnect at the end of a successful flash is expected.
     if (this.step !== "connecting" && this.step !== "ready") return
 
-    this.error = "The DFU device was disconnected."
+    this.error = t("dfu.disconnected")
     this.step = "error"
   }
 
@@ -316,21 +315,23 @@ class FirmwareUpdate {
     const serial = usbDevice.serialNumber
     const serialNote =
       serial === null || serial === ""
-        ? ", and it exposes no serial number"
-        : ` (serial "${serial}")`
+        ? t("dfu.serialNone")
+        : t("dfu.serialSome", { serial })
     const identityNote =
       expectedVendorId === null
-        ? `The expected DFU bootloader for "${this.keyboardName}" could not be verified, and a DFU bootloader does not identify which keyboard it belongs to`
-        : `The selected DFU device matches the ${dfuVendorLabel(expectedVendorId)} bootloader expected for "${this.keyboardName}", but the bootloader cannot prove that it belongs to this keyboard`
-    return `${identityNote}${serialNote}. If more than one DFU-capable keyboard is connected, disconnect the others so that only "${this.keyboardName}" remains attached, and verify the device summary above before flashing.`
+        ? t("dfu.identityUnknown", { name: this.keyboardName })
+        : t("dfu.identityMatch", {
+            expected: dfuVendorLabel(expectedVendorId),
+            name: this.keyboardName,
+          })
+    return `${identityNote}${serialNote}${t("dfu.identityTail", { name: this.keyboardName })}`
   }
-
   #armSelectTimeout() {
     this.#clearSelectTimer()
     this.#selectTimer = setTimeout(() => {
       this.#selectTimer = null
       if (this.step !== "select") return
-      this.error = dfuSelectTimeoutMessage
+      this.error = dfuSelectTimeoutMessage()
       this.#log(
         `Timed out waiting for a DFU device to be selected (${DFU_SELECT_TIMEOUT_S} seconds).`,
       )
@@ -346,11 +347,11 @@ class FirmwareUpdate {
 
   #logInfo(msg: string) {
     if (msg === "Erasing DFU device memory") {
-      this.phase = "Erasing flash memory..."
+      this.phase = t("dfu.phaseErase")
     } else if (msg === "Copying data from browser to DFU device") {
-      this.phase = "Writing firmware..."
+      this.phase = t("dfu.phaseWrite")
     } else if (msg === "Manifesting new firmware") {
-      this.phase = "Manifesting new firmware..."
+      this.phase = t("dfu.phaseManifest")
     }
     this.#log(msg)
   }

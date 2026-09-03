@@ -19,7 +19,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import { Input } from "$lib/components/ui/input"
   import * as ToggleGroupUI from "$lib/components/ui/toggle-group"
+  import { t, type I18nKey } from "$lib/i18n.svelte"
   import { macroActions } from "$lib/configurator/lib/advanced-keys"
+  import { HMK_MacroAction } from "$lib/libhmk/macro"
   import { macrosQueryContext } from "$lib/configurator/queries/macros-query.svelte"
   import type { HMK_AKMacro } from "$lib/libhmk/advanced-keys"
   import { Keycode } from "$lib/libhmk/keycodes"
@@ -48,7 +50,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const macroNode = $derived(macros[macroNodeId])
 
+  const macroActionLabels: Record<number, I18nKey> = {
+    [HMK_MacroAction.TAP]: "advkeys.macro.actionTap",
+    [HMK_MacroAction.PRESS]: "advkeys.macro.actionPress",
+    [HMK_MacroAction.RELEASE]: "advkeys.macro.actionRelease",
+  }
+
   const delaySchema = z.coerce.number().min(0).max(HMK_MAX_MACRO_DELAY)
+
 </script>
 
 <div
@@ -80,7 +89,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   <div
     class="grid flex-1 auto-rows-[1fr] grid-cols-[max-content_1fr] items-center gap-2 p-2 pl-3 text-sm font-medium"
   >
-    <span>Action</span>
+    <span>{t("advkeys.macro.actionLabel")}</span>
     <ToggleGroupUI.Root
       bind:value={
         () => String(macroNode.action),
@@ -95,13 +104,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       type="single"
       variant="outline"
     >
-      {#each Object.entries(macroActions) as [actionName, action] (action)}
+      {#each Object.values(macroActions) as action (action)}
         <ToggleGroupUI.Item value={String(action)}>
-          {actionName}
+          {t(macroActionLabels[action] ?? "advkeys.macro.actionTap")}
         </ToggleGroupUI.Item>
       {/each}
     </ToggleGroupUI.Root>
-    <span>Delay</span>
+    <span>{t("advkeys.macro.delayLabel")}</span>
     <div class="flex items-center gap-2">
       <Input
         bind:value={
@@ -138,7 +147,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       variant="outline"
     >
       <TrashIcon />
-      <span class="sr-only">Delete</span>
+      <span class="sr-only">{t("advkeys.macro.delete")}</span>
     </Button>
   </div>
 </div>

@@ -17,17 +17,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import { Badge } from "$lib/components/ui/badge"
   import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
 </script>
 
 <KeyboardEditor.Menubar>
   <Tooltip.Root>
     <Tooltip.Trigger>
-      <Badge variant="destructive">Warning</Badge>
+      <Badge variant="destructive">{t("calibration.warningBadge")}</Badge>
     </Tooltip.Trigger>
     <Tooltip.Content class="max-w-sm text-wrap">
-      This tab requests data from the keyboard at a high frequency, which may
-      impact performance. Please close this tab or switch to another one when
-      performing other performance-sensitive tasks with your keyboard.
+      {t("calibration.warningTooltip")}
     </Tooltip.Content>
   </Tooltip.Root>
   <KeyboardEditor.LayoutDialog />

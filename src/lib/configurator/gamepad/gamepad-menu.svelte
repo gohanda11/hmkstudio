@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { Badge } from "$lib/components/ui/badge"
   import * as Tabs from "$lib/components/ui/tabs"
+  import { t } from "$lib/i18n.svelte"
   import { gamepadStateContext } from "../context.svelte"
   import { optionsQueryContext } from "../queries/options-query.svelte"
   import GamepadAnalogTab from "./gamepad-analog-tab.svelte"
@@ -33,11 +34,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 >
   <div class="flex items-center gap-4 p-4 pb-0">
     <Tabs.List>
-      <Tabs.Trigger value="setup">Setup</Tabs.Trigger>
-      <Tabs.Trigger value="analog">Analog</Tabs.Trigger>
+      <Tabs.Trigger value="setup">{t("gamepad.menu.setup")}</Tabs.Trigger>
+      <Tabs.Trigger value="analog">{t("gamepad.menu.analog")}</Tabs.Trigger>
     </Tabs.List>
     {#if options && !options.xInputEnabled}
-      <Badge variant="destructive">XInput interface is disabled</Badge>
+      <Badge variant="destructive">{t("gamepad.menu.xinputDisabled")}</Badge>
     {/if}
   </div>
   <Tabs.Content value="setup">

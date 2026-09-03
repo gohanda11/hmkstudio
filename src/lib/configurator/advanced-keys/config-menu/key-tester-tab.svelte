@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as KeyTester from "$lib/components/key-tester"
+  import { t } from "$lib/i18n.svelte"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
 
@@ -27,11 +28,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <KeyTester.Root>
   <div class={cn("flex flex-col gap-4", className)} {...props}>
     <div class="flex flex-col gap-2">
-      <div class="text-sm font-medium">Pressed Keys</div>
+      <div class="text-sm font-medium">{t("advkeys.keyTester.pressed")}</div>
       <KeyTester.Press class="h-24 max-w-72" />
     </div>
     <div class="flex flex-col gap-2">
-      <div class="text-sm font-medium">Released Keys</div>
+      <div class="text-sm font-medium">{t("advkeys.keyTester.released")}</div>
       <KeyTester.Release class="h-24 max-w-72" />
     </div>
   </div>

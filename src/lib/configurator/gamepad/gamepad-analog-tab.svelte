@@ -1,6 +1,7 @@
 <script lang="ts">
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import Switch from "$lib/components/switch.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
   import { gamepadQueryContext } from "../queries/gamepad-query.svelte"
@@ -18,11 +19,9 @@
 <div class={cn("grid grid-cols-[minmax(0,1fr)_28rem]", className)} {...props}>
   <FixedScrollArea class="flex flex-col gap-4 p-6 pt-2 pr-4">
     <div class="grid text-sm">
-      <span class="font-medium">Configure Analog Curve</span>
+      <span class="font-medium">{t("gamepad.analog.title")}</span>
       <span class="text-muted-foreground">
-        Modify how keyboard analog values translate to gamepad analog inputs.
-        You can manually adjust the analog curve or select a preset from below.
-        These settings affect both joysticks and triggers.
+        {t("gamepad.analog.description")}
       </span>
     </div>
     <AnalogCurve />
@@ -37,10 +36,10 @@
             data: { ...options, squareJoystick: v },
           })
       }
-      description="Remove the circular boundaries of the joystick for full range of motion."
+      description={t("gamepad.analog.squareDescription")}
       disabled={!options}
       id="square-joystick"
-      title="Square Joystick Mode"
+      title={t("gamepad.analog.squareTitle")}
     />
     <Switch
       bind:checked={
@@ -51,10 +50,10 @@
             data: { ...options, snappyJoystick: v },
           })
       }
-      description="Use the maximum analog value between opposite joystick axes instead of combining them for more responsive movement."
+      description={t("gamepad.analog.snappyDescription")}
       disabled={!options}
       id="snappy-joystick"
-      title="Snappy Joystick"
+      title={t("gamepad.analog.snappyTitle")}
     />
   </FixedScrollArea>
 </div>

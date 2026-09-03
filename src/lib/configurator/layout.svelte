@@ -18,6 +18,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import GithubLink from "$lib/components/github-link.svelte"
   import ThemeSwitcher from "$lib/components/theme-switcher.svelte"
   import * as Sidebar from "$lib/components/ui/sidebar"
+  import { t } from "$lib/i18n.svelte"
   import { Tabs } from "bits-ui"
   import type { ComponentProps } from "svelte"
   import { globalStateContext } from "./context.svelte"
@@ -44,7 +45,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <MonitorIcon class="size-24" />
     <div class="mx-auto max-w-2xl text-center">
       <p class="mt-4 text-lg font-medium text-wrap">
-        Your window is too small. Please resize your window, or zoom out.
+        {t("layout.windowTooSmall")}
       </p>
     </div>
   </div>

@@ -20,6 +20,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import Switch from "$lib/components/switch.svelte"
   import { Button } from "$lib/components/ui/button"
   import * as Select from "$lib/components/ui/select"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import {
     defaultPointingConfig,
@@ -31,6 +32,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { toast } from "svelte-sonner"
   import type { HTMLAttributes } from "svelte/elements"
   import { pointingQueryContext } from "../queries/pointing-query.svelte"
+  import PointingFigure from "./pointing-figure.svelte"
 
   const {
     class: className,
@@ -73,47 +75,41 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   )
 
   function reportLayerConflict() {
-    toast.error(
-      "The Auto Mouse Layer and the Scroll Layer cannot be the same layer. Choose a different Auto Mouse Target Layer or Scroll Layer first.",
-    )
+    toast.error(t("pointing.layerConflict"))
   }
 
   function scrollLayerLabel(layer: number) {
     return layer === HMK_POINTING_SCROLL_LAYER_OFF
-      ? "Disabled"
-      : `Layer ${layer}`
+      ? t("pointing.disabled")
+      : t("pointing.layer", { layer })
   }
 
   function snapAxisLabel(axis: number) {
-    return axis === 1 ? "X Axis" : axis === 2 ? "Y Axis" : "Disabled"
+    return axis === 1 ? t("pointing.xAxis") : axis === 2 ? t("pointing.yAxis") : t("pointing.disabled")
   }
 </script>
 
 <div
-  class={cn("mx-auto flex size-full max-w-3xl flex-col", className)}
+  class={cn("mx-auto flex size-full max-w-5xl flex-col", className)}
   {...props}
 >
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <div class="grid text-sm text-wrap">
-      <span class="font-semibold">Pointing Device</span>
+      <span class="font-semibold">{t("pointing.title")}</span>
       <span class="text-muted-foreground">
-        Configure the trackball pointing device: pointer speed and direction,
-        scrolling, and axis snapping.
+        {t("pointing.description")}
       </span>
     </div>
     {#if !pointingAvailable}
       <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
-        <span class="font-semibold">Firmware Update Required</span>
+        <span class="font-semibold">{t("pointing.firmwareRequired")}</span>
         <span class="text-muted-foreground">
-          Pointing device configuration requires firmware
-          {displayVersion(HMK_POINTING_CONFIG_MIN_VERSION)} or later. This keyboard
-          is running {displayVersion(version)}. Update the firmware from the
-          Settings tab to configure the pointing device.
+          {t("pointing.firmwareRequiredDescription", { min: displayVersion(HMK_POINTING_CONFIG_MIN_VERSION), version: displayVersion(version) })}
         </span>
       </div>
     {:else if queryError && !result}
       <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
-        <span class="font-semibold">Failed to Load Configuration</span>
+        <span class="font-semibold">{t("pointing.loadFailed")}</span>
         <span class="text-muted-foreground">{queryError.message}</span>
         <div>
           <Button
@@ -121,343 +117,387 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             size="sm"
             variant="outline"
           >
-            Retry
+            {t("pointing.retry")}
           </Button>
         </div>
       </div>
     {:else if result && !result.supported}
       <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
-        <span class="font-semibold">No Pointing Device</span>
+        <span class="font-semibold">{t("pointing.noDevice")}</span>
         <span class="text-muted-foreground">
-          This keyboard does not have a pointing device, so there is nothing to
-          configure.
+          {t("pointing.noDeviceDescription")}
         </span>
       </div>
     {:else}
-      <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-        <div class="grid text-sm">
-          <span class="font-semibold">Pointing Device</span>
-          <span class="text-muted-foreground">
-            Enable or disable the trackball and set its sensor resolution.
-          </span>
-        </div>
-        <Switch
-          bind:checked={
-            () => config?.enabled ?? defaultPointingConfig.enabled,
-            (v) =>
-              config && pointingQuery.set({ data: { ...config, enabled: v } })
-          }
-          description="Enable the pointing device. When disabled, the sensor is turned off and no cursor movement is reported."
-          disabled={!config}
-          id="pointing-enabled"
-          title="Enabled"
-        />
-        <CommitSlider
-          bind:committed={
-            () => config?.cpi ?? defaultPointingConfig.cpi,
-            (v) => config && pointingQuery.set({ data: { ...config, cpi: v } })
-          }
-          description="Sensor resolution in counts per inch (200-3200 in steps of 200). Higher values move the cursor further for the same physical movement."
-          disabled={!config}
-          display={(v) => String(v)}
-          max={3200}
-          min={200}
-          step={200}
-          title="CPI"
-        />
-      </div>
-      {#if layerConflict}
-        <div
-          class="grid gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm shadow-sm"
-        >
-          <span class="font-semibold text-destructive">Conflicting Layers</span>
-          <span class="text-muted-foreground">
-            The Auto Mouse Layer and the Scroll Layer are both set to the same
-            layer. Choose a different Auto Mouse Target Layer or Scroll Layer,
-            or disable one of them.
-          </span>
-        </div>
-      {/if}
-      <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-        <div class="grid text-sm">
-          <span class="font-semibold">Auto Mouse Layer</span>
-          <span class="text-muted-foreground">
-            Dedicate a keymap layer to mouse actions: it is activated while the
-            pointing device moves and deactivates when it stops.
-          </span>
-        </div>
-        <Switch
-          bind:checked={
-            () =>
-              config?.autoMouseLayerEnabled ??
-              defaultPointingConfig.autoMouseLayerEnabled,
-            (v) => {
-              if (!config) return
-              if (
-                v &&
-                scrollLayerActive &&
-                config.autoMouseLayer === scrollLayer
-              ) {
-                reportLayerConflict()
-                return
-              }
-              void pointingQuery.set({
-                data: { ...config, autoMouseLayerEnabled: v },
-              })
-            }
-          }
-          description="Automatically switch to the auto mouse layer while the pointing device is moving."
-          disabled={!config}
-          id="pointing-auto-mouse-layer"
-          title="Enable Auto Mouse Layer"
-        />
-        <div class="flex items-center justify-between gap-4">
-          <div class="grid text-sm text-wrap">
-            <span class="font-semibold">Target Layer</span>
-            <span class="text-muted-foreground">
-              The layer to activate while the pointing device is moving.
-            </span>
-          </div>
-          <LayerSelect
-            disabled={!config}
-            layer={autoMouseLayer}
-            onLayerChange={(layer) => {
-              if (!config) return
-              if (
-                config.autoMouseLayerEnabled &&
-                scrollLayerActive &&
-                layer === scrollLayer
-              ) {
-                reportLayerConflict()
-                return
-              }
-              void pointingQuery.set({
-                data: { ...config, autoMouseLayer: layer },
-              })
-            }}
-          />
-        </div>
-      </div>
-      {#if extendedAvailable}
+      <div class="grid items-start gap-4 xl:grid-cols-2">
         <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
           <div class="grid text-sm">
-            <span class="font-semibold">Orientation</span>
+            <span class="font-semibold">{t("pointing.deviceTitle")}</span>
             <span class="text-muted-foreground">
-              Compensate for a tilted sensor and flip the movement axes.
+              {t("pointing.deviceDescription")}
             </span>
           </div>
-          <CommitSlider
-            bind:committed={
-              () => config?.rotationDeg ?? defaultPointingConfig.rotationDeg,
-              (v) =>
-                config &&
-                pointingQuery.set({
-                  data: { ...config, rotationDeg: v },
-                })
-            }
-            description="Rotation of the sensor in degrees (0-359). Set this to the angle the sensor is mounted at so the reported movement is rotated back to the keyboard axes."
-            disabled={!config}
-            display={(v) => `${v}°`}
-            max={359}
-            min={0}
-            step={1}
-            title="Sensor Rotation"
-          />
           <Switch
             bind:checked={
-              () => config?.invertX ?? defaultPointingConfig.invertX,
+              () => config?.enabled ?? defaultPointingConfig.enabled,
               (v) =>
-                config && pointingQuery.set({ data: { ...config, invertX: v } })
+                config && pointingQuery.set({ data: { ...config, enabled: v } })
             }
-            description="Reverse the horizontal cursor direction."
+            description={t("pointing.enabledDescription")}
             disabled={!config}
-            id="pointing-invert-x"
-            title="Invert X Axis"
+            id="pointing-enabled"
+            title={t("pointing.enabled")}
           />
-          <Switch
-            bind:checked={
-              () => config?.invertY ?? defaultPointingConfig.invertY,
-              (v) =>
-                config && pointingQuery.set({ data: { ...config, invertY: v } })
-            }
-            description="Reverse the vertical cursor direction."
-            disabled={!config}
-            id="pointing-invert-y"
-            title="Invert Y Axis"
-          />
-          <Switch
-            bind:checked={
-              () => config?.swapAxes ?? defaultPointingConfig.swapAxes,
-              (v) =>
-                config &&
-                pointingQuery.set({ data: { ...config, swapAxes: v } })
-            }
-            description="Swap the horizontal and vertical movement axes."
-            disabled={!config}
-            id="pointing-swap-axes"
-            title="Swap Axes"
-          />
+          <div class="flex items-start gap-3">
+            <CommitSlider
+              bind:committed={
+                () => config?.cpi ?? defaultPointingConfig.cpi,
+                (v) => config && pointingQuery.set({ data: { ...config, cpi: v } })
+              }
+              class="min-w-0 flex-1"
+              description={t("pointing.cpiDescription")}
+              disabled={!config}
+              display={(v) => String(v)}
+              max={3200}
+              min={200}
+              step={200}
+              title="CPI"
+            />
+            <PointingFigure figure="cpi" />
+          </div>
         </div>
+        {#if layerConflict}
+          <div
+            class="grid gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm shadow-sm xl:col-span-2"
+          >
+            <span class="font-semibold text-destructive">{t("pointing.conflictTitle")}</span>
+            <span class="text-muted-foreground">
+              {t("pointing.conflictDescription")}
+            </span>
+          </div>
+        {/if}
         <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
           <div class="grid text-sm">
-            <span class="font-semibold">Scrolling</span>
+            <span class="font-semibold">{t("pointing.autoMouseTitle")}</span>
             <span class="text-muted-foreground">
-              Turn pointing movement into scroll wheel ticks on a dedicated
-              layer.
+              {t("pointing.autoMouseDescription")}
             </span>
           </div>
-          <Switch
-            bind:checked={
-              () => config?.invertScroll ?? defaultPointingConfig.invertScroll,
-              (v) =>
-                config &&
-                pointingQuery.set({
-                  data: { ...config, invertScroll: v },
-                })
-            }
-            description="Reverse the scroll wheel direction."
-            disabled={!config}
-            id="pointing-invert-scroll"
-            title="Invert Scroll"
-          />
-          <div class="grid gap-1 text-sm">
-            <div class="grid text-wrap">
-              <span class="font-semibold">Scroll Layer</span>
-              <span class="text-muted-foreground">
-                The layer on which pointing movement is sent as scroll wheel
-                ticks. Disabled turns scroll mode off entirely.
-              </span>
-            </div>
-            <Select.Root
-              bind:value={
-                () => String(scrollLayer),
+          <div class="flex items-start gap-3">
+            <Switch
+              bind:checked={
+                () =>
+                  config?.autoMouseLayerEnabled ??
+                  defaultPointingConfig.autoMouseLayerEnabled,
                 (v) => {
                   if (!config) return
-                  const next = Number(v)
                   if (
-                    config.autoMouseLayerEnabled &&
-                    next !== HMK_POINTING_SCROLL_LAYER_OFF &&
-                    next === config.autoMouseLayer
+                    v &&
+                    scrollLayerActive &&
+                    config.autoMouseLayer === scrollLayer
                   ) {
                     reportLayerConflict()
                     return
                   }
                   void pointingQuery.set({
-                    data: { ...config, scrollLayer: next },
+                    data: { ...config, autoMouseLayerEnabled: v },
                   })
                 }
               }
+              class="min-w-0 flex-1"
+              description={t("pointing.enableAutoMouseDescription")}
               disabled={!config}
-              type="single"
-            >
-              <Select.Trigger class="w-48" size="sm">
-                <span>
-                  {scrollLayerLabel(
-                    config?.scrollLayer ?? HMK_POINTING_SCROLL_LAYER_OFF,
-                  )}
-                </span>
-              </Select.Trigger>
-              <Select.Content class="w-[var(--bits-select-anchor-width)]">
-                <Select.Item value={String(HMK_POINTING_SCROLL_LAYER_OFF)}>
-                  Disabled
-                </Select.Item>
-                {#each { length: numLayers }, layer (layer)}
-                  <Select.Item value={String(layer)}>
-                    Layer {layer}
-                  </Select.Item>
-                {/each}
-              </Select.Content>
-            </Select.Root>
+              id="pointing-auto-mouse-layer"
+              title={t("pointing.enableAutoMouse")}
+            />
+            <PointingFigure figure="auto-mouse" on={autoMouseLayerEnabled} />
           </div>
-          <CommitSlider
-            bind:committed={
-              () =>
-                config?.scrollDivisor ?? defaultPointingConfig.scrollDivisor,
-              (v) =>
-                config &&
-                pointingQuery.set({
-                  data: { ...config, scrollDivisor: v },
-                })
-            }
-            description="Raw sensor counts per scroll wheel tick (1-255). Lower values scroll faster."
-            disabled={!config}
-            display={(v) => String(v)}
-            max={255}
-            min={1}
-            step={1}
-            title="Scroll Divisor"
-          />
-        </div>
-        <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
-          <div class="grid text-sm">
-            <span class="font-semibold">Axis Snapping</span>
-            <span class="text-muted-foreground">
-              Keep cursor movement on a straight line when moving mostly along
-              one axis.
-            </span>
-          </div>
-          <div class="grid gap-1 text-sm">
-            <div class="grid text-wrap">
-              <span class="font-semibold">Snap Axis</span>
+          <div class="flex items-center justify-between gap-4">
+            <div class="grid text-sm text-wrap">
+              <span class="font-semibold">{t("pointing.targetLayer")}</span>
               <span class="text-muted-foreground">
-                The axis cursor movement is snapped to while the other axis
-                stays within the snap threshold.
+                {t("pointing.targetLayerDescription")}
               </span>
             </div>
-            <Select.Root
-              bind:value={
-                () =>
-                  String(config?.snapAxis ?? defaultPointingConfig.snapAxis),
+            <LayerSelect
+              disabled={!config}
+              layer={autoMouseLayer}
+              onLayerChange={(layer) => {
+                if (!config) return
+                if (
+                  config.autoMouseLayerEnabled &&
+                  scrollLayerActive &&
+                  layer === scrollLayer
+                ) {
+                  reportLayerConflict()
+                  return
+                }
+                void pointingQuery.set({
+                  data: { ...config, autoMouseLayer: layer },
+                })
+              }}
+            />
+          </div>
+        </div>
+        {#if extendedAvailable}
+          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
+            <div class="grid text-sm">
+              <span class="font-semibold">{t("pointing.orientationTitle")}</span>
+              <span class="text-muted-foreground">
+                {t("pointing.orientationDescription")}
+              </span>
+            </div>
+            <div class="flex items-start gap-3">
+              <CommitSlider
+                bind:committed={
+                  () => config?.rotationDeg ?? defaultPointingConfig.rotationDeg,
+                  (v) =>
+                    config &&
+                    pointingQuery.set({
+                      data: { ...config, rotationDeg: v },
+                    })
+                }
+                class="min-w-0 flex-1"
+                description={t("pointing.rotationDescription")}
+                disabled={!config}
+                display={(v) => `${v}°`}
+                max={359}
+                min={0}
+                step={1}
+                title={t("pointing.sensorRotation")}
+              />
+              <PointingFigure
+                figure="rotation"
+                angle={config?.rotationDeg ??
+                  defaultPointingConfig.rotationDeg}
+              />
+            </div>
+            <div class="flex items-start gap-3">
+              <Switch
+                bind:checked={
+                  () => config?.invertX ?? defaultPointingConfig.invertX,
+                  (v) =>
+                    config && pointingQuery.set({ data: { ...config, invertX: v } })
+                }
+                class="min-w-0 flex-1"
+                description={t("pointing.invertXDescription")}
+                disabled={!config}
+                id="pointing-invert-x"
+                title={t("pointing.invertX")}
+              />
+              <PointingFigure
+                figure="invert-x"
+                on={config?.invertX ?? defaultPointingConfig.invertX}
+              />
+            </div>
+            <div class="flex items-start gap-3">
+              <Switch
+                bind:checked={
+                  () => config?.invertY ?? defaultPointingConfig.invertY,
+                  (v) =>
+                    config && pointingQuery.set({ data: { ...config, invertY: v } })
+                }
+                class="min-w-0 flex-1"
+                description={t("pointing.invertYDescription")}
+                disabled={!config}
+                id="pointing-invert-y"
+                title={t("pointing.invertY")}
+              />
+              <PointingFigure
+                figure="invert-y"
+                on={config?.invertY ?? defaultPointingConfig.invertY}
+              />
+            </div>
+            <div class="flex items-start gap-3">
+              <Switch
+                bind:checked={
+                  () => config?.swapAxes ?? defaultPointingConfig.swapAxes,
+                  (v) =>
+                    config &&
+                    pointingQuery.set({ data: { ...config, swapAxes: v } })
+                }
+                class="min-w-0 flex-1"
+                description={t("pointing.swapAxesDescription")}
+                disabled={!config}
+                id="pointing-swap-axes"
+                title={t("pointing.swapAxes")}
+              />
+              <PointingFigure
+                figure="swap"
+                on={config?.swapAxes ?? defaultPointingConfig.swapAxes}
+              />
+            </div>
+          </div>
+          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
+            <div class="grid text-sm">
+            <span class="font-semibold">{t("pointing.scrollTitle")}</span>
+              <span class="text-muted-foreground">
+              {t("pointing.scrollDescription")}
+              </span>
+            </div>
+            <Switch
+              bind:checked={
+                () => config?.invertScroll ?? defaultPointingConfig.invertScroll,
                 (v) =>
                   config &&
                   pointingQuery.set({
-                    data: { ...config, snapAxis: Number(v) },
+                    data: { ...config, invertScroll: v },
                   })
               }
+              description={t("pointing.invertScrollDescription")}
               disabled={!config}
-              type="single"
-            >
-              <Select.Trigger class="w-48" size="sm">
-                <span>{snapAxisLabel(config?.snapAxis ?? 0)}</span>
-              </Select.Trigger>
-              <Select.Content class="w-[var(--bits-select-anchor-width)]">
-                <Select.Item value="0">Disabled</Select.Item>
-                <Select.Item value="1">X Axis</Select.Item>
-                <Select.Item value="2">Y Axis</Select.Item>
-              </Select.Content>
-            </Select.Root>
+              id="pointing-invert-scroll"
+              title={t("pointing.invertScroll")}
+            />
+            <div class="flex items-start gap-3">
+              <div class="grid min-w-0 flex-1 gap-1 text-sm">
+                <div class="grid text-wrap">
+                  <span class="font-semibold">{t("pointing.scrollLayer")}</span>
+                  <span class="text-muted-foreground">
+                    {t("pointing.scrollLayerDescription")}
+                  </span>
+                </div>
+                <Select.Root
+                  bind:value={
+                    () => String(scrollLayer),
+                    (v) => {
+                      if (!config) return
+                      const next = Number(v)
+                      if (
+                        config.autoMouseLayerEnabled &&
+                        next !== HMK_POINTING_SCROLL_LAYER_OFF &&
+                        next === config.autoMouseLayer
+                      ) {
+                        reportLayerConflict()
+                        return
+                      }
+                      void pointingQuery.set({
+                        data: { ...config, scrollLayer: next },
+                      })
+                    }
+                  }
+                  disabled={!config}
+                  type="single"
+                >
+                  <Select.Trigger class="w-48" size="sm">
+                    <span>
+                      {scrollLayerLabel(
+                        config?.scrollLayer ?? HMK_POINTING_SCROLL_LAYER_OFF,
+                      )}
+                    </span>
+                  </Select.Trigger>
+                  <Select.Content class="w-[var(--bits-select-anchor-width)]">
+                    <Select.Item value={String(HMK_POINTING_SCROLL_LAYER_OFF)}>
+                      {t("pointing.disabled")}
+                    </Select.Item>
+                    {#each { length: numLayers }, layer (layer)}
+                      <Select.Item value={String(layer)}>
+                        {t("pointing.layer", { layer })}
+                      </Select.Item>
+                    {/each}
+                  </Select.Content>
+                </Select.Root>
+              </div>
+              <PointingFigure
+                class="self-center"
+                figure="scroll"
+                on={config?.invertScroll ??
+                  defaultPointingConfig.invertScroll}
+              />
+            </div>
+            <CommitSlider
+              bind:committed={
+                () =>
+                  config?.scrollDivisor ?? defaultPointingConfig.scrollDivisor,
+                (v) =>
+                  config &&
+                  pointingQuery.set({
+                    data: { ...config, scrollDivisor: v },
+                  })
+              }
+              description={t("pointing.scrollDivisorDescription")}
+              disabled={!config}
+              display={(v) => String(v)}
+              max={255}
+              min={1}
+              step={1}
+              title={t("pointing.scrollDivisor")}
+            />
           </div>
-          <CommitSlider
-            bind:committed={
-              () =>
-                config?.snapThreshold ?? defaultPointingConfig.snapThreshold,
-              (v) =>
-                config &&
-                pointingQuery.set({
-                  data: { ...config, snapThreshold: v },
-                })
-            }
-            description="Movement of the other axis below this percent of the dominant axis is ignored."
-            disabled={!config || config.snapAxis === 0}
-            display={(v) => `${v}%`}
-            max={100}
-            min={0}
-            step={1}
-            title="Snap Threshold"
-          />
-        </div>
-      {:else}
-        <div class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm">
-          <span class="font-semibold">Extended Settings Unavailable</span>
-          <span class="text-muted-foreground">
-            Firmware {displayVersion(version)} supports only the basic pointing settings
-            above. Sensor rotation, axis orientation (invert/swap axes), scrolling
-            behavior and axis snapping require firmware
-            {displayVersion(HMK_POINTING_CONFIG_V2_VERSION)} or later. Update the
-            firmware from the Settings tab to configure these settings.
-          </span>
-        </div>
-      {/if}
+          <div class="grid gap-4 rounded-lg border bg-card p-4 shadow-sm">
+            <div class="grid text-sm">
+              <span class="font-semibold">{t("pointing.axisSnapping")}</span>
+              <span class="text-muted-foreground">
+                {t("pointing.axisSnappingDescription")}
+              </span>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="grid min-w-0 flex-1 gap-1 text-sm">
+                <div class="grid text-wrap">
+                  <span class="font-semibold">{t("pointing.snapAxis")}</span>
+                  <span class="text-muted-foreground">
+                    {t("pointing.snapAxisDescription")}
+                  </span>
+                </div>
+                <Select.Root
+                  bind:value={
+                    () =>
+                      String(config?.snapAxis ?? defaultPointingConfig.snapAxis),
+                    (v) =>
+                      config &&
+                      pointingQuery.set({
+                        data: { ...config, snapAxis: Number(v) },
+                      })
+                  }
+                  disabled={!config}
+                  type="single"
+                >
+                  <Select.Trigger class="w-48" size="sm">
+                    <span>{snapAxisLabel(config?.snapAxis ?? 0)}</span>
+                  </Select.Trigger>
+                  <Select.Content class="w-[var(--bits-select-anchor-width)]">
+                    <Select.Item value="0">{t("pointing.disabled")}</Select.Item>
+                    <Select.Item value="1">{t("pointing.xAxis")}</Select.Item>
+                    <Select.Item value="2">{t("pointing.yAxis")}</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              </div>
+              <PointingFigure
+                class="self-center"
+                figure="snap"
+                axis={config?.snapAxis ?? defaultPointingConfig.snapAxis}
+              />
+            </div>
+            <CommitSlider
+              bind:committed={
+                () =>
+                  config?.snapThreshold ?? defaultPointingConfig.snapThreshold,
+                (v) =>
+                  config &&
+                  pointingQuery.set({
+                    data: { ...config, snapThreshold: v },
+                  })
+              }
+              description={t("pointing.snapThresholdDescription")}
+              disabled={!config || config.snapAxis === 0}
+              display={(v) => `${v}%`}
+              max={100}
+              min={0}
+              step={1}
+              title={t("pointing.snapThreshold")}
+            />
+          </div>
+        {:else}
+          <div
+            class="grid gap-2 rounded-lg border bg-card p-4 text-sm shadow-sm xl:col-span-2"
+          >
+            <span class="font-semibold">{t("pointing.extendedUnavailable")}</span>
+            <span class="text-muted-foreground">
+              {t("pointing.extendedUnavailableDescription", { version: displayVersion(version), min: displayVersion(HMK_POINTING_CONFIG_V2_VERSION) })}
+            </span>
+          </div>
+        {/if}
+      </div>
     {/if}
   </FixedScrollArea>
 </div>

@@ -19,6 +19,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import * as Empty from "$lib/components/ui/empty"
   import * as Tabs from "$lib/components/ui/tabs"
+  import { t } from "$lib/i18n.svelte"
   import {
     findEmptyMacroNode,
     getMacroSequence,
@@ -55,10 +56,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <div class="grid text-sm">
-    <span class="font-medium">Configure Macro Actions</span>
+    <span class="font-medium">{t("advkeys.macro.configureTitle")}</span>
     <span class="text-muted-foreground">
-      Create a sequence of actions to be triggered when the key is pressed.
-      Assign bindings for each action using the menu on the right.
+      {t("advkeys.macro.configureDescription")}
     </span>
   </div>
   <div class="flex flex-col gap-4">
@@ -94,13 +94,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         size="sm"
         variant="outline"
       >
-        <PlusIcon /> Add
+        <PlusIcon /> {t("advkeys.macro.add")}
       </Button>
     </div>
     {#if macroSequence.length === 0}
       <Empty.Root class="border border-dashed">
         <Empty.Header>
-          <Empty.Description>No macro actions...</Empty.Description>
+          <Empty.Description>{t("advkeys.macro.empty")}</Empty.Description>
         </Empty.Header>
       </Empty.Root>
     {:else}
@@ -125,9 +125,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <Tabs.Root value="bindings">
     <Tabs.List>
-      <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
-      <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">Key Tester</Tabs.Trigger>
+      <Tabs.Trigger value="bindings">{t("advkeys.tabs.bindings")}</Tabs.Trigger>
+      <Tabs.Trigger value="advanced">{t("advkeys.tabs.advanced")}</Tabs.Trigger>
+      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="bindings">

@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     isWebUSBSupported,
     resolveFirmwareEntry,
   } from "$lib/dfu/libhmk-dfu"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { displayVersion } from "$lib/utils"
   import { firmwareUpdate } from "./firmware-update.svelte"
@@ -65,47 +66,46 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <div class="flex flex-col gap-2">
   <div class="grid text-sm text-wrap">
-    <span class="font-semibold">Firmware</span>
+    <span class="font-semibold">{t("firmware.title")}</span>
     <span class="text-muted-foreground">
-      Current version: {displayVersion(version)}
+      {t("firmware.current", { version: displayVersion(version) })}
     </span>
   </div>
   {#if checking}
-    <span class="text-sm text-muted-foreground">Checking for updates...</span>
+    <span class="text-sm text-muted-foreground">{t("firmware.checking")}</span>
   {:else if checked && supported && latestVersion !== null}
     <div class="flex items-center gap-2 text-sm">
       <span class="text-muted-foreground">
-        Latest version: {displayVersion(latestVersion)}
+        {t("firmware.latest", { version: displayVersion(latestVersion) })}
       </span>
       {#if updateAvailable}
-        <Badge variant="destructive">New version available</Badge>
+        <Badge variant="destructive">{t("firmware.newAvailable")}</Badge>
       {/if}
     </div>
     {#if !updateAvailable}
       <span class="text-sm text-muted-foreground">
-        Your firmware is up to date.
+        {t("firmware.upToDate")}
       </span>
     {/if}
   {:else if checked && !supported}
-    <span class="text-sm text-muted-foreground">
-      No firmware build is available for {metadata.name}.
+    <span class="text-muted-foreground">
+      {t("firmware.noBuild", { name: metadata.name })}
     </span>
   {:else if checked}
     <div class="flex items-center gap-2">
-      <span class="text-sm text-destructive">Failed to check for updates.</span>
+      <span class="text-sm text-destructive">{t("firmware.checkFailed")}</span>
       <Button
         onclick={() => void checkForUpdates()}
         size="sm"
         variant="outline"
       >
-        Retry
+        {t("firmware.retry")}
       </Button>
     </div>
   {/if}
   {#if !webUsb}
     <span class="text-sm text-muted-foreground">
-      Firmware updates require WebUSB. Please use a Chromium-based browser
-      (Chrome, Edge, etc.).
+      {t("firmware.webUsb")}
     </span>
   {/if}
   <div>
@@ -118,7 +118,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       size="sm"
       variant="outline"
     >
-      Update Firmware
+      {t("firmware.update")}
     </Button>
   </div>
 </div>

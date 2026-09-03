@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import FixedScrollArea from "$lib/components/fixed-scroll-area.svelte"
   import * as Tabs from "$lib/components/ui/tabs"
+  import { t } from "$lib/i18n.svelte"
   import KeyTesterTab from "../key-tester-tab.svelte"
   import TickRateSlider from "../tick-rate-slider.svelte"
   import DynamicKeystrokeActions from "./actions/actions.svelte"
@@ -31,11 +32,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <div class="grid text-sm">
-    <span class="font-medium">Configure DKS Bindings</span>
+    <span class="font-medium">{t("advkeys.dks.configureTitle")}</span>
     <span class="text-muted-foreground">
-      Assign bindings using the menu on the right. For a tap action, click the
-      plus icon once. For a hold action, click the plus icon and drag it to the
-      desired key position based on your preferred behavior.
+      {t("advkeys.dks.configureDescription")}
     </span>
   </div>
   <DynamicKeystrokeActions />
@@ -43,10 +42,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <Tabs.Root value="bindings">
     <Tabs.List>
-      <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
-      <Tabs.Trigger value="performance">Performance</Tabs.Trigger>
-      <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">Key Tester</Tabs.Trigger>
+      <Tabs.Trigger value="bindings">{t("advkeys.tabs.bindings")}</Tabs.Trigger>
+      <Tabs.Trigger value="performance">{t("advkeys.tabs.performance")}</Tabs.Trigger>
+      <Tabs.Trigger value="advanced">{t("advkeys.tabs.advanced")}</Tabs.Trigger>
+      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="bindings">

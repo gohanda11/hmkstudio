@@ -16,6 +16,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { Button } from "$lib/components/ui/button"
   import * as Dialog from "$lib/components/ui/dialog"
+  import { t } from "$lib/i18n.svelte"
+  import { displayUInt8 } from "$lib/integer"
   import {
     defaultAdvancedKey,
     type HMK_AdvancedKey,
@@ -40,22 +42,25 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   const advancedKeysQuery = advancedKeysQueryContext.get()
 
-  const { title } = $derived(getAdvancedKeyMetadata(advancedKey.action.type))
+  const { titleKey } = $derived(getAdvancedKeyMetadata(advancedKey.action.type))
+  const title = $derived(
+    t(titleKey, { value: displayUInt8(advancedKey.action.type) }),
+  )
 </script>
 
 <Dialog.Root>
   <Dialog.Trigger {...props}>{@render children?.()}</Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>Remove this {title} binding?</Dialog.Title>
+      <Dialog.Title>{t("advkeys.deleteDialog.title", { title })}</Dialog.Title>
       <Dialog.Description>
-        Are you sure you want to remove this binding?
+        {t("advkeys.deleteDialog.description")}
       </Dialog.Description>
     </Dialog.Header>
     <Dialog.Footer>
       <Dialog.Close>
         {#snippet child({ props })}
-          <Button size="sm" variant="outline" {...props}>Cancel</Button>
+          <Button size="sm" variant="outline" {...props}>{t("advkeys.deleteDialog.cancel")}</Button>
         {/snippet}
       </Dialog.Close>
       <Dialog.Close
@@ -70,7 +75,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         }}
       >
         {#snippet child({ props })}
-          <Button size="sm" variant="destructive" {...props}>Remove</Button>
+          <Button size="sm" variant="destructive" {...props}>{t("advkeys.deleteDialog.remove")}</Button>
         {/snippet}
       </Dialog.Close>
     </Dialog.Footer>

@@ -17,10 +17,31 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import { analogCurvePresets } from "$lib/configurator/lib/gamepad"
   import { gamepadQueryContext } from "$lib/configurator/queries/gamepad-query.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { HMK_MAX_DISTANCE, HMK_MIN_DISTANCE } from "$lib/libhmk"
 
   const gamepadQuery = gamepadQueryContext.get()
   const { current: options } = $derived(gamepadQuery.gamepadOptions)
+
+  function presetLabel(name: string): string {
+    switch (name) {
+      case "Aggressive":
+        return t("gamepad.analogCurve.presetAggressive")
+      case "Slow":
+        return t("gamepad.analogCurve.presetSlow")
+      case "Smooth":
+        return t("gamepad.analogCurve.presetSmooth")
+      case "Step":
+        return t("gamepad.analogCurve.presetStep")
+      case "Instant":
+        return t("gamepad.analogCurve.presetInstant")
+      case "Digital":
+        return t("gamepad.analogCurve.presetDigital")
+      case "Linear":
+      default:
+        return t("gamepad.analogCurve.presetLinear")
+    }
+  }
 </script>
 
 <div class="flex flex-wrap gap-2">
@@ -53,7 +74,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           vector-effect="non-scaling-stroke"
         />
       </svg>
-      {name}
+      {presetLabel(name)}
     </Button>
   {/each}
 </div>

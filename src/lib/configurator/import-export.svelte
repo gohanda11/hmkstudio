@@ -16,6 +16,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { DownloadIcon, UploadIcon } from "@lucide/svelte"
   import { Button } from "$lib/components/ui/button"
+  import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { toast } from "svelte-sonner"
   import z from "zod"
@@ -51,19 +53,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       try {
         const json = JSON.parse(await file.text())
         await keyboardConfig.setConfig(profile, json)
-        toast.success(`Successfully imported Profile ${profile}.`)
+        toast.success(t("toast.profileImported", { profile }))
       } catch (err) {
         if (err instanceof SyntaxError) {
-          toast.error(
-            `Failed to import Profile ${profile}: The selected file is not a valid JSON.`,
-          )
+          toast.error(t("toast.profileImportInvalidJson", { profile }))
         } else if (err instanceof z.ZodError) {
           toast.error(
-            `Failed to import Profile ${profile}: ${formatZodError(err)}`,
+            t("toast.profileImportFailed", { profile, error: formatZodError(err) }),
           )
           console.error(z.treeifyError(err))
         } else {
-          toast.error(`Failed to import Profile ${profile}: ${String(err)}`)
+          toast.error(t("toast.profileImportFailed", { profile, error: String(err) }))
         }
       }
     }
@@ -80,28 +80,42 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       anchorRef.href = URL.createObjectURL(blob)
       anchorRef.download = `${name}-profile-${profile}.json`
       anchorRef.click()
-      toast.success(`Successfully exported Profile ${profile}.`)
+      toast.success(t("toast.profileExported", { profile }))
     } catch (err) {
       if (err instanceof z.ZodError) {
         toast.error(
-          `Failed to export Profile ${profile}: ${formatZodError(err)}`,
+          t("toast.profileExportFailed", { profile, error: formatZodError(err) }),
         )
         console.error(z.treeifyError(err))
       } else {
-        toast.error(`Failed to export Profile ${profile}: ${String(err)}`)
+        toast.error(t("toast.profileExportFailed", { profile, error: String(err) }))
       }
     }
   }
 </script>
 
-<Button onclick={importProfile} size="icon" variant="outline">
-  <UploadIcon />
-  <span class="sr-only">Import Profile</span>
-</Button>
-<Button onclick={exportProfile} size="icon" variant="outline">
-  <DownloadIcon />
-  <span class="sr-only">Export Profile</span>
-</Button>
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    {#snippet child({ props })}
+      <Button {...props} onclick={importProfile} variant="outline">
+        <UploadIcon />
+        {t("header.import")}
+      </Button>
+    {/snippet}
+  </Tooltip.Trigger>
+  <Tooltip.Content>{t("header.importTooltip")}</Tooltip.Content>
+</Tooltip.Root>
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    {#snippet child({ props })}
+      <Button {...props} onclick={exportProfile} variant="outline">
+        <DownloadIcon />
+        {t("header.export")}
+      </Button>
+    {/snippet}
+  </Tooltip.Trigger>
+  <Tooltip.Content>{t("header.exportTooltip")}</Tooltip.Content>
+</Tooltip.Root>
 <input
   bind:this={fileRef}
   accept="application/json"

@@ -19,6 +19,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyTester from "$lib/components/key-tester"
   import Switch from "$lib/components/switch.svelte"
   import { Button } from "$lib/components/ui/button"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { isFeatureAvailable } from "$lib/utils"
   import { toast } from "svelte-sonner"
@@ -54,8 +55,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         }
         disabled={demo || !options}
         id="save-bottom-out-threshold"
-        title="Save Bottom Out Threshold"
-        description="Periodically save the per-key bottom-out threshold values after some inactivity to be restored on next boot. The saved values will only be cleared on recalibration. This setting applies globally across all profiles."
+        title={t("calibration.saveBottomOutTitle")}
+        description={t("calibration.saveBottomOutDescription")}
       />
     {/if}
     <CommitSlider
@@ -70,12 +71,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             },
           })
       }
-      description="The initial noise floor represents the estimated analog value when a key is at rest. It should be set slightly higher than the actual analog readings of all keys in their resting position to prevent deadzones. Recalibrate the keyboard to apply changes. This setting applies globally across all profiles."
+      description={t("calibration.initialNoiseFloorDescription")}
       disabled={demo || !calibration}
       min={0}
       max={(1 << adcResolution) - 1}
       step={10}
-      title="Initial Noise Floor"
+      title={t("calibration.initialNoiseFloorTitle")}
     />
     <CommitSlider
       bind:committed={
@@ -90,12 +91,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             },
           })
       }
-      description="The initial bottom out threshold represents the estimated change in analog value when a key is fully pressed. It should be set slightly lower than the actual change in analog readings when keys are fully pressed to prevent deadzones. Recalibrate the keyboard to apply changes. This setting applies globally across all profiles."
+      description={t("calibration.initialBottomOutDescription")}
       disabled={demo || !calibration}
       min={0}
       max={(1 << adcResolution) - 1}
       step={10}
-      title="Initial Bottom Out Threshold"
+      title={t("calibration.initialBottomOutTitle")}
     />
     <div class="flex gap-2">
       <Button
@@ -104,18 +105,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         size="sm"
         variant="destructive"
       >
-        Recalibrate
+        {t("calibration.recalibrate")}
       </Button>
       {#if isFeatureAvailable("saveCalibrationThreshold", version)}
         <Button
           disabled={demo}
           onclick={async () => {
             await keyboard.saveCalibrationThreshold()
-            toast.success("Successfully saved calibration threshold.")
+            toast.success(t("toast.calibrationSaved"))
           }}
           size="sm"
         >
-          Save Current Threshold
+          {t("calibration.saveCurrentThreshold")}
         </Button>
       {/if}
     </div>
@@ -123,11 +124,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <KeyTester.Root>
       <div class="flex flex-col gap-2">
-        <div class="text-sm font-medium">Pressed Keys</div>
+        <div class="text-sm font-medium">{t("calibration.pressedKeys")}</div>
         <KeyTester.Press class="h-32 w-full" />
       </div>
       <div class="flex flex-col gap-2">
-        <div class="text-sm font-medium">Released Keys</div>
+        <div class="text-sm font-medium">{t("calibration.releasedKeys")}</div>
         <KeyTester.Release class="h-32 w-full" />
       </div>
     </KeyTester.Root>

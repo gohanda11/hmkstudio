@@ -19,6 +19,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Badge } from "$lib/components/ui/badge"
   import { Button } from "$lib/components/ui/button"
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
+  import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
@@ -41,12 +42,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 >
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <div class="grid shrink-0">
-      <span class="font-semibold">Configure Profiles</span>
+      <span class="font-semibold">{t("profiles.title")}</span>
       <span class="text-sm text-muted-foreground">
-        Manage your keyboard profiles here. Use the menu on each profile to
-        duplicate it from another profile or restore its default bindings.
-        Switch, import, and export the active profile using the toolbar at the
-        top.
+        {t("profiles.description")}
       </span>
     </div>
     <div class="grid grid-cols-2 gap-4">
@@ -55,18 +53,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           class="flex items-center gap-4 rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
         >
           <div class="grid flex-1 truncate font-semibold">
-            Profile {profile}
+            {t("profiles.profile", { profile })}
           </div>
           <div class="flex shrink-0 items-center gap-2">
             {#if profile === currentProfile}
-              <Badge>Active</Badge>
+              <Badge>{t("profiles.active")}</Badge>
             {/if}
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 {#snippet child({ props })}
                   <Button size="icon" variant="ghost" {...props}>
                     <EllipsisVerticalIcon />
-                    <span class="sr-only">Open Menu</span>
+                    <span class="sr-only">{t("profiles.openMenu")}</span>
                   </Button>
                 {/snippet}
               </DropdownMenu.Trigger>
@@ -74,7 +72,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                 <DropdownMenu.Group>
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger>
-                      Duplicate From
+                      {t("profiles.duplicateFrom")}
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.SubContent>
                       {#each { length: numProfiles }, srcProfile (srcProfile)}
@@ -86,7 +84,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                                 srcProfile,
                               })}
                           >
-                            Profile {srcProfile}
+                            {t("profiles.profile", { profile: srcProfile })}
                           </DropdownMenu.Item>
                         {/if}
                       {/each}
@@ -95,7 +93,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                   <DropdownMenu.Item
                     onSelect={() => profileQuery.resetProfile({ profile })}
                   >
-                    Restore Default
+                    {t("profiles.restoreDefault")}
                   </DropdownMenu.Item>
                 </DropdownMenu.Group>
               </DropdownMenu.Content>

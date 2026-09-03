@@ -17,6 +17,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { InfoIcon } from "@lucide/svelte"
   import CommitSlider from "$lib/components/commit-slider.svelte"
   import { tickRateQueryContext } from "$lib/configurator/queries/tick-rate-query.svelte"
+  import { t } from "$lib/i18n.svelte"
   import { DEFAULT_TICK_RATE } from "$lib/libhmk/advanced-keys"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
@@ -35,18 +36,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     bind:committed={
       () => tickRate ?? DEFAULT_TICK_RATE, (v) => tickRateQuery.set({ data: v })
     }
-    description="The tick rate determines the delay between two consecutive actions performed by Advanced Keys. For example, a tap action performs a key press and release consecutively. A lower tick rate means less delay, but may result in missed inputs if the game or application cannot keep up with processing the inputs."
+    description={t("advkeys.tickRate.description")}
     disabled={tickRate === undefined}
     min={0}
     max={255}
     step={5}
-    title="Tick Rate"
+    title={t("advkeys.tickRate.title")}
   />
   <div class="flex items-center gap-2 text-muted-foreground">
     <InfoIcon class="size-4" />
     <p class="text-sm text-wrap">
-      The tick rate is per profile and only affects Dynamic Keystroke, Tap-Hold,
-      and Macro keys.
+      {t("advkeys.tickRate.note")}
     </p>
   </div>
 </div>

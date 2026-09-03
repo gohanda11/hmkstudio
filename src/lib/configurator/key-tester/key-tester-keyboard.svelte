@@ -22,18 +22,43 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Keycode } from "$lib/libhmk/keycodes"
   import { advancedKeysQueryContext } from "../queries/advanced-keys-query.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
+  import { keyTesterLatchedContext } from "./latched-state.svelte"
+  import { untrack } from "svelte"
 
   const { current: keymap } = $derived(keymapQueryContext.get().keymap)
   const { current: advancedKeys } = $derived(
     advancedKeysQueryContext.get().advancedKeys,
   )
   const { keyEvents } = $derived(keyTesterStateContext.get())
+  const latched = keyTesterLatchedContext.get()
 
   const pressedWebCodes = $derived(
     new Set(
       keyEvents.filter(({ pressed }) => pressed).map(({ webCode }) => webCode),
     ),
   )
+
+  // Latch every observed web code so released keys stay highlighted, like a
+  // QMK matrix test. Reset clears both the latched set and the tester state's
+  // key events, so draining events cannot re-latch keys after a reset.
+  $effect(() => {
+    const webCodes = keyEvents.map(({ webCode }) => webCode)
+    untrack(() => {
+      for (const webCode of webCodes) {
+        latched.codes.add(webCode)
+      }
+    })
+  })
+
+  function testerState(webCodes: string[]): "active" | "latched" | "off" {
+    if (webCodes.some((webCode) => pressedWebCodes.has(webCode))) {
+      return "active"
+    }
+    if (webCodes.some((webCode) => latched.codes.has(webCode))) {
+      return "latched"
+    }
+    return "off"
+  }
 
   /**
    * Resolves the keycode a key reports on the default layer. Keys configured
@@ -60,10 +85,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         testerKeycode(key),
       )}
       <KeyButton.Root
-        class="data-[state=on]:border-primary data-[state=on]:bg-primary/20 data-[state=on]:text-primary"
-        data-state={webCodes.some((webCode) => pressedWebCodes.has(webCode))
-          ? "on"
-          : "off"}
+        class="data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=latched]:border-primary data-[state=latched]:bg-accent data-[state=latched]:text-accent-foreground"
+        data-state={testerState(webCodes)}
         tabindex={-1}
       >
         {#each display ?? [name] as Variant, i (i)}

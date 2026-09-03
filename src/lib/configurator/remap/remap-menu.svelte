@@ -19,6 +19,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { displayLayoutContext, remapStateContext } from "../context.svelte"
   import { advancedKeysQueryContext } from "../queries/advanced-keys-query.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
+  import { macrosQueryContext } from "../queries/macros-query.svelte"
   import { assignKeycode } from "./modtap"
 
   const allKeys = $derived(
@@ -31,17 +32,26 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const keymapQuery = keymapQueryContext.get()
   const advancedKeysQuery = advancedKeysQueryContext.get()
   const { current: advancedKeys } = $derived(advancedKeysQuery.advancedKeys)
+  const macrosQuery = macrosQueryContext.get()
+  const { current: macros } = $derived(macrosQuery.macros)
 </script>
 
 <FixedScrollArea class="p-4">
   <KeycodeAccordion
     onKeycodeSelected={(keycode) => {
       if (key === null) return
-      assignKeycode(keymapQuery, advancedKeysQuery, advancedKeys, {
-        layer,
-        key,
-        keycode,
-      })
+      void assignKeycode(
+        keymapQuery,
+        advancedKeysQuery,
+        macrosQuery,
+        advancedKeys,
+        macros,
+        {
+          layer,
+          key,
+          keycode,
+        },
+      )
       const index = allKeys.indexOf(key)
       remapState.key =
         index !== -1 && index + 1 < allKeys.length ? allKeys[index + 1] : null

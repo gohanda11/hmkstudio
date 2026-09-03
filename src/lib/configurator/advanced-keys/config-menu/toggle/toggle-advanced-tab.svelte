@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import CommitSlider from "$lib/components/commit-slider.svelte"
+  import { t } from "$lib/i18n.svelte"
   import {
     MAX_TAPPING_TERM,
     MIN_TAPPING_TERM,
@@ -39,11 +40,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       () => action.tappingTerm,
       (v) => configMenuState.updateAction({ ...action, tappingTerm: v })
     }
-    description="Set the duration the key must be held to perform the normal key behavior."
+    description={t("advkeys.toggle.tappingTermDescription")}
     display={(v) => `${v}ms`}
     min={MIN_TAPPING_TERM}
     max={MAX_TAPPING_TERM}
     step={10}
-    title="Tapping Term"
+    title={t("advkeys.toggle.tappingTermTitle")}
   />
 </div>

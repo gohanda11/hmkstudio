@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { displayDistance } from "$lib/distance"
+  import { t } from "$lib/i18n.svelte"
   import { HMK_MAX_DISTANCE, HMK_MIN_DISTANCE } from "$lib/libhmk"
 </script>
 
@@ -28,7 +29,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   class="flex -rotate-90 flex-col items-center justify-center text-sm whitespace-nowrap text-muted-foreground"
   style:grid-area="analog-label"
 >
-  Analog Value
+  {t("gamepad.analogCurve.analogValueLabel")}
 </div>
 <div
   class="flex flex-col items-center justify-end text-sm text-muted-foreground"
@@ -46,7 +47,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   class="flex items-center justify-center text-sm text-muted-foreground"
   style:grid-area="switch-label"
 >
-  Key Press Distance
+  {t("gamepad.analogCurve.distanceLabel")}
 </div>
 <div
   class="flex items-center justify-end text-sm text-muted-foreground"

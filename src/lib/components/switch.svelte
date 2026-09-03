@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { InfoIcon } from "@lucide/svelte"
+  import { t } from "$lib/i18n.svelte"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { HTMLAttributes } from "svelte/elements"
   import { Label } from "./ui/label"
@@ -52,7 +53,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Tooltip.Root>
         <Tooltip.Trigger>
           <InfoIcon class="size-4" />
-          <span class="sr-only">Info</span>
+          <span class="sr-only">{t("common.info")}</span>
         </Tooltip.Trigger>
         <Tooltip.Content class="max-w-56 text-wrap">
           {tooltip}
