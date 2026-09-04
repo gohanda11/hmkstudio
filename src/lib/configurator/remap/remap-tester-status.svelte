@@ -17,19 +17,24 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Badge } from "$lib/components/ui/badge"
   import { t } from "$lib/i18n.svelte"
   import { getKeycodeLayout } from "$lib/keycodes/layout.svelte"
-  import { getTesterDisplay } from "$lib/keycodes/tester-display"
+  import { getTesterDisplayWithActual } from "$lib/keycodes/tester-display"
   import { remapTesterContext } from "./tester-state.svelte"
 
   const tester = remapTesterContext.get()
 
+  function testerLabel(webCode: string): string {
+    return getTesterDisplayWithActual(
+      webCode,
+      tester.shiftAtPress.get(webCode) ?? false,
+      getKeycodeLayout(),
+      tester.keyAtPress.get(webCode),
+    )
+  }
+
   const pressedDisplays = $derived(
     [...tester.pressed].map((webCode) => ({
       webCode,
-      label: getTesterDisplay(
-        webCode,
-        tester.shiftAtPress.get(webCode) ?? false,
-        getKeycodeLayout(),
-      ),
+      label: testerLabel(webCode),
     })),
   )
   const latchedDisplays = $derived(
@@ -37,11 +42,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       .filter((webCode) => !tester.pressed.has(webCode))
       .map((webCode) => ({
         webCode,
-        label: getTesterDisplay(
-          webCode,
-          tester.shiftAtPress.get(webCode) ?? false,
-          getKeycodeLayout(),
-        ),
+        label: testerLabel(webCode),
       })),
   )
 </script>

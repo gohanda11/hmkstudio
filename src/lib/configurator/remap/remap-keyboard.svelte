@@ -84,6 +84,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         tester.pressed.add(e.code)
         tester.latched.add(e.code)
         tester.shiftAtPress.set(e.code, e.shiftKey || e.code.startsWith("Shift"))
+        tester.keyAtPress.set(e.code, e.key)
       }
     },
   )

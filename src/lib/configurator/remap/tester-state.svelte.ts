@@ -28,11 +28,14 @@ export class RemapTesterState {
   latched = new SvelteSet<string>()
   /** Whether Shift was held when each web code was pressed. */
   shiftAtPress = new Map<string, boolean>()
+  /** OS-reported `KeyboardEvent.key` at press time, per web code. */
+  keyAtPress = new Map<string, string>()
 
   reset() {
     this.pressed.clear()
     this.latched.clear()
     this.shiftAtPress.clear()
+    this.keyAtPress.clear()
   }
 
   get empty(): boolean {

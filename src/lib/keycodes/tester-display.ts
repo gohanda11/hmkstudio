@@ -124,3 +124,24 @@ export function getTesterDisplay(
   }
   return friendlyNames[webCode] ?? webCode
 }
+
+/**
+ * Tester label preferring the character the OS actually produced
+ * (`KeyboardEvent.key` at press time). Falls back to the simulated
+ * `getTesterDisplay` legend when there is no printable `actualKey`
+ * (single character, e.g. `a`, `A`, `!`, `ろ`; modifiers, function keys
+ * and friends fall back). Space renders as `Space` so the badge stays
+ * readable.
+ */
+export function getTesterDisplayWithActual(
+  webCode: string,
+  shift: boolean,
+  layout: KeycodeLayout,
+  actualKey: string | undefined,
+): string {
+  if (actualKey !== undefined && actualKey.length === 1) {
+    if (actualKey === " ") return "Space"
+    return actualKey
+  }
+  return getTesterDisplay(webCode, shift, layout)
+}

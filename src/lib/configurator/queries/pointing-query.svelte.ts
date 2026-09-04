@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { t } from "$lib/i18n.svelte"
 import {
   keyboardContext,
   type SetPointingConfigParams,
@@ -27,6 +28,7 @@ import {
   type HMK_PointingSideConfigResult,
 } from "$lib/libhmk/commands/pointing-config"
 import { Context, resource, type ResourceReturn } from "runed"
+import { toast } from "svelte-sonner"
 import { optimisticUpdate } from "."
 
 export class PointingQuery {
@@ -70,6 +72,8 @@ export class PointingQuery {
         return { ...current, config: data }
       },
       updateFn: () => this.#keyboard.setPointingConfig(params),
+      onError: (err) =>
+        toast.error(t("pointing.saveFailed", { error: String(err) })),
     })
   }
 
@@ -83,6 +87,8 @@ export class PointingQuery {
         return { ...current, config: data }
       },
       updateFn: () => this.#keyboard.setPointingSideConfig(params),
+      onError: (err) =>
+        toast.error(t("pointing.saveFailed", { error: String(err) })),
     })
   }
 }

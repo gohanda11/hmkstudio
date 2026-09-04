@@ -89,8 +89,8 @@ const en = {
   "remap.testerReset": "Reset tester",
   "remap.testerPressed": "Pressed",
   "remap.testerHistory": "History",
-  "remap.legendLayout": "Legend layout",
-  "remap.legendLayoutTooltip": "Legend layout (US / JP)",
+  "remap.legendLayout": "Keycap legend layout",
+  "remap.legendLayoutTooltip": "Keycap legend layout (US / JP) — display only, does not change OS input",
   "remap.importProfile": "Import Profile",
   "remap.importProfileTooltip": "Import profile",
   "remap.exportProfile": "Export Profile",
@@ -216,6 +216,7 @@ const en = {
   "pointing.layer": "Layer {layer}",
   "pointing.xAxis": "X Axis",
   "pointing.yAxis": "Y Axis",
+  "pointing.saveFailed": "Failed to write settings: {error}",
   "pointing.figureCpi":
     "Diagram: higher CPI moves the cursor further for the same trackball movement",
   "pointing.figureRotation":
@@ -605,8 +606,8 @@ const ja: Dictionary = {
   "remap.testerReset": "テスターをリセット",
   "remap.testerPressed": "押下中",
   "remap.testerHistory": "履歴",
-  "remap.legendLayout": "キー表示レイアウト",
-  "remap.legendLayoutTooltip": "キー表示レイアウト (US / JP)",
+  "remap.legendLayout": "キー表示の配列",
+  "remap.legendLayoutTooltip": "キー表示の配列 (US / JP) — 表示のみでOSの入力は変わりません",
   "remap.importProfile": "プロフィールをインポート",
   "remap.importProfileTooltip": "プロフィールをインポート",
   "remap.exportProfile": "プロフィールをエクスポート",
@@ -731,6 +732,7 @@ const ja: Dictionary = {
   "pointing.layer": "レイヤー {layer}",
   "pointing.xAxis": "X 軸",
   "pointing.yAxis": "Y 軸",
+  "pointing.saveFailed": "設定の書き込みに失敗しました: {error}",
   "pointing.figureCpi":
     "図解: CPI が高いほど同じトラックボール操作でのカーソル移動量が増えます",
   "pointing.figureRotation":
