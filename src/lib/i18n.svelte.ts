@@ -176,6 +176,12 @@ const en = {
   "pointing.orientationTitle": "Orientation",
   "pointing.orientationDescription":
     "Compensate for a tilted sensor and flip the movement axes.",
+  "pointing.orientationLeftTitle": "Orientation (Left)",
+  "pointing.orientationRightTitle": "Orientation (Right)",
+  "pointing.orientationSideDescription":
+    "Compensate for a tilted {side} sensor and flip its movement axes.",
+  "pointing.leftSide": "left",
+  "pointing.rightSide": "right",
   "pointing.rotationDescription":
     "Rotation of the sensor in degrees (0-359). Set this to the angle the sensor is mounted at so the reported movement is rotated back to the keyboard axes.",
   "pointing.sensorRotation": "Sensor Rotation",
@@ -686,6 +692,12 @@ const ja: Dictionary = {
   "pointing.orientationTitle": "向き",
   "pointing.orientationDescription":
     "傾けて取り付けられたセンサーを補正し、移動軸を反転します。",
+  "pointing.orientationLeftTitle": "向き（左）",
+  "pointing.orientationRightTitle": "向き（右）",
+  "pointing.orientationSideDescription":
+    "傾けて取り付けられた{side}側センサーを補正し、移動軸を反転します。",
+  "pointing.leftSide": "左",
+  "pointing.rightSide": "右",
   "pointing.rotationDescription":
     "センサーの回転角度 (0-359 度)。センサーの取付角度に合わせると、報告される移動方向がキーボードの軸に補正されます。",
   "pointing.sensorRotation": "センサーの回転",

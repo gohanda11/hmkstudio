@@ -24,9 +24,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { keyboardContext } from "$lib/keyboard"
   import {
     defaultPointingConfig,
+    defaultPointingSideConfig,
     HMK_POINTING_CONFIG_MIN_VERSION,
     HMK_POINTING_CONFIG_V2_VERSION,
+    HMK_POINTING_CONFIG_V3_VERSION,
     HMK_POINTING_SCROLL_LAYER_OFF,
+    HMK_POINTING_SIDE_LEFT,
+    HMK_POINTING_SIDE_RIGHT,
+    type HMK_PointingSideConfig,
   } from "$lib/libhmk/commands/pointing-config"
   import { cn, displayVersion, type WithoutChildren } from "$lib/utils"
   import { toast } from "svelte-sonner"
@@ -46,11 +51,59 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   } = keyboard
 
   const pointingQuery = pointingQueryContext.get()
-  const { current: result, error: queryError } = $derived(pointingQuery.result)
+  const { current: result, error: resultError } = $derived(pointingQuery.result)
+  const { error: leftError } = $derived(pointingQuery.left)
+  const { error: rightError } = $derived(pointingQuery.right)
+  const queryError = $derived(resultError ?? leftError ?? rightError)
   const config = $derived(result?.config)
 
   const extendedAvailable = version >= HMK_POINTING_CONFIG_V2_VERSION
+  const sideAvailable = version >= HMK_POINTING_CONFIG_V3_VERSION
   const pointingAvailable = version >= HMK_POINTING_CONFIG_MIN_VERSION
+
+  const left = $derived(pointingQuery.left.current)
+  const right = $derived(pointingQuery.right.current)
+  const leftConfig = $derived(left?.config)
+  const rightConfig = $derived(right?.config)
+  // While a side result is still loading, keep its card visible (disabled)
+  // so dual hardware previews both halves without layout shift.
+  const showLeft = $derived(left === undefined || left.supported)
+  const showRight = $derived(right === undefined || right.supported)
+
+  function orientOf(side: number | null) {
+    if (side === null) return config
+    return side === HMK_POINTING_SIDE_LEFT ? leftConfig : rightConfig
+  }
+
+  function setOrient(side: number | null, patch: Partial<HMK_PointingSideConfig>) {
+    if (side === null) {
+      if (config) void pointingQuery.set({ data: { ...config, ...patch } })
+      return
+    }
+    const sideCfg =
+      side === HMK_POINTING_SIDE_LEFT ? leftConfig : rightConfig
+    if (sideCfg) void pointingQuery.setSide({ side, data: { ...sideCfg, ...patch } })
+  }
+
+  function orientTitle(side: number | null) {
+    if (side === null) return t("pointing.orientationTitle")
+    return t(
+      side === HMK_POINTING_SIDE_LEFT
+        ? "pointing.orientationLeftTitle"
+        : "pointing.orientationRightTitle",
+    )
+  }
+
+  function orientDescription(side: number | null) {
+    if (side === null) return t("pointing.orientationDescription")
+    return t("pointing.orientationSideDescription", {
+      side: t(
+        side === HMK_POINTING_SIDE_LEFT
+          ? "pointing.leftSide"
+          : "pointing.rightSide",
+      ),
+    })
+  }
 
   const scrollLayer = $derived(
     config?.scrollLayer ?? defaultPointingConfig.scrollLayer,
@@ -93,6 +146,90 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   class={cn("mx-auto flex size-full max-w-6xl flex-col", className)}
   {...props}
 >
+  {#snippet orientationCard(side: number | null)}
+    {@const orient = orientOf(side)}
+    {@const orientKey = side ?? "global"}
+    <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+      <div class="grid">
+        <span class="text-[13px] font-semibold leading-tight">{orientTitle(side)}</span>
+        <span class="text-xs leading-snug text-muted-foreground">
+          {orientDescription(side)}
+        </span>
+      </div>
+      <div class="flex items-start gap-2">
+        <CommitSlider
+          bind:committed={
+            () => orient?.rotationDeg ?? defaultPointingSideConfig.rotationDeg,
+            (v) => setOrient(side, { rotationDeg: v })
+          }
+          class="min-w-0 flex-1"
+          description={t("pointing.rotationDescription")}
+          disabled={!orient}
+          display={(v) => `${v}°`}
+          max={359}
+          min={0}
+          step={1}
+          title={t("pointing.sensorRotation")}
+        />
+        <PointingFigure
+          figure="rotation"
+          angle={orient?.rotationDeg ??
+            defaultPointingSideConfig.rotationDeg}
+        />
+      </div>
+      <div class="flex items-start gap-2">
+        <Switch
+          bind:checked={
+            () => orient?.invertX ?? defaultPointingSideConfig.invertX,
+            (v) => setOrient(side, { invertX: v })
+          }
+          class="min-w-0 flex-1"
+          description={t("pointing.invertXDescription")}
+          disabled={!orient}
+          id={`pointing-invert-x-${orientKey}`}
+          title={t("pointing.invertX")}
+        />
+        <PointingFigure
+          figure="invert-x"
+          on={orient?.invertX ?? defaultPointingSideConfig.invertX}
+        />
+      </div>
+      <div class="flex items-start gap-2">
+        <Switch
+          bind:checked={
+            () => orient?.invertY ?? defaultPointingSideConfig.invertY,
+            (v) => setOrient(side, { invertY: v })
+          }
+          class="min-w-0 flex-1"
+          description={t("pointing.invertYDescription")}
+          disabled={!orient}
+          id={`pointing-invert-y-${orientKey}`}
+          title={t("pointing.invertY")}
+        />
+        <PointingFigure
+          figure="invert-y"
+          on={orient?.invertY ?? defaultPointingSideConfig.invertY}
+        />
+      </div>
+      <div class="flex items-start gap-2">
+        <Switch
+          bind:checked={
+            () => orient?.swapAxes ?? defaultPointingSideConfig.swapAxes,
+            (v) => setOrient(side, { swapAxes: v })
+          }
+          class="min-w-0 flex-1"
+          description={t("pointing.swapAxesDescription")}
+          disabled={!orient}
+          id={`pointing-swap-axes-${orientKey}`}
+          title={t("pointing.swapAxes")}
+        />
+        <PointingFigure
+          figure="swap"
+          on={orient?.swapAxes ?? defaultPointingSideConfig.swapAxes}
+        />
+      </div>
+    </div>
+  {/snippet}
   <FixedScrollArea class="flex flex-col gap-2.5 p-3">
     <div class="flex flex-wrap items-baseline gap-x-2 text-wrap">
       <span class="text-sm font-semibold">{t("pointing.title")}</span>
@@ -113,7 +250,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         <span class="text-muted-foreground">{queryError.message}</span>
         <div>
           <Button
-            onclick={() => pointingQuery.result.refetch()}
+            onclick={() => {
+              pointingQuery.result.refetch()
+              pointingQuery.left.refetch()
+              pointingQuery.right.refetch()
+            }}
             size="sm"
             variant="outline"
           >
@@ -129,8 +270,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </span>
       </div>
     {:else}
-      <div class="grid items-start gap-2.5 text-sm xl:grid-cols-2 2xl:grid-cols-3 [&_p.text-sm]:text-xs [&_p.text-sm]:leading-snug [&_span.text-muted-foreground]:text-xs [&_span.text-muted-foreground]:leading-snug">
-        <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+      <div class="grid items-stretch gap-2.5 text-sm xl:grid-cols-2 2xl:grid-cols-3 [&_p.text-sm]:text-xs [&_p.text-sm]:leading-snug [&_span.text-muted-foreground]:text-xs [&_span.text-muted-foreground]:leading-snug">
+        <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
           <div class="grid">
             <span class="text-[13px] font-semibold leading-tight">{t("pointing.deviceTitle")}</span>
             <span class="text-xs leading-snug text-muted-foreground">
@@ -176,7 +317,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             </span>
           </div>
         {/if}
-        <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+        <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
           <div class="grid">
             <span class="text-[13px] font-semibold leading-tight">{t("pointing.autoMouseTitle")}</span>
             <span class="text-xs leading-snug text-muted-foreground">
@@ -240,95 +381,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </div>
         </div>
         {#if extendedAvailable}
-          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
-            <div class="grid">
-              <span class="text-[13px] font-semibold leading-tight">{t("pointing.orientationTitle")}</span>
-              <span class="text-xs leading-snug text-muted-foreground">
-                {t("pointing.orientationDescription")}
-              </span>
-            </div>
-            <div class="flex items-start gap-2">
-              <CommitSlider
-                bind:committed={
-                  () => config?.rotationDeg ?? defaultPointingConfig.rotationDeg,
-                  (v) =>
-                    config &&
-                    pointingQuery.set({
-                      data: { ...config, rotationDeg: v },
-                    })
-                }
-                class="min-w-0 flex-1"
-                description={t("pointing.rotationDescription")}
-                disabled={!config}
-                display={(v) => `${v}°`}
-                max={359}
-                min={0}
-                step={1}
-                title={t("pointing.sensorRotation")}
-              />
-              <PointingFigure
-                figure="rotation"
-                angle={config?.rotationDeg ??
-                  defaultPointingConfig.rotationDeg}
-              />
-            </div>
-            <div class="flex items-start gap-2">
-              <Switch
-                bind:checked={
-                  () => config?.invertX ?? defaultPointingConfig.invertX,
-                  (v) =>
-                    config && pointingQuery.set({ data: { ...config, invertX: v } })
-                }
-                class="min-w-0 flex-1"
-                description={t("pointing.invertXDescription")}
-                disabled={!config}
-                id="pointing-invert-x"
-                title={t("pointing.invertX")}
-              />
-              <PointingFigure
-                figure="invert-x"
-                on={config?.invertX ?? defaultPointingConfig.invertX}
-              />
-            </div>
-            <div class="flex items-start gap-2">
-              <Switch
-                bind:checked={
-                  () => config?.invertY ?? defaultPointingConfig.invertY,
-                  (v) =>
-                    config && pointingQuery.set({ data: { ...config, invertY: v } })
-                }
-                class="min-w-0 flex-1"
-                description={t("pointing.invertYDescription")}
-                disabled={!config}
-                id="pointing-invert-y"
-                title={t("pointing.invertY")}
-              />
-              <PointingFigure
-                figure="invert-y"
-                on={config?.invertY ?? defaultPointingConfig.invertY}
-              />
-            </div>
-            <div class="flex items-start gap-2">
-              <Switch
-                bind:checked={
-                  () => config?.swapAxes ?? defaultPointingConfig.swapAxes,
-                  (v) =>
-                    config &&
-                    pointingQuery.set({ data: { ...config, swapAxes: v } })
-                }
-                class="min-w-0 flex-1"
-                description={t("pointing.swapAxesDescription")}
-                disabled={!config}
-                id="pointing-swap-axes"
-                title={t("pointing.swapAxes")}
-              />
-              <PointingFigure
-                figure="swap"
-                on={config?.swapAxes ?? defaultPointingConfig.swapAxes}
-              />
-            </div>
-          </div>
-          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          {#if sideAvailable}
+            {#if showLeft}
+              {@render orientationCard(HMK_POINTING_SIDE_LEFT)}
+            {/if}
+            {#if showRight}
+              {@render orientationCard(HMK_POINTING_SIDE_RIGHT)}
+            {/if}
+          {:else}
+            {@render orientationCard(null)}
+          {/if}
+          <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
             <div class="grid">
               <span class="text-[13px] font-semibold leading-tight">{t("pointing.scrollTitle")}</span>
               <span class="text-xs leading-snug text-muted-foreground">
@@ -424,7 +487,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               title={t("pointing.scrollDivisor")}
             />
           </div>
-          <div class="grid gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
             <div class="grid">
               <span class="text-[13px] font-semibold leading-tight">{t("pointing.axisSnapping")}</span>
               <span class="text-xs leading-snug text-muted-foreground">

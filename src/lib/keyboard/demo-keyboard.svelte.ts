@@ -23,7 +23,11 @@ import {
 } from "$lib/libhmk/advanced-keys"
 import {
   defaultPointingConfig,
+  defaultPointingSideConfig,
+  HMK_POINTING_SIDE_LEFT,
+  HMK_POINTING_SIDE_RIGHT,
   type HMK_PointingConfig,
+  type HMK_PointingSideConfig,
 } from "$lib/libhmk/commands/pointing-config"
 import { HMK_GamepadButton, type HMK_GamepadOptions } from "$lib/libhmk/gamepad"
 import { defaultMacroNode, type HMK_MacroNode } from "$lib/libhmk/macro"
@@ -46,6 +50,7 @@ import type {
   SetMacrosParams,
   SetOptionsParams,
   SetPointingConfigParams,
+  SetPointingSideConfigParams,
   SetTickRateParams,
 } from "."
 import { demoMetadata } from "./metadata"
@@ -90,6 +95,7 @@ function defaultProfile(profile: number): DemoKeyboardProfileState {
 type DemoKeyboardState = {
   options: HMK_Options
   pointingConfig: HMK_PointingConfig
+  pointingSideConfigs: Record<number, HMK_PointingSideConfig>
   profiles: DemoKeyboardProfileState[]
 }
 
@@ -106,6 +112,10 @@ export class DemoKeyboard implements Keyboard {
       highPollingRateEnabled: true,
     },
     pointingConfig: structuredClone(defaultPointingConfig),
+    pointingSideConfigs: {
+      [HMK_POINTING_SIDE_LEFT]: structuredClone(defaultPointingSideConfig),
+      [HMK_POINTING_SIDE_RIGHT]: structuredClone(defaultPointingSideConfig),
+    },
     profiles: [...Array(numProfiles)].map((_, i) =>
       structuredClone(defaultProfile(i)),
     ),
@@ -140,12 +150,26 @@ export class DemoKeyboard implements Keyboard {
   async getPointingConfig() {
     return {
       supported: true,
-      side: 0,
+      side: HMK_POINTING_SIDE_LEFT,
       config: this.#state.pointingConfig,
     }
   }
   async setPointingConfig({ data }: SetPointingConfigParams) {
     this.#state.pointingConfig = data
+  }
+  async getPointingSideConfig(side: number) {
+    return {
+      supported: true,
+      config:
+        this.#state.pointingSideConfigs[side] ??
+        structuredClone(defaultPointingSideConfig),
+    }
+  }
+  async setPointingSideConfig({
+    side,
+    data,
+  }: SetPointingSideConfigParams) {
+    this.#state.pointingSideConfigs[side] = data
   }
   async resetProfile({ profile }: ResetProfileParams) {
     this.#state.profiles[profile] = structuredClone(defaultProfile(profile))

@@ -13,17 +13,26 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { keyboardContext, type SetPointingConfigParams } from "$lib/keyboard"
+import {
+  keyboardContext,
+  type SetPointingConfigParams,
+  type SetPointingSideConfigParams,
+} from "$lib/keyboard"
 import {
   HMK_POINTING_CONFIG_MIN_VERSION,
+  HMK_POINTING_CONFIG_V3_VERSION,
+  HMK_POINTING_SIDE_LEFT,
+  HMK_POINTING_SIDE_RIGHT,
   type HMK_PointingConfigResult,
+  type HMK_PointingSideConfigResult,
 } from "$lib/libhmk/commands/pointing-config"
 import { Context, resource, type ResourceReturn } from "runed"
 import { optimisticUpdate } from "."
 
 export class PointingQuery {
   result: ResourceReturn<HMK_PointingConfigResult | undefined>
-
+  left: ResourceReturn<HMK_PointingSideConfigResult | undefined>
+  right: ResourceReturn<HMK_PointingSideConfigResult | undefined>
   #keyboard = keyboardContext.get()
 
   constructor() {
@@ -36,6 +45,20 @@ export class PointingQuery {
           ? this.#keyboard.getPointingConfig()
           : Promise.resolve(undefined),
     )
+    // Per-side orientation is stored on each half from firmware v0x010b;
+    // older firmware has no GET_SIDE_CONFIG, so skip the fetch there.
+    const sideAvailable =
+      this.#keyboard.version >= HMK_POINTING_CONFIG_V3_VERSION
+    this.left = resource(() => {}, () =>
+      sideAvailable
+        ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_LEFT)
+        : Promise.resolve(undefined),
+    )
+    this.right = resource(() => {}, () =>
+      sideAvailable
+        ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_RIGHT)
+        : Promise.resolve(undefined),
+    )
   }
 
   async set(params: SetPointingConfigParams) {
@@ -47,6 +70,19 @@ export class PointingQuery {
         return { ...current, config: data }
       },
       updateFn: () => this.#keyboard.setPointingConfig(params),
+    })
+  }
+
+  async setSide(params: SetPointingSideConfigParams) {
+    const { side, data } = params
+    const target = side === HMK_POINTING_SIDE_LEFT ? this.left : this.right
+    await optimisticUpdate({
+      resource: target,
+      optimisticFn: (current) => {
+        if (!current) return current
+        return { ...current, config: data }
+      },
+      updateFn: () => this.#keyboard.setPointingSideConfig(params),
     })
   }
 }

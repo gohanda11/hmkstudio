@@ -51,7 +51,9 @@ import { getMetadata } from "$lib/libhmk/commands/metadata"
 import { getOptions, setOptions } from "$lib/libhmk/commands/options"
 import {
   getPointingConfig,
+  getPointingSideConfig,
   setPointingConfig,
+  setPointingSideConfig,
 } from "$lib/libhmk/commands/pointing-config"
 import {
   duplicateProfile,
@@ -82,6 +84,7 @@ import type {
   SetMacrosParams,
   SetOptionsParams,
   SetPointingConfigParams,
+  SetPointingSideConfigParams,
   SetTickRateParams,
 } from "."
 import { Commander } from "./commander"
@@ -172,6 +175,12 @@ class HMKKeyboard implements Keyboard {
   }
   setPointingConfig(params: SetPointingConfigParams) {
     return setPointingConfig(this.commander, params, this.version)
+  }
+  getPointingSideConfig(side: number) {
+    return getPointingSideConfig(this.commander, side)
+  }
+  setPointingSideConfig(params: SetPointingSideConfigParams) {
+    return setPointingSideConfig(this.commander, params)
   }
 
   getKeymap(params: GetKeymapParams) {
