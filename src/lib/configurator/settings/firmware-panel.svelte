@@ -18,9 +18,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import {
     fetchFirmwareManifest,
-    fetchLatestFirmwareVersion,
     isWebUSBSupported,
     resolveFirmwareEntry,
+    resolveManifestVersion,
   } from "$lib/dfu/libhmk-dfu"
   import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
@@ -45,9 +45,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     try {
       const manifest = await fetchFirmwareManifest()
       supported = (await resolveFirmwareEntry(manifest, metadata)) !== undefined
-      latestVersion = supported
-        ? await fetchLatestFirmwareVersion(manifest.commit)
-        : null
+      latestVersion = supported ? await resolveManifestVersion(manifest) : null
     } catch (error) {
       console.error("Failed to check for firmware updates:", error)
       supported = false

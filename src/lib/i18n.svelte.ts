@@ -289,6 +289,16 @@ const en = {
   "dfu.title": "Firmware Update",
   "dfu.versionRange": "- {current} to {latest}",
   "dfu.preparing": "Downloading the latest firmware from GitHub...",
+  "dfu.preparingVersions":
+    "Loading the available firmware versions from GitHub...",
+  "dfu.selectVersion": "Version",
+  "dfu.versionHint":
+    "Select the firmware version to install. The latest version is selected by default.",
+  "dfu.changelog": "Changelog",
+  "dfu.noChangelog": "No changelog entries for this version.",
+  "dfu.downgradeBody":
+    "The selected version ({selected}) is older than the current version ({current}). Flashing will downgrade the firmware.",
+  "dfu.continue": "Download and Continue",
   "dfu.selectBody1":
     'The keyboard is restarting in DFU bootloader mode. Click "Select DFU Device" and choose the DFU device (e.g. "STM32 BOOTLOADER" or "AT32 DFU", VID 0x2E3C/0x0483, PID 0xDF11). If several DFU devices are listed, choose the one that appeared when your keyboard restarted.',
   "dfu.selectBody2":
@@ -789,6 +799,16 @@ const ja: Dictionary = {
   "dfu.title": "ファームウェア更新",
   "dfu.versionRange": "- {current} から {latest} へ",
   "dfu.preparing": "GitHub から最新のファームウェアをダウンロードしています...",
+  "dfu.preparingVersions":
+    "GitHub から利用可能なファームウェアのバージョンを取得しています...",
+  "dfu.selectVersion": "バージョン",
+  "dfu.versionHint":
+    "インストールするファームウェアのバージョンを選択してください。既定では最新バージョンが選択されます。",
+  "dfu.changelog": "変更内容",
+  "dfu.noChangelog": "このバージョンの変更内容はありません。",
+  "dfu.downgradeBody":
+    "選択したバージョン ({selected}) は現在のバージョン ({current}) より古いため、書き込むとダウングレードになります。",
+  "dfu.continue": "ダウンロードして続行",
   "dfu.selectBody1":
     "キーボードが DFU ブートローダーモードで再起動しています。「DFU デバイスを選択」をクリックし、DFU デバイス (例: 「STM32 BOOTLOADER」や「AT32 DFU」、VID 0x2E3C/0x0483、PID 0xDF11) を選択してください。複数の DFU デバイスが表示される場合は、キーボードの再起動時に現れたものを選んでください。",
   "dfu.selectBody2":

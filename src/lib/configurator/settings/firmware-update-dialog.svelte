@@ -16,6 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import { Button } from "$lib/components/ui/button"
   import * as Dialog from "$lib/components/ui/dialog"
+  import * as Select from "$lib/components/ui/select"
   import { niceSize } from "$lib/dfu/libhmk-dfu"
   import { t } from "$lib/i18n.svelte"
   import { displayVersion } from "$lib/utils"
@@ -50,7 +51,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Dialog.Title>{t("dfu.title")}</Dialog.Title>
       <Dialog.Description>
         {firmwareUpdate.keyboardName}
-        {#if firmwareUpdate.latestVersion !== null}
+        {#if firmwareUpdate.step === "version" && firmwareUpdate.selectedVersion !== null}
+          {t("dfu.versionRange", { current: displayVersion(firmwareUpdate.currentVersion), latest: firmwareUpdate.selectedVersion.tag })}
+        {:else if firmwareUpdate.latestVersion !== null}
           {t("dfu.versionRange", { current: displayVersion(firmwareUpdate.currentVersion), latest: firmwareUpdate.latestVersion !== null ? displayVersion(firmwareUpdate.latestVersion) : "" })}
         {/if}
       </Dialog.Description>
@@ -58,8 +61,70 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
     {#if firmwareUpdate.step === "preparing"}
       <p class="text-sm text-muted-foreground">
-        {t("dfu.preparing")}
+        {firmwareUpdate.loadingList
+          ? t("dfu.preparingVersions")
+          : t("dfu.preparing")}
       </p>
+    {:else if firmwareUpdate.step === "version"}
+      <div class="grid gap-2 text-sm">
+        <p class="text-muted-foreground">
+          {t("dfu.versionHint")}
+        </p>
+        <div class="grid gap-1">
+          <span class="font-medium">{t("dfu.selectVersion")}</span>
+          <Select.Root
+            bind:value={
+              () => firmwareUpdate.selectedTag ?? "",
+              (v) => {
+                firmwareUpdate.selectedTag = v
+              }
+            }
+            type="single"
+          >
+            <Select.Trigger class="w-full" size="sm">
+              <span>{firmwareUpdate.selectedVersion?.tag ?? ""}</span>
+            </Select.Trigger>
+            <Select.Content class="w-[var(--bits-select-anchor-width)]">
+              {#each firmwareUpdate.availableVersions as v (v.tag)}
+                <Select.Item value={v.tag}>{v.tag}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+        <div class="grid gap-1">
+          <span class="font-medium">{t("dfu.changelog")}</span>
+          {#if firmwareUpdate.selectedChangelog.length > 0}
+            <ul
+              class="grid max-h-32 gap-1 overflow-y-auto rounded-md bg-muted p-2 text-xs"
+            >
+              {#each firmwareUpdate.selectedChangelog as line, i (i)}
+                <li class="break-words">{line}</li>
+              {/each}
+            </ul>
+          {:else}
+            <p class="text-xs text-muted-foreground">{t("dfu.noChangelog")}</p>
+          {/if}
+        </div>
+        {#if firmwareUpdate.isDowngrade && firmwareUpdate.selectedVersion !== null}
+          <p
+            class="rounded-md border border-destructive/50 bg-destructive/10 p-2 text-destructive"
+          >
+            {t("dfu.downgradeBody", { selected: firmwareUpdate.selectedVersion.tag, current: displayVersion(firmwareUpdate.currentVersion) })}
+          </p>
+        {/if}
+      </div>
+      <Dialog.Footer>
+        <Button
+          onclick={() => void firmwareUpdate.close()}
+          size="sm"
+          variant="outline"
+        >
+          {t("dfu.cancel")}
+        </Button>
+        <Button onclick={() => void firmwareUpdate.confirmVersion()} size="sm">
+          {t("dfu.continue")}
+        </Button>
+      </Dialog.Footer>
     {:else if firmwareUpdate.step === "select" || firmwareUpdate.step === "connecting"}
       <div class="grid gap-2 text-sm text-wrap">
         <p>

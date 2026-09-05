@@ -15,10 +15,13 @@
 
 import { DfuState } from "$lib/dfu/dfu"
 import {
+  buildSelectableVersions,
   connectDfuDevice,
+  expectedDfuVendorIdForEntry,
   fetchExpectedDfuVendorId,
   fetchFirmwareBinary,
   fetchFirmwareManifest,
+  fetchFirmwareVersions,
   fetchLatestFirmwareVersion,
   formatDfuError,
   formatDfuSummary,
@@ -27,6 +30,7 @@ import {
   resolveFirmwareEntry,
   type DfuConnection,
   type FirmwareEntry,
+  type SelectableFirmwareVersion,
 } from "$lib/dfu/libhmk-dfu"
 import { t } from "$lib/i18n.svelte"
 import type { Keyboard } from "$lib/keyboard"
@@ -35,6 +39,7 @@ import { toast } from "svelte-sonner"
 export type FirmwareUpdateStep =
   | "idle"
   | "preparing"
+  | "version"
   | "select"
   | "connecting"
   | "ready"
@@ -70,6 +75,9 @@ class FirmwareUpdate {
   keyboardName = $state("")
   currentVersion = $state(0)
   latestVersion = $state<number | null>(null)
+  availableVersions = $state<SelectableFirmwareVersion[]>([])
+  selectedTag = $state<string | null>(null)
+  loadingList = $state(false)
   firmwareSize = $state(0)
   deviceSummary = $state("")
   memorySummary = $state("")
@@ -82,8 +90,26 @@ class FirmwareUpdate {
   identityWarning = $state<string | null>(null)
   identityConfirmed = $state(false)
 
+  get selectedVersion(): SelectableFirmwareVersion | null {
+    if (this.availableVersions.length === 0) return null
+    return (
+      this.availableVersions.find((v) => v.tag === this.selectedTag) ??
+      this.availableVersions[0]
+    )
+  }
+
+  get selectedChangelog(): string[] {
+    return this.selectedVersion?.changelog ?? []
+  }
+
+  get isDowngrade(): boolean {
+    const selected = this.selectedVersion
+    return selected !== null && selected.version < this.currentVersion
+  }
+
   #firmware: ArrayBuffer | null = null
   #entry: FirmwareEntry | null = null
+  #keyboard: Keyboard | null = null
   #connection: DfuConnection | null = null
   #onUsbDisconnect: ((event: USBConnectionEvent) => void) | null = null
   #selectTimer: ReturnType<typeof setTimeout> | null = null
@@ -106,7 +132,9 @@ class FirmwareUpdate {
     this.#resetState()
     this.keyboardName = keyboard.metadata.name
     this.currentVersion = keyboard.version
+    this.#keyboard = keyboard
     this.step = "preparing"
+    this.loadingList = true
 
     try {
       const manifest = await fetchFirmwareManifest()
@@ -118,20 +146,76 @@ class FirmwareUpdate {
       }
       this.#entry = entry
 
-      const [latestVersion, firmware] = await Promise.all([
-        fetchLatestFirmwareVersion(manifest.commit).catch(() => null),
-        fetchFirmwareBinary(entry.url),
+      const [versions, fallbackVersion] = await Promise.all([
+        fetchFirmwareVersions().catch(() => null),
+        manifest.version === undefined
+          ? fetchLatestFirmwareVersion(manifest.commit).catch(() => null)
+          : Promise.resolve(manifest.version),
       ])
-      if (firmware.byteLength !== entry.size) {
+      const selectable = buildSelectableVersions({
+        entry,
+        manifest,
+        versions,
+        fallbackVersion,
+      })
+      this.latestVersion = manifest.version ?? fallbackVersion
+      if (selectable.length === 0) {
+        // No version metadata at all (old manifest + unreadable common.h):
+        // keep the legacy latest-only path.
+        this.loadingList = false
+        const firmware = await fetchFirmwareBinary(entry.url)
+        if (firmware.byteLength !== entry.size) {
+          throw new Error(
+            `The downloaded firmware is invalid: expected ${entry.size} bytes but received ${firmware.byteLength} bytes. The download may be incomplete or corrupted — please try again.`,
+          )
+        }
+        this.#firmware = firmware
+        this.firmwareSize = firmware.byteLength
+        this.#log(
+          `Downloaded ${this.keyboardName} firmware (${niceSize(firmware.byteLength)}, commit ${entry.commit.slice(0, 7)})`,
+        )
+      } else {
+        this.availableVersions = selectable
+        this.selectedTag = selectable[0].tag
+        this.loadingList = false
+        this.step = "version"
+        return
+      }
+    } catch (error) {
+      this.loadingList = false
+      this.error = formatDfuError(error)
+      this.step = "error"
+      return
+    }
+
+    // The firmware jumps to the bootloader without responding to the HID
+    // command, so the returned promise never resolves. The keyboard then
+    // disconnects and re-enumerates as a DFU device.
+    void keyboard.bootloader().catch(() => undefined)
+    this.step = "select"
+    this.#armSelectTimeout()
+  }
+
+  async confirmVersion() {
+    if (this.step !== "version") return
+    const selected = this.selectedVersion
+    const keyboard = this.#keyboard
+    if (selected === null || keyboard === null) return
+
+    this.step = "preparing"
+    this.loadingList = false
+    try {
+      const firmware = await fetchFirmwareBinary(selected.url)
+      if (selected.size !== null && firmware.byteLength !== selected.size) {
         throw new Error(
-          `The downloaded firmware is invalid: expected ${entry.size} bytes but received ${firmware.byteLength} bytes. The download may be incomplete or corrupted — please try again.`,
+          `The downloaded firmware is invalid: expected ${selected.size} bytes but received ${firmware.byteLength} bytes. The download may be incomplete or corrupted — please try again.`,
         )
       }
-      this.latestVersion = latestVersion
+      this.latestVersion = selected.version
       this.#firmware = firmware
       this.firmwareSize = firmware.byteLength
       this.#log(
-        `Downloaded ${this.keyboardName} firmware (${niceSize(firmware.byteLength)}, commit ${entry.commit.slice(0, 7)})`,
+        `Downloaded ${this.keyboardName} firmware ${selected.tag} (${niceSize(firmware.byteLength)}, commit ${selected.commit.slice(0, 7)})`,
       )
     } catch (error) {
       this.error = formatDfuError(error)
@@ -191,13 +275,17 @@ class FirmwareUpdate {
     // The DFU bootloader cannot prove which keyboard it belongs to, so refuse
     // to continue when it contradicts the keyboard being updated, and require
     // explicit user confirmation before flashing in every other case.
-    const expectedVendorId =
-      this.#entry === null
-        ? null
-        : await fetchExpectedDfuVendorId(
-            this.#entry.commit,
-            this.#entry.keyboard,
-          )
+    let expectedVendorId: number | null = null
+    if (this.#entry !== null) {
+      expectedVendorId = expectedDfuVendorIdForEntry(this.#entry)
+      if (expectedVendorId === null) {
+        // Old manifest without per-build driver metadata.
+        expectedVendorId = await fetchExpectedDfuVendorId(
+          this.#entry.commit,
+          this.#entry.keyboard,
+        )
+      }
+    }
     if (expectedVendorId !== null && usbDevice.vendorId !== expectedVendorId) {
       this.#log(
         `Warning: the selected DFU device (${dfuDeviceDescription(usbDevice)}) is not the bootloader expected for ${this.keyboardName} (${dfuVendorLabel(expectedVendorId)})`,
@@ -270,7 +358,12 @@ class FirmwareUpdate {
 
     await this.#closeConnection()
     this.error = null
-    this.step = this.#firmware === null ? "idle" : "select"
+    this.step =
+      this.#firmware === null
+        ? this.availableVersions.length > 0
+          ? "version"
+          : "idle"
+        : "select"
     if (this.step === "select") this.#armSelectTimeout()
   }
 
@@ -365,6 +458,9 @@ class FirmwareUpdate {
     this.keyboardName = ""
     this.currentVersion = 0
     this.latestVersion = null
+    this.availableVersions = []
+    this.selectedTag = null
+    this.loadingList = false
     this.firmwareSize = 0
     this.deviceSummary = ""
     this.memorySummary = ""
@@ -377,6 +473,7 @@ class FirmwareUpdate {
     this.#clearSelectTimer()
     this.#firmware = null
     this.#entry = null
+    this.#keyboard = null
   }
 }
 

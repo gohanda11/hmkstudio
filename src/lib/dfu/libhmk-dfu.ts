@@ -29,7 +29,10 @@ import { DfuSeDevice } from "./dfuse"
 export const LIBHMK_REPO = "gohanda11/libhmk"
 export const LIBHMK_FIRMWARE_BRANCH = "firmware"
 export const LIBHMK_MANIFEST_URL = `https://raw.githubusercontent.com/${LIBHMK_REPO}/${LIBHMK_FIRMWARE_BRANCH}/manifest.json`
+export const LIBHMK_MANIFEST_DEV_URL = `https://raw.githubusercontent.com/${LIBHMK_REPO}/${LIBHMK_FIRMWARE_BRANCH}/manifest-dev.json`
+export const LIBHMK_VERSIONS_URL = `https://raw.githubusercontent.com/${LIBHMK_REPO}/${LIBHMK_FIRMWARE_BRANCH}/versions.json`
 export const LIBHMK_RAW_BASE_URL = `https://raw.githubusercontent.com/${LIBHMK_REPO}`
+export const LIBHMK_FIRMWARE_BASE_URL = `https://raw.githubusercontent.com/${LIBHMK_REPO}/${LIBHMK_FIRMWARE_BRANCH}`
 
 // Factory DFU bootloaders used by libhmk keyboards
 export const HMK_DFU_DEVICE_FILTERS: USBDeviceFilter[] = [
@@ -39,33 +42,93 @@ export const HMK_DFU_DEVICE_FILTERS: USBDeviceFilter[] = [
 
 const DEFAULT_TRANSFER_SIZE = 1024
 
-export const firmwareManifestSchema = z.object({
+const firmwareEntrySchema = z.object({
+  keyboard: z.string(),
+  url: z.string(),
+  size: z.number(),
+  // New manifests carry the USB ID and MCU driver per build so the correct
+  // firmware can be picked without extra metadata fetches. They stay optional
+  // so manifests predating the redistribution layout still parse.
+  vid: z.string().optional(),
+  pid: z.string().optional(),
+  driver: z.string().optional(),
   commit: z.string(),
-  firmwares: z.array(
-    z.object({
-      keyboard: z.string(),
-      url: z.string(),
-      size: z.number(),
-      commit: z.string(),
-      built_at: z.string(),
-    }),
-  ),
+  built_at: z.string(),
+})
+
+export const firmwareManifestSchema = z.object({
+  // New manifests carry the release version directly. Optional so manifests
+  // predating the redistribution layout still parse (callers fall back to
+  // reading FIRMWARE_VERSION from common.h).
+  version: z.number().optional(),
+  version_text: z.string().optional(),
+  channel: z.string().optional(),
+  repository: z.string().optional(),
+  branch: z.string().optional(),
+  commit: z.string(),
+  built_at: z.string().optional(),
+  changelog: z.array(z.string()).default([]),
+  firmwares: z.array(firmwareEntrySchema),
 })
 
 export type FirmwareManifest = z.infer<typeof firmwareManifestSchema>
 export type FirmwareEntry = FirmwareManifest["firmwares"][number]
 
+export const firmwareVersionsSchema = z.object({
+  versions: z.array(
+    z.object({
+      version: z.number(),
+      tag: z.string(),
+      commit: z.string(),
+      built_at: z.string(),
+      changelog: z.array(z.string()).default([]),
+      url_prefix: z.string(),
+    }),
+  ),
+})
+
+export type FirmwareVersions = z.infer<typeof firmwareVersionsSchema>
+export type FirmwareVersionInfo = FirmwareVersions["versions"][number]
+
+/** A firmware release the user can pick in the update dialog. */
+export interface SelectableFirmwareVersion {
+  version: number
+  tag: string
+  changelog: string[]
+  url: string
+  commit: string
+  /** Expected binary size in bytes, or null when unknown (archive builds). */
+  size: number | null
+}
+
 export function isWebUSBSupported() {
   return "usb" in navigator
 }
 
-export async function fetchFirmwareManifest(): Promise<FirmwareManifest> {
-  const res = await fetch(LIBHMK_MANIFEST_URL, { cache: "no-store" })
+export type ManifestChannel = "stable" | "dev"
+
+export function manifestUrlForChannel(channel: ManifestChannel): string {
+  return channel === "dev" ? LIBHMK_MANIFEST_DEV_URL : LIBHMK_MANIFEST_URL
+}
+
+export async function fetchFirmwareManifest(
+  channel: ManifestChannel = "stable",
+): Promise<FirmwareManifest> {
+  const res = await fetch(manifestUrlForChannel(channel), { cache: "no-store" })
   if (!res.ok) {
     throw new Error(`Failed to fetch the firmware manifest: HTTP ${res.status}`)
   }
 
   return firmwareManifestSchema.parse(await res.json())
+}
+
+export async function fetchFirmwareVersions(): Promise<FirmwareVersions> {
+  const res = await fetch(LIBHMK_VERSIONS_URL, { cache: "no-store" })
+  if (!res.ok) {
+    throw new Error(`Failed to fetch the firmware versions: HTTP ${res.status}`)
+  }
+
+  return firmwareVersionsSchema.parse(await res.json())
 }
 
 function normalizeKeyboardName(name: string) {
@@ -94,16 +157,31 @@ async function fetchKeyboardJson(commit: string, keyboard: string) {
 // as 0x2E3C:0xDF11. Returns the expected bootloader vendor ID for the
 // keyboard, or null when it cannot be determined (unknown MCU driver, missing
 // hardware metadata, or a network failure).
+export function expectedDfuVendorIdForDriver(
+  driver: string | null | undefined,
+): number | null {
+  const normalized = (driver ?? "").toLowerCase()
+  if (normalized.startsWith("stm32")) return 0x0483
+  if (normalized.startsWith("at32")) return 0x2e3c
+  return null
+}
+
+export function expectedDfuVendorIdForEntry(
+  entry: FirmwareEntry,
+): number | null {
+  return expectedDfuVendorIdForDriver(entry.driver)
+}
+
+// Legacy fallback for manifests without per-build driver metadata: resolves
+// the MCU driver through keyboard.json. Prefer expectedDfuVendorIdForEntry,
+// which reads the driver straight from the manifest without a network fetch.
 export async function fetchExpectedDfuVendorId(
   commit: string,
   keyboard: string,
 ): Promise<number | null> {
   try {
     const { hardware } = await fetchKeyboardJson(commit, keyboard)
-    const driver = (hardware?.driver ?? "").toLowerCase()
-    if (driver.startsWith("stm32")) return 0x0483
-    if (driver.startsWith("at32")) return 0x2e3c
-    return null
+    return expectedDfuVendorIdForDriver(hardware?.driver)
   } catch {
     return null
   }
@@ -131,6 +209,28 @@ export async function resolveFirmwareEntry(
   if (candidates.length === 0) return undefined
   if (candidates.length === 1) return candidates[0]
 
+  // New manifests carry the USB VID/PID per build, so disambiguation needs
+  // no extra fetch.
+  const manifestMatches = candidates.filter(
+    (fw) =>
+      fw.vid !== undefined &&
+      fw.pid !== undefined &&
+      parseInt(fw.vid, 16) === metadata.vendorId &&
+      parseInt(fw.pid, 16) === metadata.productId,
+  )
+  if (manifestMatches.length === 1) return manifestMatches[0]
+  const allIdentified = candidates.every(
+    (fw) => fw.vid !== undefined && fw.pid !== undefined,
+  )
+  if (allIdentified || manifestMatches.length > 1) {
+    throw firmwareAmbiguityError(
+      metadata,
+      manifestMatches.length > 1 ? manifestMatches : candidates,
+      manifestMatches.length > 1,
+    )
+  }
+
+  // Legacy fallback for entries without USB IDs in the manifest.
   const matches = (
     await Promise.all(
       candidates.map(async (fw) => {
@@ -149,14 +249,23 @@ export async function resolveFirmwareEntry(
 
   if (matches.length === 1) return matches[0]
 
-  const boardNames = (matches.length > 1 ? matches : candidates)
-    .map((fw) => fw.keyboard)
-    .join(", ")
-  const ambiguity =
-    matches.length === 0
-      ? `none of the boards with this name (${boardNames}) could be confirmed against the keyboard's USB ID [${hex4(metadata.vendorId)}:${hex4(metadata.productId)}]`
-      : `multiple boards with this name (${boardNames}) share the USB ID [${hex4(metadata.vendorId)}:${hex4(metadata.productId)}] and cannot be told apart`
-  throw new Error(
+  throw firmwareAmbiguityError(
+    metadata,
+    matches.length > 1 ? matches : candidates,
+    matches.length > 1,
+  )
+}
+
+function firmwareAmbiguityError(
+  metadata: { name: string; vendorId: number; productId: number },
+  boards: FirmwareEntry[],
+  matched: boolean,
+): Error {
+  const boardNames = boards.map((fw) => fw.keyboard).join(", ")
+  const ambiguity = matched
+    ? `multiple boards with this name (${boardNames}) share the USB ID [${hex4(metadata.vendorId)}:${hex4(metadata.productId)}] and cannot be told apart`
+    : `none of the boards with this name (${boardNames}) could be confirmed against the keyboard's USB ID [${hex4(metadata.vendorId)}:${hex4(metadata.productId)}]`
+  return new Error(
     `Cannot determine the firmware for "${metadata.name}": ${ambiguity}, so the correct build cannot be selected automatically. Refusing to auto-update — flashing firmware built for the wrong microcontroller can permanently damage the keyboard. Please update manually with hmkdfu (https://github.com/gohanda11/hmkdfu) and choose the DFU device whose bootloader matches your keyboard (VID 0x2E3C:0xDF11 for AT32F405 boards, VID 0x0483:0xDF11 for STM32 boards).`,
   )
 }
@@ -186,6 +295,77 @@ export async function fetchLatestFirmwareVersion(
   }
 
   return version
+}
+/** Format a raw uint16 firmware version (0x010b) as a tag (v1.11). */
+export function formatVersionTag(version: number): string {
+  return `v${version >> 8}.${version & 0xff}`
+}
+
+/** Bin URL for an archived release: <url_prefix>/<keyboard>/firmware.bin. */
+export function firmwareBinUrlForVersion(
+  keyboard: string,
+  version: FirmwareVersionInfo,
+): string {
+  return `${LIBHMK_FIRMWARE_BASE_URL}/${version.url_prefix}/${keyboard}/firmware.bin`
+}
+
+/**
+ * Release version for the manifest: manifest.version directly, falling back
+ * to FIRMWARE_VERSION in common.h for manifests predating the redistribution
+ * layout. Returns null when the version cannot be determined.
+ */
+export async function resolveManifestVersion(
+  manifest: FirmwareManifest,
+): Promise<number | null> {
+  if (manifest.version !== undefined) return manifest.version
+  try {
+    return await fetchLatestFirmwareVersion(manifest.commit)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Selectable releases for the update dialog, newest first. The manifest
+ * release (with its direct bin URL and known size) and archived releases
+ * from versions.json (bin URL rebuilt from url_prefix) are merged and
+ * sorted by version descending; on duplicate versions the manifest entry
+ * wins. Returns [] when no version is known at all (old manifest +
+ * unreadable common.h); callers then use the legacy latest-only path.
+ */
+export function buildSelectableVersions(args: {
+  entry: FirmwareEntry
+  manifest: FirmwareManifest
+  versions: FirmwareVersions | null
+  fallbackVersion: number | null
+}): SelectableFirmwareVersion[] {
+  const { entry, manifest, versions, fallbackVersion } = args
+  const latestVersion = manifest.version ?? fallbackVersion
+  const out: SelectableFirmwareVersion[] = []
+  if (latestVersion != null) {
+    const tag = manifest.version_text ?? formatVersionTag(latestVersion)
+    out.push({
+      version: latestVersion,
+      tag,
+      changelog: manifest.changelog,
+      url: entry.url,
+      commit: entry.commit,
+      size: entry.size,
+    })
+  }
+  for (const v of (versions?.versions ?? [])) {
+    if (v.version === latestVersion) continue
+    out.push({
+      version: v.version,
+      tag: v.tag,
+      changelog: v.changelog,
+      url: firmwareBinUrlForVersion(entry.keyboard, v),
+      commit: v.commit,
+      size: null,
+    })
+  }
+  out.sort((a, b) => b.version - a.version)
+  return out
 }
 
 export async function fetchFirmwareBinary(url: string): Promise<ArrayBuffer> {
