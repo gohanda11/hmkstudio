@@ -13,6 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Context } from "runed"
 import { SvelteMap, SvelteSet } from "svelte/reactivity"
 
 /**
