@@ -17,8 +17,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import DistanceSlider from "$lib/components/distance-slider.svelte"
   import Switch from "$lib/components/switch.svelte"
   import { actuationQueryContext } from "$lib/configurator/queries/actuation-query.svelte"
-  import { t } from "$lib/i18n.svelte"
   import { distanceToUnit, SWITCH_DISTANCE_UNIT } from "$lib/distance"
+  import { t } from "$lib/i18n.svelte"
   import {
     DEFAULT_ACTUATION_POINT,
     DEFAULT_RT_SENSITIVITY,

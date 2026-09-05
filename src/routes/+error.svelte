@@ -23,10 +23,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <main class="grid min-h-svh place-items-center px-6 py-24">
   <div class="text-center">
-    <h1 class="text-5xl font-semibold tracking-tight">{t("error.pageNotFound")}</h1>
+    <h1 class="text-5xl font-semibold tracking-tight">
+      {t("error.pageNotFound")}
+    </h1>
     <div class="mt-6 grid place-items-center">
       <Button href="{base}/" size="lg">
-        <HouseIcon /> {t("error.backHome")}
+        <HouseIcon />
+        {t("error.backHome")}
       </Button>
     </div>
   </div>

@@ -13,9 +13,9 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { displayUInt16 } from "$lib/integer"
 import { keyboardContext } from "$lib/keyboard"
 import { keyboardConfigSchema } from "$lib/keyboard/config"
-import { displayUInt16 } from "$lib/integer"
 import { HMK_FIRMWARE_MAX_VERSION } from "$lib/libhmk"
 import { HMK_AKType } from "$lib/libhmk/advanced-keys"
 import { SvelteDate } from "svelte/reactivity"

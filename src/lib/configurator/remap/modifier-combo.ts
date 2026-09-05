@@ -78,8 +78,9 @@ export function isModifierKeycode(keycode: number): boolean {
 
 export function modifierFamilyOf(keycode: number): ModifierFamily | null {
   return (
-    modifierFamilies.find(({ left, right }) => left === keycode || right === keycode)
-      ?.family ?? null
+    modifierFamilies.find(
+      ({ left, right }) => left === keycode || right === keycode,
+    )?.family ?? null
   )
 }
 
@@ -274,14 +275,12 @@ export async function applyModifierCombo(
       delay: 0,
       next: indices[mods.length + 1] ?? HMK_MACRO_NODE_NONE,
     },
-    ...[...mods]
-      .reverse()
-      .map((keycode, i) => ({
-        keycode,
-        action: HMK_MacroAction.RELEASE as const,
-        delay: 0,
-        next: indices[mods.length + 1 + i + 1] ?? HMK_MACRO_NODE_NONE,
-      })),
+    ...[...mods].reverse().map((keycode, i) => ({
+      keycode,
+      action: HMK_MacroAction.RELEASE as const,
+      delay: 0,
+      next: indices[mods.length + 1 + i + 1] ?? HMK_MACRO_NODE_NONE,
+    })),
   ]
   for (let i = 0; i < indices.length; i++) {
     await macrosQuery.set({ offset: indices[i], data: [nodes[i]] })

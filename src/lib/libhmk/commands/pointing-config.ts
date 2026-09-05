@@ -326,7 +326,10 @@ export async function getPointingSideConfig(
 
 export async function setPointingSideConfig(
   commander: Commander,
-  { side, data: { rotationDeg, invertX, invertY, swapAxes } }: SetPointingSideConfigParams,
+  {
+    side,
+    data: { rotationDeg, invertX, invertY, swapAxes },
+  }: SetPointingSideConfigParams,
 ) {
   await commander.sendCommand({
     command: HMK_Command.SET_SIDE_CONFIG,

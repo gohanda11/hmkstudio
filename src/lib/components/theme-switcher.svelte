@@ -14,8 +14,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-  import { t } from "$lib/i18n.svelte"
   import { MoonIcon, SunIcon } from "@lucide/svelte"
+  import { t } from "$lib/i18n.svelte"
   import { resetMode, setMode } from "mode-watcher"
   import { buttonVariants } from "./ui/button"
   import * as DropdownMenu from "./ui/dropdown-menu"

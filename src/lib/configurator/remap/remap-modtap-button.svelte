@@ -14,13 +14,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
+  import { KeyButton } from "$lib/components/key-button"
+  import * as Tooltip from "$lib/components/ui/tooltip"
+  import { t } from "$lib/i18n.svelte"
   import { getKeycodeMetadata } from "$lib/keycodes"
   import type { HMK_AKTapHold } from "$lib/libhmk/advanced-keys"
   import { cn, type WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
-  import { KeyButton } from "$lib/components/key-button"
-  import * as Tooltip from "$lib/components/ui/tooltip"
-  import { t } from "$lib/i18n.svelte"
 
   const {
     modtap,
@@ -48,8 +48,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         <Variant />
       {/if}
     {/each}
-    <span
-      class="text-muted-foreground text-[length:0.625em]! leading-[1em]">
+    <span class="text-[length:0.625em]! leading-[1em] text-muted-foreground">
       {holdMetadata.name}
     </span>
   </KeyButton>
@@ -67,7 +66,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       {/snippet}
     </Tooltip.Trigger>
     <Tooltip.Content class="max-w-56 text-wrap">
-      {t("modtap.tooltip", { tap: tapMetadata.tooltip ?? tapMetadata.name, hold: holdMetadata.tooltip ?? holdMetadata.name })}
+      {t("modtap.tooltip", {
+        tap: tapMetadata.tooltip ?? tapMetadata.name,
+        hold: holdMetadata.tooltip ?? holdMetadata.name,
+      })}
     </Tooltip.Content>
   </Tooltip.Root>
 {/if}

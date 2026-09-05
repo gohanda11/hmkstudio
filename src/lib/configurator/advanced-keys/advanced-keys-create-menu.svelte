@@ -91,7 +91,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   <div class="flex flex-col gap-4">
     <div class="grid text-sm">
       <span class="font-medium">
-        {numKeys > 1 ? t("advkeys.createMenu.selectKeysPlural", { numKeys, title }) : t("advkeys.createMenu.selectKeysSingle", { numKeys, title })}
+        {numKeys > 1
+          ? t("advkeys.createMenu.selectKeysPlural", { numKeys, title })
+          : t("advkeys.createMenu.selectKeysSingle", { numKeys, title })}
       </span>
       <span class="text-muted-foreground">{description}</span>
     </div>
@@ -106,7 +108,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       >
         {#each { length: numKeys }, i (i)}
           <div class="flex flex-col items-center text-center text-base">
-            <div class="text-muted-foreground">{t("advkeys.createMenu.keyLabel", { index: i + 1 })}</div>
+            <div class="text-muted-foreground">
+              {t("advkeys.createMenu.keyLabel", { index: i + 1 })}
+            </div>
             <div class="p-0.5" style={unitToStyle()}>
               {#if !advancedKeys || !keymap}
                 <KeycodeButton.Skeleton />

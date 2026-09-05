@@ -83,7 +83,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       if (testerMode && !e.repeat) {
         tester.pressed.add(e.code)
         tester.latched.add(e.code)
-        tester.shiftAtPress.set(e.code, e.shiftKey || e.code.startsWith("Shift"))
+        tester.shiftAtPress.set(
+          e.code,
+          e.shiftKey || e.code.startsWith("Shift"),
+        )
         tester.keyAtPress.set(e.code, e.key)
       }
     },
@@ -142,7 +145,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <ToggleGroup.Root
   bind:value={
-    () => stringNullable(key), (v) => {
+    () => stringNullable(key),
+    (v) => {
       if (testerMode) return
       const next = numberNullable(v)
       // The dialog-opening second click of a double-click re-toggles the

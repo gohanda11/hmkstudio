@@ -40,6 +40,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
   import { remapTesterContext } from "./tester-state.svelte"
+
   let { testerMode = $bindable(false) }: { testerMode?: boolean } = $props()
 
   const { metadata } = keyboardContext.get()
@@ -89,11 +90,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           toast.error(t("toast.profileImportInvalidJson", { profile }))
         } else if (err instanceof z.ZodError) {
           toast.error(
-            t("toast.profileImportFailed", { profile, error: formatZodError(err) }),
+            t("toast.profileImportFailed", {
+              profile,
+              error: formatZodError(err),
+            }),
           )
           console.error(z.treeifyError(err))
         } else {
-          toast.error(t("toast.profileImportFailed", { profile, error: String(err) }))
+          toast.error(
+            t("toast.profileImportFailed", { profile, error: String(err) }),
+          )
         }
       }
     }
@@ -114,11 +120,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     } catch (err) {
       if (err instanceof z.ZodError) {
         toast.error(
-          t("toast.profileExportFailed", { profile, error: formatZodError(err) }),
+          t("toast.profileExportFailed", {
+            profile,
+            error: formatZodError(err),
+          }),
         )
         console.error(z.treeifyError(err))
       } else {
-        toast.error(t("toast.profileExportFailed", { profile, error: String(err) }))
+        toast.error(
+          t("toast.profileExportFailed", { profile, error: String(err) }),
+        )
       }
     }
   }
@@ -136,7 +147,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }
 </script>
 
-<div class="flex flex-col items-center gap-1.5 border-l py-2 pl-2 pr-3">
+<div class="flex flex-col items-center gap-1.5 border-l py-2 pr-3 pl-2">
   <div class="flex flex-col items-center gap-1.5">
     <Tooltip.Root>
       <Tooltip.Trigger>
@@ -154,7 +165,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </Button>
         {/snippet}
       </Tooltip.Trigger>
-      <Tooltip.Content side="left">{t("remap.testerHighlight")}</Tooltip.Content>
+      <Tooltip.Content side="left">{t("remap.testerHighlight")}</Tooltip.Content
+      >
     </Tooltip.Root>
 
     {#if testerMode}
@@ -196,7 +208,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </Button>
         {/snippet}
       </Tooltip.Trigger>
-      <Tooltip.Content side="left">{t("remap.legendLayoutTooltip")}</Tooltip.Content>
+      <Tooltip.Content side="left"
+        >{t("remap.legendLayoutTooltip")}</Tooltip.Content
+      >
     </Tooltip.Root>
   </div>
 
@@ -206,25 +220,39 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tooltip.Root>
       <Tooltip.Trigger>
         {#snippet child({ props })}
-          <Button {...props} onclick={importProfile} size="icon" variant="outline">
+          <Button
+            {...props}
+            onclick={importProfile}
+            size="icon"
+            variant="outline"
+          >
             <UploadIcon />
             <span class="sr-only">{t("remap.importProfile")}</span>
           </Button>
         {/snippet}
       </Tooltip.Trigger>
-      <Tooltip.Content side="left">{t("remap.importProfileTooltip")}</Tooltip.Content>
+      <Tooltip.Content side="left"
+        >{t("remap.importProfileTooltip")}</Tooltip.Content
+      >
     </Tooltip.Root>
 
     <Tooltip.Root>
       <Tooltip.Trigger>
         {#snippet child({ props })}
-          <Button {...props} onclick={exportProfile} size="icon" variant="outline">
+          <Button
+            {...props}
+            onclick={exportProfile}
+            size="icon"
+            variant="outline"
+          >
             <DownloadIcon />
             <span class="sr-only">{t("remap.exportProfile")}</span>
           </Button>
         {/snippet}
       </Tooltip.Trigger>
-      <Tooltip.Content side="left">{t("remap.exportProfileTooltip")}</Tooltip.Content>
+      <Tooltip.Content side="left"
+        >{t("remap.exportProfileTooltip")}</Tooltip.Content
+      >
     </Tooltip.Root>
   </div>
 
@@ -255,7 +283,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           {#snippet child({ props })}
             <Dialog.Trigger {...props}>
               {#snippet child({ props })}
-                <Button size="icon" variant="destructive" {...props} disabled={testerMode}>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  {...props}
+                  disabled={testerMode}
+                >
                   <RotateCcwIcon />
                   <span class="sr-only">{t("remap.resetProfile")}</span>
                 </Button>
@@ -263,7 +296,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             </Dialog.Trigger>
           {/snippet}
         </Tooltip.Trigger>
-        <Tooltip.Content side="left">{t("remap.resetProfileTooltip")}</Tooltip.Content>
+        <Tooltip.Content side="left"
+          >{t("remap.resetProfileTooltip")}</Tooltip.Content
+        >
       </Tooltip.Root>
       <Dialog.Content>
         <Dialog.Header>
@@ -275,14 +310,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         <Dialog.Footer>
           <Dialog.Close>
             {#snippet child({ props })}
-              <Button size="sm" variant="outline" {...props}>{t("remap.cancel")}</Button>
+              <Button size="sm" variant="outline" {...props}
+                >{t("remap.cancel")}</Button
+              >
             {/snippet}
           </Dialog.Close>
-          <Dialog.Close
-            onclick={() => profileQuery.resetProfile({ profile })}
-          >
+          <Dialog.Close onclick={() => profileQuery.resetProfile({ profile })}>
             {#snippet child({ props })}
-              <Button size="sm" variant="destructive" {...props}>{t("remap.reset")}</Button>
+              <Button size="sm" variant="destructive" {...props}
+                >{t("remap.reset")}</Button
+              >
             {/snippet}
           </Dialog.Close>
         </Dialog.Footer>

@@ -82,7 +82,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <div class={cn("flex w-full flex-col gap-2", className)} {...props}>
   <div class="flex justify-end">
     <InputGroup.Root class="w-60">
-      <InputGroup.Input bind:value={search} placeholder={t("keycodes.search")} />
+      <InputGroup.Input
+        bind:value={search}
+        placeholder={t("keycodes.search")}
+      />
       <InputGroup.Addon align="inline-end">
         <InputGroup.Button onclick={() => (search = "")} size="icon-xs">
           <XIcon />

@@ -15,13 +15,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { GripVerticalIcon } from "@lucide/svelte"
-  import { t } from "$lib/i18n.svelte"
   import {
     DKS_ACTION_SIZE,
     getDKSIntervalLeft,
     getDKSIntervalWidth,
     intervalsToBitmap,
   } from "$lib/configurator/lib/advanced-keys"
+  import { t } from "$lib/i18n.svelte"
   import { dksActionsStateContext } from "./context.svelte"
 
   const { index }: { index: number } = $props()

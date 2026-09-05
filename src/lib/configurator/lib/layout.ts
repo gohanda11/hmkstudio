@@ -23,8 +23,8 @@ import {
   SettingsIcon,
   SquareChevronUpIcon,
 } from "@lucide/svelte"
-import type { Component } from "svelte"
 import type { I18nKey } from "$lib/i18n.svelte"
+import type { Component } from "svelte"
 import type { ConfiguratorTabs } from "../context.svelte"
 
 export const MIN_WINDOW_WIDTH = 1024
@@ -42,13 +42,19 @@ export type SidebarTabGroup = {
 export const sidebarTabGroups: SidebarTabGroup[] = [
   {
     groupKey: "sidebar.groupProfiles",
-    tabs: [{ labelKey: "sidebar.tabProfiles", value: "profiles", icon: Grid2x2Icon }],
+    tabs: [
+      { labelKey: "sidebar.tabProfiles", value: "profiles", icon: Grid2x2Icon },
+    ],
   },
   {
     groupKey: "sidebar.groupKeyboard",
     tabs: [
       { labelKey: "sidebar.tabRemap", value: "remap", icon: PencilIcon },
-      { labelKey: "sidebar.tabPerformance", value: "performance", icon: GaugeIcon },
+      {
+        labelKey: "sidebar.tabPerformance",
+        value: "performance",
+        icon: GaugeIcon,
+      },
       {
         labelKey: "sidebar.tabAdvancedKeys",
         value: "advanced-keys",
@@ -56,11 +62,21 @@ export const sidebarTabGroups: SidebarTabGroup[] = [
       },
       { labelKey: "sidebar.tabGamepad", value: "gamepad", icon: Gamepad2Icon },
       { labelKey: "sidebar.tabPointing", value: "pointing", icon: MouseIcon },
-      { labelKey: "sidebar.tabCalibration", value: "calibration", icon: CrosshairIcon },
+      {
+        labelKey: "sidebar.tabCalibration",
+        value: "calibration",
+        icon: CrosshairIcon,
+      },
     ],
   },
   {
     groupKey: "sidebar.groupSettings",
-    tabs: [{ labelKey: "sidebar.tabSettings", value: "settings", icon: SettingsIcon }],
+    tabs: [
+      {
+        labelKey: "sidebar.tabSettings",
+        value: "settings",
+        icon: SettingsIcon,
+      },
+    ],
   },
 ]

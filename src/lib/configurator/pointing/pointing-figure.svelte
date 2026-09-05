@@ -126,19 +126,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         class={on ? "opacity-35" : "text-primary"}
         stroke-dasharray={on ? "4 4" : undefined}
       />
-      <path
-        d="M64 13l10 7-10 7"
-        class={on ? "opacity-35" : "text-primary"}
-      />
+      <path d="M64 13l10 7-10 7" class={on ? "opacity-35" : "text-primary"} />
       <path
         d="M82 44H24"
         class={on ? "text-primary" : "opacity-35"}
         stroke-dasharray={on ? undefined : "4 4"}
       />
-      <path
-        d="M32 37l-10 7 10 7"
-        class={on ? "text-primary" : "opacity-35"}
-      />
+      <path d="M32 37l-10 7 10 7" class={on ? "text-primary" : "opacity-35"} />
       <text
         x="83"
         y="25"
@@ -166,19 +160,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         class={on ? "opacity-35" : "text-primary"}
         stroke-dasharray={on ? "4 4" : undefined}
       />
-      <path
-        d="M27 46l7 10 7-10"
-        class={on ? "opacity-35" : "text-primary"}
-      />
+      <path d="M27 46l7 10 7-10" class={on ? "opacity-35" : "text-primary"} />
       <path
         d="M62 54V10"
         class={on ? "text-primary" : "opacity-35"}
         stroke-dasharray={on ? undefined : "4 4"}
       />
-      <path
-        d="M55 18l7-10 7 10"
-        class={on ? "text-primary" : "opacity-35"}
-      />
+      <path d="M55 18l7-10 7 10" class={on ? "text-primary" : "opacity-35"} />
       <text
         x="66"
         y="60"
@@ -336,14 +324,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         rx="3"
         class={on ? "text-primary" : undefined}
       />
-      <path
-        d="M55 38h15"
-        class={on ? "text-primary" : undefined}
-      />
-      <path
-        d="M64 34l8 4-8 4"
-        class={on ? "text-primary" : undefined}
-      />
+      <path d="M55 38h15" class={on ? "text-primary" : undefined} />
+      <path d="M64 34l8 4-8 4" class={on ? "text-primary" : undefined} />
     </svg>
   {/if}
 </div>

@@ -21,8 +21,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as RadioGroup from "$lib/components/ui/radio-group"
   import * as Tabs from "$lib/components/ui/tabs"
   import * as Tooltip from "$lib/components/ui/tooltip"
-  import { t } from "$lib/i18n.svelte"
   import { nullBindBehaviorMetadata } from "$lib/configurator/lib/advanced-keys"
+  import { t } from "$lib/i18n.svelte"
   import {
     DEFAULT_BOTTOM_OUT_POINT,
     type HMK_AKNullBind,
@@ -81,8 +81,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <FixedScrollArea class="flex flex-col gap-4 p-4 pt-0">
   <Tabs.Root value="performance">
     <Tabs.List>
-      <Tabs.Trigger value="performance">{t("advkeys.tabs.performance")}</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
+      <Tabs.Trigger value="performance"
+        >{t("advkeys.tabs.performance")}</Tabs.Trigger
+      >
+      <Tabs.Trigger value="key-tester"
+        >{t("advkeys.tabs.keyTester")}</Tabs.Trigger
+      >
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="performance">

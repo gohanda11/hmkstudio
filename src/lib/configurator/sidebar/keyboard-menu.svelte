@@ -23,8 +23,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { base } from "$app/paths"
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu"
   import * as Sidebar from "$lib/components/ui/sidebar"
-  import { displayUInt16 } from "$lib/integer"
   import { t } from "$lib/i18n.svelte"
+  import { displayUInt16 } from "$lib/integer"
   import { keyboardContext } from "$lib/keyboard"
 
   const keyboard = keyboardContext.get()

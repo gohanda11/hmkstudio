@@ -291,7 +291,11 @@ class FirmwareUpdate {
         `Warning: the selected DFU device (${dfuDeviceDescription(usbDevice)}) is not the bootloader expected for ${this.keyboardName} (${dfuVendorLabel(expectedVendorId)})`,
       )
       await connection.device.close()
-      this.error = t("dfu.mismatch", { device: dfuDeviceDescription(usbDevice), name: this.keyboardName, expected: dfuVendorLabel(expectedVendorId) })
+      this.error = t("dfu.mismatch", {
+        device: dfuDeviceDescription(usbDevice),
+        name: this.keyboardName,
+        expected: dfuVendorLabel(expectedVendorId),
+      })
       this.step = "select"
       this.#armSelectTimeout()
       return

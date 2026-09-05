@@ -166,7 +166,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             <Dialog.Footer>
               <Dialog.Close>
                 {#snippet child({ props })}
-                  <Button size="sm" variant="outline" {...props}>{t("settings.cancel")}</Button>
+                  <Button size="sm" variant="outline" {...props}
+                    >{t("settings.cancel")}</Button
+                  >
                 {/snippet}
               </Dialog.Close>
               <Dialog.Close onclick={() => profileQuery.factoryReset()}>

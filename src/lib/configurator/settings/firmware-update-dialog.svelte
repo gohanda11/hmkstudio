@@ -29,7 +29,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
   $effect(() => {
     // Scroll the log to the bottom on new entries
-    firmwareUpdate.logs
+    void firmwareUpdate.logs
     if (logElement) logElement.scrollTop = logElement.scrollHeight
   })
 </script>
@@ -52,9 +52,18 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <Dialog.Description>
         {firmwareUpdate.keyboardName}
         {#if firmwareUpdate.step === "version" && firmwareUpdate.selectedVersion !== null}
-          {t("dfu.versionRange", { current: displayVersion(firmwareUpdate.currentVersion), latest: firmwareUpdate.selectedVersion.tag })}
+          {t("dfu.versionRange", {
+            current: displayVersion(firmwareUpdate.currentVersion),
+            latest: firmwareUpdate.selectedVersion.tag,
+          })}
         {:else if firmwareUpdate.latestVersion !== null}
-          {t("dfu.versionRange", { current: displayVersion(firmwareUpdate.currentVersion), latest: firmwareUpdate.latestVersion !== null ? displayVersion(firmwareUpdate.latestVersion) : "" })}
+          {t("dfu.versionRange", {
+            current: displayVersion(firmwareUpdate.currentVersion),
+            latest:
+              firmwareUpdate.latestVersion !== null
+                ? displayVersion(firmwareUpdate.latestVersion)
+                : "",
+          })}
         {/if}
       </Dialog.Description>
     </Dialog.Header>
@@ -109,7 +118,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <p
             class="rounded-md border border-destructive/50 bg-destructive/10 p-2 text-destructive"
           >
-            {t("dfu.downgradeBody", { selected: firmwareUpdate.selectedVersion.tag, current: displayVersion(firmwareUpdate.currentVersion) })}
+            {t("dfu.downgradeBody", {
+              selected: firmwareUpdate.selectedVersion.tag,
+              current: displayVersion(firmwareUpdate.currentVersion),
+            })}
           </p>
         {/if}
       </div>
@@ -158,7 +170,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     {:else if firmwareUpdate.step === "ready"}
       <div class="grid gap-2 text-sm">
         <p>
-          {t("dfu.readyBody", { size: niceSize(firmwareUpdate.firmwareSize), name: firmwareUpdate.keyboardName })}
+          {t("dfu.readyBody", {
+            size: niceSize(firmwareUpdate.firmwareSize),
+            name: firmwareUpdate.keyboardName,
+          })}
         </p>
         <pre
           class="rounded-md bg-muted p-2 font-mono text-xs break-all whitespace-pre-wrap">{firmwareUpdate.deviceSummary}{firmwareUpdate.memorySummary ===

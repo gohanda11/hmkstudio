@@ -72,7 +72,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
       </div>
       <div class="flex flex-col items-center text-center text-base">
-        <div class="text-muted-foreground">{t("advkeys.tapHold.holdLabel")}</div>
+        <div class="text-muted-foreground">
+          {t("advkeys.tapHold.holdLabel")}
+        </div>
         <div class="p-0.5" style={unitToStyle()}>
           <ToggleGroup.Item
             oncontextmenu={(e) => {
@@ -98,7 +100,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tabs.List>
       <Tabs.Trigger value="bindings">{t("advkeys.tabs.bindings")}</Tabs.Trigger>
       <Tabs.Trigger value="advanced">{t("advkeys.tabs.advanced")}</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
+      <Tabs.Trigger value="key-tester"
+        >{t("advkeys.tabs.keyTester")}</Tabs.Trigger
+      >
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="bindings">

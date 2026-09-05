@@ -22,7 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import RemapMenubar from "./remap-menubar.svelte"
   import RemapTesterStatus from "./remap-tester-status.svelte"
   import RemapToolbar from "./remap-toolbar.svelte"
-  import { RemapTesterState, remapTesterContext } from "./tester-state.svelte"
+  import { remapTesterContext, RemapTesterState } from "./tester-state.svelte"
 
   const {
     ...props

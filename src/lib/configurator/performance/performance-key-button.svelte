@@ -32,7 +32,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const continuousLabel = $derived(
     continuous ? t("performance.continuousAbbreviation") : "",
   )
-
 </script>
 
 <KeyButton size="sm" {...props}>

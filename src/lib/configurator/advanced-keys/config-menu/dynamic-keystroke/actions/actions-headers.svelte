@@ -15,12 +15,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import * as Tooltip from "$lib/components/ui/tooltip"
-  import { t } from "$lib/i18n.svelte"
   import {
     DKS_ACTION_SIZE,
     DKS_ROW_PADDING,
     dynamicKeystrokeHeaders,
   } from "$lib/configurator/lib/advanced-keys"
+  import { t } from "$lib/i18n.svelte"
 </script>
 
 <div class="grid place-items-center" style:grid-area="bindings">

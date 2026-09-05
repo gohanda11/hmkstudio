@@ -69,7 +69,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   </FixedScrollArea>
   <FixedScrollArea class="flex flex-col gap-4 p-4">
     <div class="font-semibold">
-      {t("advkeys.mainMenu.activeTitle", { count: String(count ?? 0).padStart(2, "0"), total: String(numAdvancedKeys).padStart(2, "0") })}
+      {t("advkeys.mainMenu.activeTitle", {
+        count: String(count ?? 0).padStart(2, "0"),
+        total: String(numAdvancedKeys).padStart(2, "0"),
+      })}
     </div>
     {#if !advancedKeys || !count}
       <Empty.Root class="border border-dashed">

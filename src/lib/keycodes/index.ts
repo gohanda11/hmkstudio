@@ -137,16 +137,17 @@ export function getKeycodeMetadata(
   }
 
   const resolvedLayout = layout ?? getKeycodeLayout()
-  const base =
-    keycodeMetadataMap.get(keycode) ?? {
-      name: displayUInt16(keycode),
-      tooltip: `Unknown Keycode: ${displayUInt16(keycode)}`,
-      keycode,
-      webCodes: [],
-      category: "Unknown" as const,
-    }
+  const base = keycodeMetadataMap.get(keycode) ?? {
+    name: displayUInt16(keycode),
+    tooltip: `Unknown Keycode: ${displayUInt16(keycode)}`,
+    keycode,
+    webCodes: [],
+    category: "Unknown" as const,
+  }
   const override =
-    resolvedLayout === "jp" ? jpNameOverrides[keycode] : usNameOverrides[keycode]
+    resolvedLayout === "jp"
+      ? jpNameOverrides[keycode]
+      : usNameOverrides[keycode]
   return override ? { ...base, ...override } : base
 }
 

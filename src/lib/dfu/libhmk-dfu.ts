@@ -353,7 +353,7 @@ export function buildSelectableVersions(args: {
       size: entry.size,
     })
   }
-  for (const v of (versions?.versions ?? [])) {
+  for (const v of versions?.versions ?? []) {
     if (v.version === latestVersion) continue
     out.push({
       version: v.version,

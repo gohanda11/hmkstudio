@@ -60,7 +60,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Dialog.Footer>
       <Dialog.Close>
         {#snippet child({ props })}
-          <Button size="sm" variant="outline" {...props}>{t("advkeys.deleteDialog.cancel")}</Button>
+          <Button size="sm" variant="outline" {...props}
+            >{t("advkeys.deleteDialog.cancel")}</Button
+          >
         {/snippet}
       </Dialog.Close>
       <Dialog.Close
@@ -75,7 +77,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         }}
       >
         {#snippet child({ props })}
-          <Button size="sm" variant="destructive" {...props}>{t("advkeys.deleteDialog.remove")}</Button>
+          <Button size="sm" variant="destructive" {...props}
+            >{t("advkeys.deleteDialog.remove")}</Button
+          >
         {/snippet}
       </Dialog.Close>
     </Dialog.Footer>

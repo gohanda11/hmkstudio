@@ -22,12 +22,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import * as Dialog from "$lib/components/ui/dialog"
   import * as Tabs from "$lib/components/ui/tabs"
+  import * as ToggleGroup from "$lib/components/ui/toggle-group"
   import { t } from "$lib/i18n.svelte"
   import { keyboardContext } from "$lib/keyboard"
   import { getKeycodeMetadata } from "$lib/keycodes"
   import { HMK_AKType } from "$lib/libhmk/advanced-keys"
   import { unitToStyle } from "$lib/ui"
-  import * as ToggleGroup from "$lib/components/ui/toggle-group"
   import { cn } from "$lib/utils"
   import { untrack } from "svelte"
   import { remapStateContext } from "../context.svelte"
@@ -149,8 +149,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const comboSummary = $derived.by(() => {
     if (baseKeycode === null) return ""
     const parts = [
-      ...comboMods.map(
-        (mod) => getKeycodeMetadata(mod).name.replaceAll("\n", " "),
+      ...comboMods.map((mod) =>
+        getKeycodeMetadata(mod).name.replaceAll("\n", " "),
       ),
       getKeycodeMetadata(baseKeycode).name.replaceAll("\n", " "),
     ]
@@ -216,8 +216,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       if (tapKeycode === null) binding = "tap"
     }
   }
-
 </script>
+
 <Dialog.Root bind:open>
   <Dialog.Content class="sm:max-w-xl">
     <Dialog.Header>
@@ -228,16 +228,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     </Dialog.Header>
     <Tabs.Root bind:value={tab}>
       <Tabs.List class="w-full">
-        <Tabs.Trigger class="flex-1" value="key">{t("dialog.combo")}</Tabs.Trigger>
-        <Tabs.Trigger class="flex-1" value="tap-hold">{t("dialog.tapHold")}</Tabs.Trigger>
+        <Tabs.Trigger class="flex-1" value="key"
+          >{t("dialog.combo")}</Tabs.Trigger
+        >
+        <Tabs.Trigger class="flex-1" value="tap-hold"
+          >{t("dialog.tapHold")}</Tabs.Trigger
+        >
       </Tabs.List>
       <Tabs.Content value="key">
         <div class="flex flex-col gap-4 py-2">
           <div class="flex items-center gap-3">
-            <div
-              class="rounded-md p-0.5"
-              style={unitToStyle()}
-            >
+            <div class="rounded-md p-0.5" style={unitToStyle()}>
               {#if baseKeycode !== null}
                 <KeycodeButton keycode={baseKeycode} />
               {/if}
@@ -258,21 +259,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               type="single"
               variant="outline"
             >
-              <ToggleGroup.Item value="left">{t("dialog.left")}</ToggleGroup.Item>
-              <ToggleGroup.Item value="right">{t("dialog.right")}</ToggleGroup.Item>
+              <ToggleGroup.Item value="left"
+                >{t("dialog.left")}</ToggleGroup.Item
+              >
+              <ToggleGroup.Item value="right"
+                >{t("dialog.right")}</ToggleGroup.Item
+              >
             </ToggleGroup.Root>
           </div>
           <div class="grid grid-cols-2 gap-3">
-            <Switch
-              bind:checked={modCtrl}
-              id="combo-ctrl"
-              title="Ctrl"
-            />
-            <Switch
-              bind:checked={modShift}
-              id="combo-shift"
-              title="Shift"
-            />
+            <Switch bind:checked={modCtrl} id="combo-ctrl" title="Ctrl" />
+            <Switch bind:checked={modShift} id="combo-shift" title="Shift" />
             <Switch bind:checked={modAlt} id="combo-alt" title="Alt" />
             <Switch bind:checked={modGui} id="combo-gui" title="Win" />
           </div>
@@ -367,7 +364,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Dialog.Footer>
       <Dialog.Close>
         {#snippet child({ props })}
-          <Button size="sm" variant="outline" {...props}>{t("dialog.cancel")}</Button>
+          <Button size="sm" variant="outline" {...props}
+            >{t("dialog.cancel")}</Button
+          >
         {/snippet}
       </Dialog.Close>
       {#if tab === "key"}
@@ -379,7 +378,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           {t("dialog.apply")}
         </Button>
       {:else}
-        <Button disabled={!canApply} onclick={() => void apply()} size="sm">{t("dialog.apply")}</Button>
+        <Button disabled={!canApply} onclick={() => void apply()} size="sm"
+          >{t("dialog.apply")}</Button
+        >
       {/if}
     </Dialog.Footer>
   </Dialog.Content>

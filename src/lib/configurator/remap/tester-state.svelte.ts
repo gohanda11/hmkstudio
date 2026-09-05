@@ -13,8 +13,7 @@
  * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "runed"
-import { SvelteSet } from "svelte/reactivity"
+import { SvelteMap, SvelteSet } from "svelte/reactivity"
 
 /**
  * Shared tester-mode state for the Remap tab. Held keys render as
@@ -27,9 +26,9 @@ export class RemapTesterState {
   /** Web codes pressed at least once since the last reset. */
   latched = new SvelteSet<string>()
   /** Whether Shift was held when each web code was pressed. */
-  shiftAtPress = new Map<string, boolean>()
+  shiftAtPress = new SvelteMap<string, boolean>()
   /** OS-reported `KeyboardEvent.key` at press time, per web code. */
-  keyAtPress = new Map<string, string>()
+  keyAtPress = new SvelteMap<string, string>()
 
   reset() {
     this.pressed.clear()

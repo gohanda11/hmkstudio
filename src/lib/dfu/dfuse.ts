@@ -85,9 +85,9 @@ export function parseMemoryDescriptor(desc: string): DfuSeMemoryInfo {
     ) {
       const sectorCount = parseInt(segmentMatch[1], 10)
       const sectorSize =
-        parseInt(segmentMatch[2], 10) * (sectorMultipliers[segmentMatch[3]] ?? 1)
-      const properties =
-        segmentMatch[4].charCodeAt(0) - "a".charCodeAt(0) + 1
+        parseInt(segmentMatch[2], 10) *
+        (sectorMultipliers[segmentMatch[3]] ?? 1)
+      const properties = segmentMatch[4].charCodeAt(0) - "a".charCodeAt(0) + 1
       segments.push({
         start: startAddress,
         sectorSize,
@@ -194,9 +194,7 @@ export class DfuSeDevice extends DfuDevice {
   async erase(startAddr: number, length: number) {
     let segment = this.getSegment(startAddr)
     if (segment === null) {
-      throw new Error(
-        `Address ${startAddr.toString(16)} outside of memory map`,
-      )
+      throw new Error(`Address ${startAddr.toString(16)} outside of memory map`)
     }
 
     let addr = this.getSectorStart(startAddr, segment)
@@ -212,9 +210,7 @@ export class DfuSeDevice extends DfuDevice {
       if (segment.end <= addr) {
         const nextSegment = this.getSegment(addr)
         if (nextSegment === null) {
-          throw new Error(
-            `Address ${addr.toString(16)} outside of memory map`,
-          )
+          throw new Error(`Address ${addr.toString(16)} outside of memory map`)
         }
         segment = nextSegment
       }
@@ -225,7 +221,9 @@ export class DfuSeDevice extends DfuDevice {
         this.logProgress(bytesErased, bytesToErase)
         continue
       }
-      const sectorIndex = Math.floor((addr - segment.start) / segment.sectorSize)
+      const sectorIndex = Math.floor(
+        (addr - segment.start) / segment.sectorSize,
+      )
       const sectorAddr = segment.start + sectorIndex * segment.sectorSize
       this.logDebug(
         `Erasing ${segment.sectorSize}B at 0x${sectorAddr.toString(16)}`,
@@ -308,7 +306,9 @@ export class DfuSeDevice extends DfuDevice {
       await this.dfuseCommand(DFUSE_SET_ADDRESS, startAddress, 4)
       await this.download(new ArrayBuffer(0), 0)
     } catch (error) {
-      throw new Error(`Error during DfuSe manifestation: ${errorMessage(error)}`)
+      throw new Error(
+        `Error during DfuSe manifestation: ${errorMessage(error)}`,
+      )
     }
 
     try {

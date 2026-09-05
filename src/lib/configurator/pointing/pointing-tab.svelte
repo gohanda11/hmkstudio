@@ -75,14 +75,17 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     return side === HMK_POINTING_SIDE_LEFT ? leftConfig : rightConfig
   }
 
-  function setOrient(side: number | null, patch: Partial<HMK_PointingSideConfig>) {
+  function setOrient(
+    side: number | null,
+    patch: Partial<HMK_PointingSideConfig>,
+  ) {
     if (side === null) {
       if (config) void pointingQuery.set({ data: { ...config, ...patch } })
       return
     }
-    const sideCfg =
-      side === HMK_POINTING_SIDE_LEFT ? leftConfig : rightConfig
-    if (sideCfg) void pointingQuery.setSide({ side, data: { ...sideCfg, ...patch } })
+    const sideCfg = side === HMK_POINTING_SIDE_LEFT ? leftConfig : rightConfig
+    if (sideCfg)
+      void pointingQuery.setSide({ side, data: { ...sideCfg, ...patch } })
   }
 
   function orientTitle(side: number | null) {
@@ -138,7 +141,11 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }
 
   function snapAxisLabel(axis: number) {
-    return axis === 1 ? t("pointing.xAxis") : axis === 2 ? t("pointing.yAxis") : t("pointing.disabled")
+    return axis === 1
+      ? t("pointing.xAxis")
+      : axis === 2
+        ? t("pointing.yAxis")
+        : t("pointing.disabled")
   }
 </script>
 
@@ -149,9 +156,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   {#snippet orientationCard(side: number | null)}
     {@const orient = orientOf(side)}
     {@const orientKey = side ?? "global"}
-    <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+    <div
+      class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm"
+    >
       <div class="grid">
-        <span class="text-[13px] font-semibold leading-tight">{orientTitle(side)}</span>
+        <span class="text-[13px] leading-tight font-semibold"
+          >{orientTitle(side)}</span
+        >
         <span class="text-xs leading-snug text-muted-foreground">
           {orientDescription(side)}
         </span>
@@ -173,8 +184,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         />
         <PointingFigure
           figure="rotation"
-          angle={orient?.rotationDeg ??
-            defaultPointingSideConfig.rotationDeg}
+          angle={orient?.rotationDeg ?? defaultPointingSideConfig.rotationDeg}
         />
       </div>
       <div class="flex items-start gap-2">
@@ -241,7 +251,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       <div class="grid gap-1.5 rounded-lg border bg-card p-3 text-sm shadow-sm">
         <span class="font-semibold">{t("pointing.firmwareRequired")}</span>
         <span class="text-muted-foreground">
-          {t("pointing.firmwareRequiredDescription", { min: displayVersion(HMK_POINTING_CONFIG_MIN_VERSION), version: displayVersion(version) })}
+          {t("pointing.firmwareRequiredDescription", {
+            min: displayVersion(HMK_POINTING_CONFIG_MIN_VERSION),
+            version: displayVersion(version),
+          })}
         </span>
       </div>
     {:else if queryError && !result}
@@ -270,10 +283,16 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </span>
       </div>
     {:else}
-      <div class="grid items-stretch gap-2.5 text-sm xl:grid-cols-2 2xl:grid-cols-3 [&_p.text-sm]:text-xs [&_p.text-sm]:leading-snug [&_span.text-muted-foreground]:text-xs [&_span.text-muted-foreground]:leading-snug">
-        <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+      <div
+        class="grid items-stretch gap-2.5 text-sm xl:grid-cols-2 2xl:grid-cols-3 [&_p.text-sm]:text-xs [&_p.text-sm]:leading-snug [&_span.text-muted-foreground]:text-xs [&_span.text-muted-foreground]:leading-snug"
+      >
+        <div
+          class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm"
+        >
           <div class="grid">
-            <span class="text-[13px] font-semibold leading-tight">{t("pointing.deviceTitle")}</span>
+            <span class="text-[13px] leading-tight font-semibold"
+              >{t("pointing.deviceTitle")}</span
+            >
             <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.deviceDescription")}
             </span>
@@ -293,7 +312,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             <CommitSlider
               bind:committed={
                 () => config?.cpi ?? defaultPointingConfig.cpi,
-                (v) => config && pointingQuery.set({ data: { ...config, cpi: v } })
+                (v) =>
+                  config && pointingQuery.set({ data: { ...config, cpi: v } })
               }
               class="min-w-0 flex-1"
               description={t("pointing.cpiDescription")}
@@ -311,15 +331,22 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <div
             class="grid gap-1 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm shadow-sm xl:col-span-2 2xl:col-span-3"
           >
-            <span class="text-[13px] font-semibold leading-tight text-destructive">{t("pointing.conflictTitle")}</span>
+            <span
+              class="text-[13px] leading-tight font-semibold text-destructive"
+              >{t("pointing.conflictTitle")}</span
+            >
             <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.conflictDescription")}
             </span>
           </div>
         {/if}
-        <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+        <div
+          class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm"
+        >
           <div class="grid">
-            <span class="text-[13px] font-semibold leading-tight">{t("pointing.autoMouseTitle")}</span>
+            <span class="text-[13px] leading-tight font-semibold"
+              >{t("pointing.autoMouseTitle")}</span
+            >
             <span class="text-xs leading-snug text-muted-foreground">
               {t("pointing.autoMouseDescription")}
             </span>
@@ -355,7 +382,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           </div>
           <div class="flex items-center justify-between gap-3">
             <div class="grid text-wrap">
-              <span class="text-[13px] font-semibold leading-tight">{t("pointing.targetLayer")}</span>
+              <span class="text-[13px] leading-tight font-semibold"
+                >{t("pointing.targetLayer")}</span
+              >
               <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.targetLayerDescription")}
               </span>
@@ -391,16 +420,21 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           {:else}
             {@render orientationCard(null)}
           {/if}
-          <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          <div
+            class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm"
+          >
             <div class="grid">
-              <span class="text-[13px] font-semibold leading-tight">{t("pointing.scrollTitle")}</span>
+              <span class="text-[13px] leading-tight font-semibold"
+                >{t("pointing.scrollTitle")}</span
+              >
               <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.scrollDescription")}
               </span>
             </div>
             <Switch
               bind:checked={
-                () => config?.invertScroll ?? defaultPointingConfig.invertScroll,
+                () =>
+                  config?.invertScroll ?? defaultPointingConfig.invertScroll,
                 (v) =>
                   config &&
                   pointingQuery.set({
@@ -415,7 +449,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="flex items-start gap-2">
               <div class="grid min-w-0 flex-1 gap-1">
                 <div class="grid text-wrap">
-                  <span class="text-[13px] font-semibold leading-tight">{t("pointing.scrollLayer")}</span>
+                  <span class="text-[13px] leading-tight font-semibold"
+                    >{t("pointing.scrollLayer")}</span
+                  >
                   <span class="text-xs leading-snug text-muted-foreground">
                     {t("pointing.scrollLayerDescription")}
                   </span>
@@ -464,8 +500,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               <PointingFigure
                 class="self-center"
                 figure="scroll"
-                on={config?.invertScroll ??
-                  defaultPointingConfig.invertScroll}
+                on={config?.invertScroll ?? defaultPointingConfig.invertScroll}
               />
             </div>
             <CommitSlider
@@ -487,9 +522,13 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               title={t("pointing.scrollDivisor")}
             />
           </div>
-          <div class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm">
+          <div
+            class="grid content-start gap-2.5 rounded-lg border bg-card p-3 shadow-sm"
+          >
             <div class="grid">
-              <span class="text-[13px] font-semibold leading-tight">{t("pointing.axisSnapping")}</span>
+              <span class="text-[13px] leading-tight font-semibold"
+                >{t("pointing.axisSnapping")}</span
+              >
               <span class="text-xs leading-snug text-muted-foreground">
                 {t("pointing.axisSnappingDescription")}
               </span>
@@ -497,7 +536,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="flex items-start gap-2">
               <div class="grid min-w-0 flex-1 gap-1">
                 <div class="grid text-wrap">
-                  <span class="text-[13px] font-semibold leading-tight">{t("pointing.snapAxis")}</span>
+                  <span class="text-[13px] leading-tight font-semibold"
+                    >{t("pointing.snapAxis")}</span
+                  >
                   <span class="text-xs leading-snug text-muted-foreground">
                     {t("pointing.snapAxisDescription")}
                   </span>
@@ -505,7 +546,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                 <Select.Root
                   bind:value={
                     () =>
-                      String(config?.snapAxis ?? defaultPointingConfig.snapAxis),
+                      String(
+                        config?.snapAxis ?? defaultPointingConfig.snapAxis,
+                      ),
                     (v) =>
                       config &&
                       pointingQuery.set({
@@ -519,7 +562,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
                     <span>{snapAxisLabel(config?.snapAxis ?? 0)}</span>
                   </Select.Trigger>
                   <Select.Content class="w-[var(--bits-select-anchor-width)]">
-                    <Select.Item value="0">{t("pointing.disabled")}</Select.Item>
+                    <Select.Item value="0">{t("pointing.disabled")}</Select.Item
+                    >
                     <Select.Item value="1">{t("pointing.xAxis")}</Select.Item>
                     <Select.Item value="2">{t("pointing.yAxis")}</Select.Item>
                   </Select.Content>
@@ -554,9 +598,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           <div
             class="grid gap-1 rounded-lg border bg-card p-3 text-sm shadow-sm xl:col-span-2 2xl:col-span-3"
           >
-            <span class="font-semibold">{t("pointing.extendedUnavailable")}</span>
+            <span class="font-semibold"
+              >{t("pointing.extendedUnavailable")}</span
+            >
             <span class="text-muted-foreground">
-              {t("pointing.extendedUnavailableDescription", { version: displayVersion(version), min: displayVersion(HMK_POINTING_CONFIG_V2_VERSION) })}
+              {t("pointing.extendedUnavailableDescription", {
+                version: displayVersion(version),
+                min: displayVersion(HMK_POINTING_CONFIG_V2_VERSION),
+              })}
             </span>
           </div>
         {/if}

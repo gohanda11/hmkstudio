@@ -165,10 +165,7 @@ export class DemoKeyboard implements Keyboard {
         structuredClone(defaultPointingSideConfig),
     }
   }
-  async setPointingSideConfig({
-    side,
-    data,
-  }: SetPointingSideConfigParams) {
+  async setPointingSideConfig({ side, data }: SetPointingSideConfigParams) {
     this.#state.pointingSideConfigs[side] = data
   }
   async resetProfile({ profile }: ResetProfileParams) {

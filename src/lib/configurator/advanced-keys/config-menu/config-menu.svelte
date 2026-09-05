@@ -15,12 +15,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import { Button } from "$lib/components/ui/button"
-  import { t } from "$lib/i18n.svelte"
-  import { displayUInt8 } from "$lib/integer"
   import { advancedKeysStateContext } from "$lib/configurator/context.svelte"
   import { getAdvancedKeyMetadata } from "$lib/configurator/lib/advanced-keys"
   import { advancedKeysQueryContext } from "$lib/configurator/queries/advanced-keys-query.svelte"
   import { macrosQueryContext } from "$lib/configurator/queries/macros-query.svelte"
+  import { t } from "$lib/i18n.svelte"
+  import { displayUInt8 } from "$lib/integer"
   import AdvancedKeysDeleteDialog from "../advanced-keys-delete-dialog.svelte"
   import ConfigMenuContent from "./config-menu-content.svelte"
 
@@ -53,7 +53,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           advancedKey={advancedKeys[index!]}
         >
           {#snippet child({ props })}
-            <Button size="sm" variant="destructive" {...props}>{t("advkeys.configMenu.delete")}</Button>
+            <Button size="sm" variant="destructive" {...props}
+              >{t("advkeys.configMenu.delete")}</Button
+            >
           {/snippet}
         </AdvancedKeysDeleteDialog>
         <Button onclick={() => advancedKeysState.setIndex(null)} size="sm">

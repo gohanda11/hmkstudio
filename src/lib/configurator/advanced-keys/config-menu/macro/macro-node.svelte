@@ -19,13 +19,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import { Input } from "$lib/components/ui/input"
   import * as ToggleGroupUI from "$lib/components/ui/toggle-group"
-  import { t, type I18nKey } from "$lib/i18n.svelte"
   import { macroActions } from "$lib/configurator/lib/advanced-keys"
-  import { HMK_MacroAction } from "$lib/libhmk/macro"
   import { macrosQueryContext } from "$lib/configurator/queries/macros-query.svelte"
+  import { t, type I18nKey } from "$lib/i18n.svelte"
   import type { HMK_AKMacro } from "$lib/libhmk/advanced-keys"
   import { Keycode } from "$lib/libhmk/keycodes"
-  import { HMK_MAX_MACRO_DELAY } from "$lib/libhmk/macro"
+  import { HMK_MacroAction, HMK_MAX_MACRO_DELAY } from "$lib/libhmk/macro"
   import { unitToStyle } from "$lib/ui"
   import { cn, type WithoutChild } from "$lib/utils"
   import { ToggleGroup } from "bits-ui"
@@ -57,7 +56,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }
 
   const delaySchema = z.coerce.number().min(0).max(HMK_MAX_MACRO_DELAY)
-
 </script>
 
 <div

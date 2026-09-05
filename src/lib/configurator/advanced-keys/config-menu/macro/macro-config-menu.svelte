@@ -19,12 +19,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { Button } from "$lib/components/ui/button"
   import * as Empty from "$lib/components/ui/empty"
   import * as Tabs from "$lib/components/ui/tabs"
-  import { t } from "$lib/i18n.svelte"
   import {
     findEmptyMacroNode,
     getMacroSequence,
   } from "$lib/configurator/lib/advanced-keys"
   import { macrosQueryContext } from "$lib/configurator/queries/macros-query.svelte"
+  import { t } from "$lib/i18n.svelte"
   import type { HMK_AKMacro } from "$lib/libhmk/advanced-keys"
   import { Keycode } from "$lib/libhmk/keycodes"
   import { HMK_MACRO_NODE_NONE, HMK_MacroAction } from "$lib/libhmk/macro"
@@ -94,7 +94,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         size="sm"
         variant="outline"
       >
-        <PlusIcon /> {t("advkeys.macro.add")}
+        <PlusIcon />
+        {t("advkeys.macro.add")}
       </Button>
     </div>
     {#if macroSequence.length === 0}
@@ -127,7 +128,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tabs.List>
       <Tabs.Trigger value="bindings">{t("advkeys.tabs.bindings")}</Tabs.Trigger>
       <Tabs.Trigger value="advanced">{t("advkeys.tabs.advanced")}</Tabs.Trigger>
-      <Tabs.Trigger value="key-tester">{t("advkeys.tabs.keyTester")}</Tabs.Trigger>
+      <Tabs.Trigger value="key-tester"
+        >{t("advkeys.tabs.keyTester")}</Tabs.Trigger
+      >
     </Tabs.List>
     <div class="p-2">
       <Tabs.Content value="bindings">

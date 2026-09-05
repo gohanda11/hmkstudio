@@ -61,10 +61,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
         </p>
         <div class="mt-6 flex items-center justify-center gap-4">
           <Button onclick={() => handleConnect()} size="lg">
-            <CableIcon /> {t("landing.connect")}
+            <CableIcon />
+            {t("landing.connect")}
           </Button>
           <Button href="{base}/demo" size="lg" variant="outline">
-            <ShapesIcon /> {t("landing.tryDemo")}
+            <ShapesIcon />
+            {t("landing.tryDemo")}
           </Button>
         </div>
       </div>

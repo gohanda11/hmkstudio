@@ -21,10 +21,7 @@ import {
   type HMK_AdvancedKey,
   type HMK_AKTapHold,
 } from "$lib/libhmk/advanced-keys"
-import {
-  defaultMacroNode,
-  type HMK_MacroNode,
-} from "$lib/libhmk/macro"
+import { defaultMacroNode, type HMK_MacroNode } from "$lib/libhmk/macro"
 import { toast } from "svelte-sonner"
 import { createAdvancedKey, getMacroSequence } from "../lib/advanced-keys"
 import type { AdvancedKeysQuery } from "../queries/advanced-keys-query.svelte"

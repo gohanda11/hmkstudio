@@ -51,15 +51,19 @@ export class PointingQuery {
     // older firmware has no GET_SIDE_CONFIG, so skip the fetch there.
     const sideAvailable =
       this.#keyboard.version >= HMK_POINTING_CONFIG_V3_VERSION
-    this.left = resource(() => {}, () =>
-      sideAvailable
-        ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_LEFT)
-        : Promise.resolve(undefined),
+    this.left = resource(
+      () => {},
+      () =>
+        sideAvailable
+          ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_LEFT)
+          : Promise.resolve(undefined),
     )
-    this.right = resource(() => {}, () =>
-      sideAvailable
-        ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_RIGHT)
-        : Promise.resolve(undefined),
+    this.right = resource(
+      () => {},
+      () =>
+        sideAvailable
+          ? this.#keyboard.getPointingSideConfig(HMK_POINTING_SIDE_RIGHT)
+          : Promise.resolve(undefined),
     )
   }
 

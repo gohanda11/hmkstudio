@@ -85,9 +85,7 @@ export interface DfuGenericDescriptor {
 }
 
 export type DfuDescriptor =
-  | DfuInterfaceDescriptor
-  | DfuFunctionalDescriptor
-  | DfuGenericDescriptor
+  DfuInterfaceDescriptor | DfuFunctionalDescriptor | DfuGenericDescriptor
 
 export interface DfuConfigurationDescriptor {
   bLength: number
@@ -313,14 +311,18 @@ export class DfuDevice {
 
     const header = await this.usbDevice.controlTransferIn(setup, 4)
     if (header.status !== "ok" || !header.data) {
-      throw new Error(`Failed to read configuration descriptor: ${header.status}`)
+      throw new Error(
+        `Failed to read configuration descriptor: ${header.status}`,
+      )
     }
 
     // Read out the full configuration descriptor
     const wLength = header.data.getUint16(2, true)
     const result = await this.usbDevice.controlTransferIn(setup, wLength)
     if (result.status !== "ok" || !result.data) {
-      throw new Error(`Failed to read configuration descriptor: ${result.status}`)
+      throw new Error(
+        `Failed to read configuration descriptor: ${result.status}`,
+      )
     }
 
     return result.data
@@ -345,14 +347,18 @@ export class DfuDevice {
     // Read enough for bLength
     let result = await this.usbDevice.controlTransferIn(setup, 1)
     if (result.status !== "ok" || !result.data) {
-      throw new Error(`Failed to read string descriptor ${index}: ${result.status}`)
+      throw new Error(
+        `Failed to read string descriptor ${index}: ${result.status}`,
+      )
     }
 
     // Retrieve the full descriptor
     const bLength = result.data.getUint8(0)
     result = await this.usbDevice.controlTransferIn(setup, bLength)
     if (result.status !== "ok" || !result.data) {
-      throw new Error(`Failed to read string descriptor ${index}: ${result.status}`)
+      throw new Error(
+        `Failed to read string descriptor ${index}: ${result.status}`,
+      )
     }
 
     const data = result.data
@@ -416,8 +422,10 @@ export class DfuDevice {
       }
     }
 
-    const names: Record<number, Record<number, Record<number, string | null>>> =
-      {}
+    const names: Record<
+      number,
+      Record<number, Record<number, string | null>>
+    > = {}
     for (const [configValue, interfaces] of Object.entries(configs)) {
       names[Number(configValue)] = {}
       for (const [intfNumber, alternates] of Object.entries(interfaces)) {

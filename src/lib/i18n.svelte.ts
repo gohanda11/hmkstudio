@@ -60,8 +60,7 @@ const en = {
   "landing.tryDemo": "Try Demo",
   "landing.disconnected": "{name} disconnected.",
   "landing.connected": "Successfully connected to {name}.",
-  "landing.firmwareAvailable":
-    " Newer version of the firmware is available.",
+  "landing.firmwareAvailable": " Newer version of the firmware is available.",
 
   "profile.label": "Profile {profile}",
   "profile.active": "Active",
@@ -90,7 +89,8 @@ const en = {
   "remap.testerPressed": "Pressed",
   "remap.testerHistory": "History",
   "remap.legendLayout": "Keycap legend layout",
-  "remap.legendLayoutTooltip": "Keycap legend layout (US / JP) — display only, does not change OS input",
+  "remap.legendLayoutTooltip":
+    "Keycap legend layout (US / JP) — display only, does not change OS input",
   "remap.importProfile": "Import Profile",
   "remap.importProfileTooltip": "Import profile",
   "remap.exportProfile": "Export Profile",
@@ -226,25 +226,24 @@ const en = {
   "pointing.figureSwap": "Diagram: swap exchanges the X and Y axes",
   "pointing.figureScroll":
     "Diagram: trackball movement becomes scroll ticks on the scroll layer",
-  "pointing.figureSnap":
-    "Diagram: near-axis movement snaps to a straight line",
+  "pointing.figureSnap": "Diagram: near-axis movement snaps to a straight line",
   "pointing.figureAutoMouse":
     "Diagram: movement temporarily switches to the mouse layer",
   "pointing.extendedUnavailable": "Extended Settings Unavailable",
   "pointing.extendedUnavailableDescription":
     "Firmware {version} supports only the basic pointing settings above. Sensor rotation, axis orientation (invert/swap axes), scrolling behavior and axis snapping require firmware {min} or later. Update the firmware from the Settings tab to configure these settings.",
   "dfu.timeout":
-    "Timed out waiting for a DFU device to be selected ({seconds} seconds). If the keyboard is stuck in DFU bootloader mode, unplug it and plug it back in (or press its reset button), then click \"Select DFU Device\" again. On Windows, make sure the DFU device is bound to a WinUSB driver (Zadig).",
+    'Timed out waiting for a DFU device to be selected ({seconds} seconds). If the keyboard is stuck in DFU bootloader mode, unplug it and plug it back in (or press its reset button), then click "Select DFU Device" again. On Windows, make sure the DFU device is bound to a WinUSB driver (Zadig).',
   "dfu.mismatch":
-    "The selected DFU device ({device}) does not match \"{name}\", which expects the {expected} DFU bootloader. To avoid flashing the wrong keyboard, disconnect the other device and select the DFU device that appeared when \"{name}\" restarted.",
+    'The selected DFU device ({device}) does not match "{name}", which expects the {expected} DFU bootloader. To avoid flashing the wrong keyboard, disconnect the other device and select the DFU device that appeared when "{name}" restarted.',
   "dfu.serialNone": ", and it exposes no serial number",
-  "dfu.serialSome": " (serial \"{serial}\")",
+  "dfu.serialSome": ' (serial "{serial}")',
   "dfu.identityUnknown":
-    "The expected DFU bootloader for \"{name}\" could not be verified, and a DFU bootloader does not identify which keyboard it belongs to",
+    'The expected DFU bootloader for "{name}" could not be verified, and a DFU bootloader does not identify which keyboard it belongs to',
   "dfu.identityMatch":
-    "The selected DFU device matches the {expected} bootloader expected for \"{name}\", but the bootloader cannot prove that it belongs to this keyboard",
+    'The selected DFU device matches the {expected} bootloader expected for "{name}", but the bootloader cannot prove that it belongs to this keyboard',
   "dfu.identityTail":
-    ". If more than one DFU-capable keyboard is connected, disconnect the others so that only \"{name}\" remains attached, and verify the device summary above before flashing.",
+    '. If more than one DFU-capable keyboard is connected, disconnect the others so that only "{name}" remains attached, and verify the device summary above before flashing.',
   "dfu.phaseErase": "Erasing flash memory...",
   "dfu.phaseWrite": "Writing firmware...",
   "dfu.phaseManifest": "Manifesting new firmware...",
@@ -327,11 +326,9 @@ const en = {
   "toast.profileImported": "Successfully imported Profile {profile}.",
   "toast.profileImportInvalidJson":
     "Failed to import Profile {profile}: The selected file is not a valid JSON.",
-  "toast.profileImportFailed":
-    "Failed to import Profile {profile}: {error}",
+  "toast.profileImportFailed": "Failed to import Profile {profile}: {error}",
   "toast.profileExported": "Successfully exported Profile {profile}.",
-  "toast.profileExportFailed":
-    "Failed to export Profile {profile}: {error}",
+  "toast.profileExportFailed": "Failed to export Profile {profile}: {error}",
   "toast.modComboSlots":
     "Could not add the modifier combo: all Advanced Keys slots are in use. Clear an Advanced Key you no longer need to free a slot, then try again.",
   "toast.macroNodes":
@@ -421,8 +418,7 @@ const en = {
   "advkeys.tapHold.tappingTermTitle": "Tapping Term",
   "advkeys.tapHold.tappingTermDescription":
     "Set the duration the key must be held to perform the hold action.",
-  "advkeys.nullBind.configureTitle":
-    "Configure Null Bind Resolution Behavior",
+  "advkeys.nullBind.configureTitle": "Configure Null Bind Resolution Behavior",
   "advkeys.nullBind.configureDescription":
     "Select how Null Bind resolves key presses when both keys are pressed simultaneously.",
   "advkeys.nullBind.info": "Info",
@@ -475,8 +471,7 @@ const en = {
   "advkeys.type.macroDescription":
     "Run a sequence of configurable actions when the key is pressed.",
   "advkeys.unknownTitle": "Unknown ({value})",
-  "advkeys.unknownDescription":
-    "This Advanced Key type is not recognized.",
+  "advkeys.unknownDescription": "This Advanced Key type is not recognized.",
   "advkeys.nullBindBehavior.lastTitle": "Last Input Priority",
   "advkeys.nullBindBehavior.lastDescription":
     "Activate the key that was pressed last.",
@@ -489,8 +484,7 @@ const en = {
   "advkeys.nullBindBehavior.neutralTitle": "Neutral",
   "advkeys.nullBindBehavior.neutralDescription":
     "Neither key will be activated.",
-  "advkeys.nullBindBehavior.distanceTitle":
-    "Distance Priority (Rappy Snappy)",
+  "advkeys.nullBindBehavior.distanceTitle": "Distance Priority (Rappy Snappy)",
   "advkeys.nullBindBehavior.distanceDescription":
     "Activate whichever key is pressed down further.",
   "advkeys.dks.headerPress": "Key press",
@@ -617,7 +611,8 @@ const ja: Dictionary = {
   "remap.testerPressed": "押下中",
   "remap.testerHistory": "履歴",
   "remap.legendLayout": "キー表示の配列",
-  "remap.legendLayoutTooltip": "キー表示の配列 (US / JP) — 表示のみでOSの入力は変わりません",
+  "remap.legendLayoutTooltip":
+    "キー表示の配列 (US / JP) — 表示のみでOSの入力は変わりません",
   "remap.importProfile": "プロフィールをインポート",
   "remap.importProfileTooltip": "プロフィールをインポート",
   "remap.exportProfile": "プロフィールをエクスポート",
@@ -906,8 +901,7 @@ const ja: Dictionary = {
   "advkeys.createMenu.keyLabel": "キー {index}",
   "advkeys.createMenu.assign": "割り当て",
   "advkeys.deleteDialog.title": "この{title}バインドを削除しますか?",
-  "advkeys.deleteDialog.description":
-    "このバインドを削除してもよろしいですか?",
+  "advkeys.deleteDialog.description": "このバインドを削除してもよろしいですか?",
   "advkeys.deleteDialog.cancel": "キャンセル",
   "advkeys.deleteDialog.remove": "削除",
   "advkeys.mainMenu.addTitle": "Advanced Keyを追加",
@@ -999,8 +993,7 @@ const ja: Dictionary = {
   "advkeys.type.macroDescription":
     "キーが押されたときに設定可能なアクションのシーケンスを実行します。",
   "advkeys.unknownTitle": "不明 ({value})",
-  "advkeys.unknownDescription":
-    "この Advanced Key の種類は認識されません。",
+  "advkeys.unknownDescription": "この Advanced Key の種類は認識されません。",
   "advkeys.nullBindBehavior.lastTitle": "最後の入力を優先",
   "advkeys.nullBindBehavior.lastDescription":
     "最後に押されたキーを有効にします。",
@@ -1013,8 +1006,7 @@ const ja: Dictionary = {
   "advkeys.nullBindBehavior.neutralTitle": "ニュートラル",
   "advkeys.nullBindBehavior.neutralDescription":
     "どちらのキーも有効になりません。",
-  "advkeys.nullBindBehavior.distanceTitle":
-    "Distance Priority (Rappy Snappy)",
+  "advkeys.nullBindBehavior.distanceTitle": "Distance Priority (Rappy Snappy)",
   "advkeys.nullBindBehavior.distanceDescription":
     "より深く押し込まれた方のキーを有効にします。",
   "advkeys.dks.headerPress": "キー押下",
@@ -1026,8 +1018,7 @@ const ja: Dictionary = {
   "advkeys.macro.actionRelease": "Release",
 
   "gamepad.setup.title": "コントローラーバインドの設定",
-  "gamepad.setup.description":
-    "ゲームパッドボタンをキーボードに割り当てます。",
+  "gamepad.setup.description": "ゲームパッドボタンをキーボードに割り当てます。",
   "gamepad.setup.keyboardEnabledTitle": "キーボード入力を有効化",
   "gamepad.setup.keyboardEnabledDescription":
     "ゲームパッド入力と一緒にキーボード入力の送信を許可します。",
@@ -1095,7 +1086,10 @@ export type I18nKey = keyof Dictionary
  * component render, the result updates reactively on language change.
  * `{name}`-style placeholders are filled from `vars`.
  */
-export function t(key: I18nKey, vars?: Record<string, string | number>): string {
+export function t(
+  key: I18nKey,
+  vars?: Record<string, string | number>,
+): string {
   const dictionary = getLocale() === "ja" ? ja : en
   let text: string = dictionary[key] ?? en[key]
   if (vars) {
