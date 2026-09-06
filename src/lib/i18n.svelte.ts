@@ -44,6 +44,7 @@ const en = {
   "sidebar.groupSettings": "Settings",
   "sidebar.tabProfiles": "Profiles",
   "sidebar.tabRemap": "Remap",
+  "sidebar.tabKeyTester": "Key Tester",
   "sidebar.tabPerformance": "Performance",
   "sidebar.tabAdvancedKeys": "Advanced Keys",
   "sidebar.tabGamepad": "Gamepad",
@@ -83,11 +84,6 @@ const en = {
   "common.info": "Info",
 
   "remap.resetLayer": "Reset Current Layer",
-  "remap.testerHighlight": "Tester highlight",
-  "remap.testerHighlightSr": "Toggle key tester highlight",
-  "remap.testerReset": "Reset tester",
-  "remap.testerPressed": "Pressed",
-  "remap.testerHistory": "History",
   "remap.legendLayout": "Keycap legend layout",
   "remap.legendLayoutTooltip":
     "Keycap legend layout (US / JP) — display only, does not change OS input",
@@ -565,6 +561,7 @@ const ja: Dictionary = {
   "sidebar.groupSettings": "設定",
   "sidebar.tabProfiles": "プロフィール",
   "sidebar.tabRemap": "リマップ",
+  "sidebar.tabKeyTester": "キーテスター",
   "sidebar.tabPerformance": "パフォーマンス",
   "sidebar.tabAdvancedKeys": "高度なキー",
   "sidebar.tabGamepad": "ゲームパッド",
@@ -605,11 +602,6 @@ const ja: Dictionary = {
   "common.info": "情報",
 
   "remap.resetLayer": "現在のレイヤーをリセット",
-  "remap.testerHighlight": "テスターのハイライト",
-  "remap.testerHighlightSr": "キーテスターのハイライトを切替",
-  "remap.testerReset": "テスターをリセット",
-  "remap.testerPressed": "押下中",
-  "remap.testerHistory": "履歴",
   "remap.legendLayout": "キー表示の配列",
   "remap.legendLayoutTooltip":
     "キー表示の配列 (US / JP) — 表示のみでOSの入力は変わりません",

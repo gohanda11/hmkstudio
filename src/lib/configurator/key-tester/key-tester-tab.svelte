@@ -17,10 +17,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import * as KeyboardEditor from "$lib/components/keyboard-editor"
   import type { WithoutChildren } from "$lib/utils"
   import type { ComponentProps } from "svelte"
-  import RemapKeyboard from "./remap-keyboard.svelte"
-  import RemapMenu from "./remap-menu.svelte"
-  import RemapMenubar from "./remap-menubar.svelte"
-  import RemapToolbar from "./remap-toolbar.svelte"
+  import KeyTesterKeyboard from "./key-tester-keyboard.svelte"
+  import KeyTesterMenu from "./key-tester-menu.svelte"
+  import {
+    keyTesterHighlightContext,
+    KeyTesterHighlightState,
+  } from "./tester-state.svelte"
+
+  keyTesterHighlightContext.set(new KeyTesterHighlightState())
 
   const {
     ...props
@@ -29,22 +33,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <KeyboardEditor.Root {...props}>
   <KeyboardEditor.Pane>
-    <div class="flex h-full min-h-0 flex-1 flex-col">
-      <div
-        class="flex min-h-0 flex-1 flex-row items-stretch justify-center gap-3 px-4"
-      >
-        <RemapKeyboard />
-        <div class="flex shrink-0 items-center py-2">
-          <RemapToolbar />
-        </div>
-      </div>
-      <RemapMenubar />
-    </div>
+    <KeyTesterKeyboard />
   </KeyboardEditor.Pane>
   <KeyboardEditor.Handle />
   <KeyboardEditor.Pane>
     <KeyboardEditor.Container>
-      <RemapMenu />
+      <KeyTesterMenu />
     </KeyboardEditor.Container>
   </KeyboardEditor.Pane>
 </KeyboardEditor.Root>

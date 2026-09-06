@@ -22,8 +22,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { macrosQueryContext } from "../queries/macros-query.svelte"
   import { assignKeycode } from "./modtap"
 
-  let { testerMode = false }: { testerMode?: boolean } = $props()
-
   const allKeys = $derived(
     displayLayoutContext.get().displayKeys.map(({ key }) => key),
   )
@@ -41,7 +39,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 <FixedScrollArea class="p-4">
   <KeycodeAccordion
     onKeycodeSelected={(keycode) => {
-      if (testerMode) return
       if (key === null) return
       void assignKeycode(
         keymapQuery,

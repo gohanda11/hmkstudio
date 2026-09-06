@@ -15,9 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
   import {
-    ActivityIcon,
     DownloadIcon,
-    EraserIcon,
     RotateCcwIcon,
     Undo2Icon,
     UploadIcon,
@@ -39,9 +37,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   import { KeyboardConfig } from "../lib/keyboard-config.svelte"
   import { keymapQueryContext } from "../queries/keymap-query.svelte"
   import { profileQueryContext } from "../queries/profile-query.svelte"
-  import { remapTesterContext } from "./tester-state.svelte"
-
-  let { testerMode = $bindable(false) }: { testerMode?: boolean } = $props()
 
   const { metadata } = keyboardContext.get()
   const { name } = metadata
@@ -53,15 +48,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   const keyboardConfig = new KeyboardConfig()
   const profileQuery = profileQueryContext.get()
   const keymapQuery = keymapQueryContext.get()
-  const tester = remapTesterContext.get()
 
   let fileRef: HTMLInputElement | null = $state(null)
   let anchorRef: HTMLAnchorElement | null = $state(null)
   let resetOpen = $state(false)
-
-  $effect(() => {
-    if (testerMode) resetOpen = false
-  })
 
   const formatZodError = (err: z.ZodError) =>
     [
@@ -147,51 +137,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   }
 </script>
 
-<div class="flex flex-col items-center gap-1.5 border-l py-2 pr-3 pl-2">
-  <div class="flex flex-col items-center gap-1.5">
-    <Tooltip.Root>
-      <Tooltip.Trigger>
-        {#snippet child({ props })}
-          <Button
-            {...props}
-            aria-pressed={testerMode}
-            disabled={resetOpen}
-            onclick={() => (testerMode = !testerMode)}
-            size="icon"
-            variant={testerMode ? "default" : "outline"}
-          >
-            <ActivityIcon />
-            <span class="sr-only">{t("remap.testerHighlightSr")}</span>
-          </Button>
-        {/snippet}
-      </Tooltip.Trigger>
-      <Tooltip.Content side="left">{t("remap.testerHighlight")}</Tooltip.Content
-      >
-    </Tooltip.Root>
-
-    {#if testerMode}
-      <Tooltip.Root>
-        <Tooltip.Trigger>
-          {#snippet child({ props })}
-            <Button
-              {...props}
-              disabled={tester.empty}
-              onclick={() => tester.reset()}
-              size="icon"
-              variant="outline"
-            >
-              <EraserIcon />
-              <span class="sr-only">{t("remap.testerReset")}</span>
-            </Button>
-          {/snippet}
-        </Tooltip.Trigger>
-        <Tooltip.Content side="left">{t("remap.testerReset")}</Tooltip.Content>
-      </Tooltip.Root>
-    {/if}
-  </div>
-
-  <Separator class="my-1 w-6" />
-
+<div class="flex flex-col items-center gap-1.5 rounded-lg border px-2 py-2">
   <div class="flex flex-col items-center gap-1.5">
     <Tooltip.Root>
       <Tooltip.Trigger>
@@ -262,13 +208,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
     <Tooltip.Root>
       <Tooltip.Trigger>
         {#snippet child({ props })}
-          <Button
-            {...props}
-            disabled={testerMode}
-            onclick={resetLayer}
-            size="icon"
-            variant="outline"
-          >
+          <Button {...props} onclick={resetLayer} size="icon" variant="outline">
             <Undo2Icon />
             <span class="sr-only">{t("remap.resetLayer")}</span>
           </Button>
@@ -283,12 +223,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           {#snippet child({ props })}
             <Dialog.Trigger {...props}>
               {#snippet child({ props })}
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  {...props}
-                  disabled={testerMode}
-                >
+                <Button size="icon" variant="destructive" {...props}>
                   <RotateCcwIcon />
                   <span class="sr-only">{t("remap.resetProfile")}</span>
                 </Button>

@@ -17,11 +17,11 @@ import { Context } from "runed"
 import { SvelteMap, SvelteSet } from "svelte/reactivity"
 
 /**
- * Shared tester-mode state for the Remap tab. Held keys render as
+ * Shared tester state for the Key Tester tab. Held keys render as
  * "active", released keys stay "latched" (QMK matrix-test style) until
  * reset.
  */
-export class RemapTesterState {
+export class KeyTesterHighlightState {
   /** Web codes currently held down. */
   pressed = new SvelteSet<string>()
   /** Web codes pressed at least once since the last reset. */
@@ -43,6 +43,6 @@ export class RemapTesterState {
   }
 }
 
-export const remapTesterContext = new Context<RemapTesterState>(
-  "hmk-remap-tester",
+export const keyTesterHighlightContext = new Context<KeyTesterHighlightState>(
+  "hmk-key-tester-highlight",
 )
