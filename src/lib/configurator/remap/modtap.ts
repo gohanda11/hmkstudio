@@ -132,11 +132,13 @@ export async function applyModtap(
     key,
     tapKeycode,
     holdKeycode,
+    holdOnOtherKeyPress,
   }: {
     layer: number
     key: number
     tapKeycode: number
     holdKeycode: number
+    holdOnOtherKeyPress: boolean
   },
 ): Promise<boolean> {
   const index = findModtapIndex(advancedKeys, layer, key)
@@ -154,7 +156,12 @@ export async function applyModtap(
       data: [
         {
           ...advancedKey,
-          action: { ...advancedKey.action, tapKeycode, holdKeycode },
+          action: {
+            ...advancedKey.action,
+            tapKeycode,
+            holdKeycode,
+            holdOnOtherKeyPress,
+          },
         },
       ],
     })
@@ -195,15 +202,18 @@ export async function applyModtap(
       data: [{ ...defaultMacroNode }],
     })
   }
+  const created = createAdvancedKey(metadata, {
+    layer,
+    type: HMK_AKType.TAP_HOLD,
+    keys: [key],
+    keycodes: [tapKeycode, holdKeycode],
+  })
   await advancedKeysQuery.set({
     offset: targetIndex,
     data: [
-      createAdvancedKey(metadata, {
-        layer,
-        type: HMK_AKType.TAP_HOLD,
-        keys: [key],
-        keycodes: [tapKeycode, holdKeycode],
-      }),
+      created.action.type === HMK_AKType.TAP_HOLD
+        ? { ...created, action: { ...created.action, holdOnOtherKeyPress } }
+        : created,
     ],
   })
   return true

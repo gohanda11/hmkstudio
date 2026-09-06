@@ -63,6 +63,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
   let binding = $state<"tap" | "hold" | "">("")
   let tapKeycode = $state<number | null>(null)
   let holdKeycode = $state<number | null>(null)
+  let holdOnOtherKeyPress = $state(true)
 
   // Modifier-combo ("Key" tab) state. The base key is display-only here; it is
   // changed from the right-side menu, matching the tab guidance.
@@ -95,9 +96,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
       if (action?.type === HMK_AKType.TAP_HOLD) {
         tapKeycode = action.tapKeycode
         holdKeycode = action.holdKeycode
+        holdOnOtherKeyPress =
+          typeof action.holdOnOtherKeyPress === "boolean"
+            ? action.holdOnOtherKeyPress
+            : true
       } else {
         tapKeycode = keymapQuery.keymap.current?.[layer]?.[target] ?? null
         holdKeycode = null
+        holdOnOtherKeyPress = true
         binding = "tap"
       }
       if (advancedKeys && macroTable) {
@@ -187,6 +193,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
           key: editKey,
           tapKeycode,
           holdKeycode,
+          holdOnOtherKeyPress,
         },
       )
     ) {
@@ -358,6 +365,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
               <KeycodeAccordion onKeycodeSelected={selectBinding} />
             </FixedScrollArea>
           </div>
+          <Switch
+            bind:checked={holdOnOtherKeyPress}
+            description={t("advkeys.tapHold.holdOnOtherKeyPressDescription")}
+            id="modtap-hold-on-other-key-press"
+            title={t("advkeys.tapHold.holdOnOtherKeyPressTitle")}
+          />
         </div>
       </Tabs.Content>
     </Tabs.Root>

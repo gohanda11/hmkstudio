@@ -926,7 +926,7 @@ const ja: Dictionary = {
     "キーのタップアクションとホールドアクションにバインドを割り当てます。",
   "advkeys.tapHold.tapLabel": "Tap",
   "advkeys.tapHold.holdLabel": "Hold",
-  "advkeys.tapHold.holdOnOtherKeyPressTitle": "Hold on Other Key Press",
+  "advkeys.tapHold.holdOnOtherKeyPressTitle": "他のキー押下でHold判定",
   "advkeys.tapHold.holdOnOtherKeyPressDescription":
     "他のTap-Hold以外のキーが押された場合、すぐにホールドアクションを実行します。",
   "advkeys.tapHold.tappingTermTitle": "Tapping Term",
